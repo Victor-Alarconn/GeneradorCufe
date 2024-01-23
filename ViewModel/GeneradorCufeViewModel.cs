@@ -32,11 +32,7 @@ namespace GeneradorCufe.ViewModel
                             InvoiceControl = new InvoiceControl
                             {
                                 InvoiceAuthorization = 18760000001,
-                                AuthorizationPeriod = new AuthorizationPeriod
-                                {
-                                    StartDate = new DateTime(2019, 1, 19),
-                                    EndDate = new DateTime(2030, 1, 19)
-                                },
+
                                 AuthorizedInvoices = new AuthorizedInvoices
                                 {
                                     Prefix = "SETT",
@@ -48,6 +44,12 @@ namespace GeneradorCufe.ViewModel
                     }
                 }
             };
+            // Crear y configurar AuthorizationPeriod
+            AuthorizationPeriod authorizationPeriod = new AuthorizationPeriod();
+            authorizationPeriod.SetDates(new DateTime(2019, 1, 19), new DateTime(2030, 1, 19));
+
+            // Asignar AuthorizationPeriod al InvoiceControl
+            MyUBLExtensions.UBLExtension.ExtensionContent.DianExtensions.InvoiceControl.AuthorizationPeriod = authorizationPeriod;
 
             // Inicialización independiente de MyInvoice con sus propias propiedades
             MyInvoice = new Invoice
@@ -62,17 +64,20 @@ namespace GeneradorCufe.ViewModel
                     SchemeName = "CUFE-SHA384",
                     Text = "f1c96d3ff4fc199817fa21ea2bc8a929b9b8c8b0fb50db6885ea48470e9ebabef994094272dbab11ddc93d8893dacb69"
                 },
-                IssueDate = new DateTime(2022, 4, 7),
-                IssueTime = DateTime.ParseExact("12:53:36", "HH:mm:ss", CultureInfo.InvariantCulture),
-                InvoiceTypeCode = 01,
+                InvoiceTypeCode = "01",
                 Note = "Prueba Factura Electronica Datos Reales 2",
                 DocumentCurrencyCode = "COP",
                 LineCountNumeric = 1,
                 // Inicializar AccountingSupplierParty y otras propiedades necesarias aquí
             };
+            DateTime issueDate = new DateTime(2022, 4, 7);
+            DateTime issueTime = DateTime.ParseExact("12:53:36-05:00", "HH:mm:ssK", CultureInfo.InvariantCulture);
+
+            MyInvoice.SetIssueDateAndTime(issueDate, issueTime);
 
             MyInvoice.AccountingSupplierParty = new AccountingSupplierParty
             {
+                AdditionalAccountID = 1,
                 Party = new Party
                 {
                     PartyName = new PartyName { Name = "Cadena S.A." },
@@ -80,9 +85,9 @@ namespace GeneradorCufe.ViewModel
                     {
                         Address = new Address
                         {
-                            ID = 05380,
+                            ID = "05380",
                             CityName = "LA ESTRELLA",
-                            PostalZone = 055460,
+                            PostalZone = "055460",
                             CountrySubentity = "Antioquia",
                             CountrySubentityCode = 05,
                             AddressLine = new AddressLine { Line = "Cra. 50 #97a Sur-180 a 97a Sur-394" },
@@ -107,9 +112,9 @@ namespace GeneradorCufe.ViewModel
                         TaxLevelCode = "R-99-PN",
                         RegistrationAddress = new RegistrationAddress
                         {
-                            ID = 05380,
+                            ID = "05380",
                             CityName = "LA ESTRELLA",
-                            PostalZone = 055460,
+                            PostalZone = "055460",
                             CountrySubentity = "Antioquia",
                             CountrySubentityCode = 05,
                             AddressLine = new AddressLine { Line = "Cra. 50 #97a Sur-180 a 97a Sur-394" },
@@ -169,9 +174,9 @@ namespace GeneradorCufe.ViewModel
                     {
                         Address = new Address
                         {
-                            ID = 66001,
+                            ID = "66001",
                             CityName = "PEREIRA",
-                            PostalZone = 54321,
+                            PostalZone = "54321",
                             CountrySubentity = "Risaralda",
                             CountrySubentityCode = 66,
                             AddressLine = new AddressLine { Line = "CR 9 A N0 99 - 07 OF 802" },
@@ -195,9 +200,9 @@ namespace GeneradorCufe.ViewModel
                         TaxLevelCode = "R-99-PN",
                         RegistrationAddress = new RegistrationAddress
                         {
-                            ID = 66001,
+                            ID = "66001",
                             CityName = "PEREIRA",
-                            PostalZone = 54321,
+                            PostalZone = "54321",
                             CountrySubentity = "Risaralda",
                             CountrySubentityCode = 66,
                             AddressLine = new AddressLine { Line = "CR 9 A N0 99 - 07 OF 802" },

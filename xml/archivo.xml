@@ -6,8 +6,8 @@
           <sts:InvoiceControl>
             <sts:InvoiceAuthorization>18760000001</sts:InvoiceAuthorization>
             <sts:AuthorizationPeriod>
-              <sts:StartDate>2019-01-19T00:00:00</sts:StartDate>
-              <sts:EndDate>2030-01-19T00:00:00</sts:EndDate>
+              <cbc:StartDate>2019-01-19</cbc:StartDate>
+              <cbc:EndDate>2030-01-19</cbc:EndDate>
             </sts:AuthorizationPeriod>
             <sts:AuthorizedInvoices>
               <sts:Prefix>SETT</sts:Prefix>
@@ -23,23 +23,23 @@
   <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
   <cbc:ID>SETT1</cbc:ID>
   <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">f1c96d3ff4fc199817fa21ea2bc8a929b9b8c8b0fb50db6885ea48470e9ebabef994094272dbab11ddc93d8893dacb69</cbc:UUID>
-  <cbc:IssueDate>2022-04-07T00:00:00</cbc:IssueDate>
-  <cbc:IssueTime>2024-01-22T12:53:36</cbc:IssueTime>
-  <cbc:InvoiceTypeCode>1</cbc:InvoiceTypeCode>
+  <cbc:IssueDate>2022-04-07</cbc:IssueDate>
+  <cbc:IssueTime>12:53:36-05:00</cbc:IssueTime>
+  <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
   <cbc:Note>Prueba Factura Electronica Datos Reales 2</cbc:Note>
   <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
   <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
-  <cbc:AccountingSupplierParty>
-    <cbc:AdditionalAccountID>0</cbc:AdditionalAccountID>
+  <cac:AccountingSupplierParty>
+    <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
     <cac:Party>
       <cac:PartyName>
         <cbc:Name>Cadena S.A.</cbc:Name>
       </cac:PartyName>
       <cac:PhysicalLocation>
         <cac:Address>
-          <cac:ID>5380</cac:ID>
+          <cbc:ID>05380</cbc:ID>
           <cbc:CityName>LA ESTRELLA</cbc:CityName>
-          <cbc:PostalZone>55460</cbc:PostalZone>
+          <cbc:PostalZone>055460</cbc:PostalZone>
           <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
           <cbc:CountrySubentityCode>5</cbc:CountrySubentityCode>
           <cac:AddressLine>
@@ -56,9 +56,9 @@
         <cbc:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">890930534</cbc:CompanyID>
         <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
         <cac:RegistrationAddress>
-          <cac:ID>5380</cac:ID>
+          <cbc:ID>05380</cbc:ID>
           <cbc:CityName>LA ESTRELLA</cbc:CityName>
-          <cbc:PostalZone>55460</cbc:PostalZone>
+          <cbc:PostalZone>055460</cbc:PostalZone>
           <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
           <cbc:CountrySubentityCode>5</cbc:CountrySubentityCode>
           <cac:AddressLine>
@@ -86,7 +86,7 @@
         <cbc:ElectronicMail>xxxxx@xxxxx.com.co</cbc:ElectronicMail>
       </cac:Contact>
     </cac:Party>
-  </cbc:AccountingSupplierParty>
+  </cac:AccountingSupplierParty>
   <cbc:AccountingCustomerParty>
     <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
     <cac:PartyIdentification>
@@ -98,7 +98,7 @@
       </cac:PartyName>
       <cbc:PhysicalLocation>
         <cac:Address>
-          <cac:ID>66001</cac:ID>
+          <cbc:ID>66001</cbc:ID>
           <cbc:CityName>PEREIRA</cbc:CityName>
           <cbc:PostalZone>54321</cbc:PostalZone>
           <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
@@ -153,12 +153,12 @@
     <cac:PaymentID>Efectivo</cac:PaymentID>
   </cac:PaymentMeans>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="COP">19000,00</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
     <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="COP">100000,00</cbc:TaxableAmount>
-      <cbc:TaxAmount currencyID="COP">19000,00</cbc:TaxAmount>
+      <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
       <cac:TaxCategory>
-        <cbc:Percent>19,00</cbc:Percent>
+        <cbc:Percent>19.00</cbc:Percent>
         <cac:TaxScheme>
           <cbc:TaxSchemeID>01</cbc:TaxSchemeID>
           <cbc:Name>IVA</cbc:Name>
@@ -167,7 +167,7 @@
     </cac:TaxSubtotal>
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
-    <cbc:LineExtensionAmount currencyID="COP">100000,00</cbc:LineExtensionAmount>
+    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
     <cbc:TaxExclusiveAmount currencyID="COP">100000</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="COP">119000</cbc:TaxInclusiveAmount>
     <cbc:PayableAmount currencyID="COP">119000</cbc:PayableAmount>
@@ -175,14 +175,14 @@
   <cac:InvoiceLine>
     <cac:ID>1</cac:ID>
     <cbc:InvoicedQuantity>1</cbc:InvoicedQuantity>
-    <cbc:LineExtensionAmount currencyID="COP">100000,00</cbc:LineExtensionAmount>
+    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
     <cac:TaxTotal>
-      <cbc:TaxAmount currencyID="COP">19000,00</cbc:TaxAmount>
+      <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
       <cac:TaxSubtotal>
-        <cbc:TaxableAmount currencyID="COP">100000,00</cbc:TaxableAmount>
-        <cbc:TaxAmount currencyID="COP">19000,00</cbc:TaxAmount>
+        <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
         <cac:TaxCategory>
-          <cbc:Percent>19,00</cbc:Percent>
+          <cbc:Percent>19.00</cbc:Percent>
           <cac:TaxScheme>
             <cbc:TaxSchemeID>01</cbc:TaxSchemeID>
             <cbc:Name>IVA</cbc:Name>
@@ -195,8 +195,8 @@
       <cac:StandardItemIdentification schemeID="999">03222314-7</cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
-      <cbc:PriceAmount currencyID="COP">100000,00</cbc:PriceAmount>
-      <cbc:BaseQuantity unitCode="EA">1,00</cbc:BaseQuantity>
+      <cbc:PriceAmount currencyID="COP">100000.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
     </cac:Price>
   </cac:InvoiceLine>
   <DATA>

@@ -16,12 +16,19 @@ namespace GeneradorCufe.Model
         [XmlRoot(ElementName = "AuthorizationPeriod")]
         public class AuthorizationPeriod
         {
-            [XmlElement(ElementName = "StartDate")]
-            public DateTime StartDate { get; set; }
+            [XmlElement(ElementName = "StartDate", Namespace = CbcNamespace)]
+            public string StartDate { get; set; }
 
-            [XmlElement(ElementName = "EndDate")]
-            public DateTime EndDate { get; set; }
+            [XmlElement(ElementName = "EndDate", Namespace = CbcNamespace)]
+            public string EndDate { get; set; }
+
+            public void SetDates(DateTime startDate, DateTime endDate)
+            {
+                StartDate = startDate.ToString("yyyy-MM-dd");
+                EndDate = endDate.ToString("yyyy-MM-dd");
+            }
         }
+
         [XmlRoot(ElementName = "AuthorizedInvoices")]
         public class AuthorizedInvoices
         {
@@ -139,14 +146,14 @@ namespace GeneradorCufe.Model
         public class Address
         {
 
-            [XmlElement(ElementName = "ID")]
-            public int ID { get; set; }
+            [XmlElement(ElementName = "ID", Namespace = CbcNamespace)]
+            public string ID { get; set; }
 
             [XmlElement(ElementName = "CityName", Namespace = CbcNamespace)]
             public string CityName { get; set; }
 
             [XmlElement(ElementName = "PostalZone", Namespace = CbcNamespace)]
-            public int PostalZone { get; set; }
+            public string PostalZone { get; set; }
 
             [XmlElement(ElementName = "CountrySubentity", Namespace = CbcNamespace)]
             public string CountrySubentity { get; set; }
@@ -193,14 +200,14 @@ namespace GeneradorCufe.Model
         public class RegistrationAddress
         {
 
-            [XmlElement(ElementName = "ID")]
-            public int ID { get; set; }
+            [XmlElement(ElementName = "ID", Namespace = CbcNamespace)]
+            public string ID { get; set; }
 
             [XmlElement(ElementName = "CityName", Namespace = CbcNamespace)]
             public string CityName { get; set; }
 
             [XmlElement(ElementName = "PostalZone", Namespace = CbcNamespace)]
-            public int PostalZone { get; set; }
+            public string PostalZone { get; set; }
 
             [XmlElement(ElementName = "CountrySubentity", Namespace = CbcNamespace)]
             public string CountrySubentity { get; set; }
@@ -303,7 +310,7 @@ namespace GeneradorCufe.Model
         public class AccountingSupplierParty
         {
 
-            [XmlElement(ElementName = "AdditionalAccountID")]
+            [XmlElement(ElementName = "AdditionalAccountID", Namespace = CbcNamespace)]
             public int AdditionalAccountID { get; set; }
 
             [XmlElement(ElementName = "Party", Namespace = CacNamespace)]
@@ -600,13 +607,20 @@ namespace GeneradorCufe.Model
             public UUID UUID { get; set; }
 
             [XmlElement(ElementName = "IssueDate", Namespace = CbcNamespace)]
-            public DateTime IssueDate { get; set; }
+            public string IssueDate { get; set; }
 
             [XmlElement(ElementName = "IssueTime", Namespace = CbcNamespace)]
-            public DateTime IssueTime { get; set; }
+            public string IssueTime { get; set; }
+
+            public void SetIssueDateAndTime(DateTime date, DateTime time)
+            {
+                IssueDate = date.ToString("yyyy-MM-dd");
+                IssueTime = time.ToString("HH:mm:sszzz");
+            }
+        
 
             [XmlElement(ElementName = "InvoiceTypeCode", Namespace = CbcNamespace)]
-            public int InvoiceTypeCode { get; set; }
+            public string InvoiceTypeCode { get; set; }
 
             [XmlElement(ElementName = "Note", Namespace = CbcNamespace)]
             public string Note { get; set; }
@@ -617,7 +631,7 @@ namespace GeneradorCufe.Model
             [XmlElement(ElementName = "LineCountNumeric", Namespace = CbcNamespace)]
             public int LineCountNumeric { get; set; }
 
-            [XmlElement(ElementName = "AccountingSupplierParty", Namespace = CbcNamespace)]
+            [XmlElement(ElementName = "AccountingSupplierParty", Namespace = CacNamespace)]
             public AccountingSupplierParty AccountingSupplierParty { get; set; }
 
             [XmlElement(ElementName = "AccountingCustomerParty", Namespace = CbcNamespace)]
