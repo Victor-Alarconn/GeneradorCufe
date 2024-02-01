@@ -159,7 +159,7 @@ namespace GeneradorCufe.Model
             public string CountrySubentity { get; set; }
 
             [XmlElement(ElementName = "CountrySubentityCode", Namespace = CbcNamespace)]
-            public int CountrySubentityCode { get; set; }
+            public string CountrySubentityCode { get; set; }
 
             [XmlElement(ElementName = "AddressLine")]
             public AddressLine AddressLine { get; set; }
@@ -213,7 +213,7 @@ namespace GeneradorCufe.Model
             public string CountrySubentity { get; set; }
 
             [XmlElement(ElementName = "CountrySubentityCode", Namespace = CbcNamespace)]
-            public int CountrySubentityCode { get; set; }
+            public string CountrySubentityCode { get; set; }
 
             [XmlElement(ElementName = "AddressLine")]
             public AddressLine AddressLine { get; set; }

@@ -89,7 +89,7 @@ namespace GeneradorCufe.ViewModel
                             CityName = "LA ESTRELLA",
                             PostalZone = "055460",
                             CountrySubentity = "Antioquia",
-                            CountrySubentityCode = 05,
+                            CountrySubentityCode = "05",
                             AddressLine = new AddressLine { Line = "Cra. 50 #97a Sur-180 a 97a Sur-394" },
                             Country = new Country
                             {
@@ -116,7 +116,7 @@ namespace GeneradorCufe.ViewModel
                             CityName = "LA ESTRELLA",
                             PostalZone = "055460",
                             CountrySubentity = "Antioquia",
-                            CountrySubentityCode = 05,
+                            CountrySubentityCode = "05",
                             AddressLine = new AddressLine { Line = "Cra. 50 #97a Sur-180 a 97a Sur-394" },
                             Country = new Country
                             {
@@ -178,7 +178,7 @@ namespace GeneradorCufe.ViewModel
                             CityName = "PEREIRA",
                             PostalZone = "54321",
                             CountrySubentity = "Risaralda",
-                            CountrySubentityCode = 66,
+                            CountrySubentityCode = "66",
                             AddressLine = new AddressLine { Line = "CR 9 A N0 99 - 07 OF 802" },
                             Country = new Country
                             {
@@ -204,7 +204,7 @@ namespace GeneradorCufe.ViewModel
                             CityName = "PEREIRA",
                             PostalZone = "54321",
                             CountrySubentity = "Risaralda",
-                            CountrySubentityCode = 66,
+                            CountrySubentityCode = "66",
                             AddressLine = new AddressLine { Line = "CR 9 A N0 99 - 07 OF 802" },
                             Country = new Country
                             {

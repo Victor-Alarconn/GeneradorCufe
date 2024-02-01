@@ -41,7 +41,7 @@
           <cbc:CityName>LA ESTRELLA</cbc:CityName>
           <cbc:PostalZone>055460</cbc:PostalZone>
           <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
-          <cbc:CountrySubentityCode>5</cbc:CountrySubentityCode>
+          <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
           <cac:AddressLine>
             <cbc:Line>Cra. 50 #97a Sur-180 a 97a Sur-394</cbc:Line>
           </cac:AddressLine>
@@ -60,7 +60,7 @@
           <cbc:CityName>LA ESTRELLA</cbc:CityName>
           <cbc:PostalZone>055460</cbc:PostalZone>
           <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
-          <cbc:CountrySubentityCode>5</cbc:CountrySubentityCode>
+          <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
           <cac:AddressLine>
             <cbc:Line>Cra. 50 #97a Sur-180 a 97a Sur-394</cbc:Line>
           </cac:AddressLine>
@@ -153,12 +153,12 @@
     <cac:PaymentID>Efectivo</cac:PaymentID>
   </cac:PaymentMeans>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="COP">19000,00</cbc:TaxAmount>
     <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
-      <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+      <cbc:TaxableAmount currencyID="COP">100000,00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">19000,00</cbc:TaxAmount>
       <cac:TaxCategory>
-        <cbc:Percent>19.00</cbc:Percent>
+        <cbc:Percent>19,00</cbc:Percent>
         <cac:TaxScheme>
           <cbc:TaxSchemeID>01</cbc:TaxSchemeID>
           <cbc:Name>IVA</cbc:Name>
@@ -167,7 +167,7 @@
     </cac:TaxSubtotal>
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
-    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
+    <cbc:LineExtensionAmount currencyID="COP">100000,00</cbc:LineExtensionAmount>
     <cbc:TaxExclusiveAmount currencyID="COP">100000</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="COP">119000</cbc:TaxInclusiveAmount>
     <cbc:PayableAmount currencyID="COP">119000</cbc:PayableAmount>
@@ -175,14 +175,14 @@
   <cac:InvoiceLine>
     <cac:ID>1</cac:ID>
     <cbc:InvoicedQuantity>1</cbc:InvoicedQuantity>
-    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
+    <cbc:LineExtensionAmount currencyID="COP">100000,00</cbc:LineExtensionAmount>
     <cac:TaxTotal>
-      <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+      <cbc:TaxAmount currencyID="COP">19000,00</cbc:TaxAmount>
       <cac:TaxSubtotal>
-        <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
-        <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+        <cbc:TaxableAmount currencyID="COP">100000,00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">19000,00</cbc:TaxAmount>
         <cac:TaxCategory>
-          <cbc:Percent>19.00</cbc:Percent>
+          <cbc:Percent>19,00</cbc:Percent>
           <cac:TaxScheme>
             <cbc:TaxSchemeID>01</cbc:TaxSchemeID>
             <cbc:Name>IVA</cbc:Name>
@@ -195,8 +195,8 @@
       <cac:StandardItemIdentification schemeID="999">03222314-7</cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
-      <cbc:PriceAmount currencyID="COP">100000.00</cbc:PriceAmount>
-      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+      <cbc:PriceAmount currencyID="COP">100000,00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1,00</cbc:BaseQuantity>
     </cac:Price>
   </cac:InvoiceLine>
   <DATA>
