@@ -192,6 +192,7 @@ namespace GeneradorCufe.ViewModel
                         RegistrationName = "ADQUIRIENTE DE EJEMPLO",
                         CompanyID = new CompanyID
                         {
+                            Text = 1017173008,
                             SchemeID = 3,
                             SchemeName = 31,
                             SchemeAgencyID = 195,
@@ -223,6 +224,7 @@ namespace GeneradorCufe.ViewModel
                         RegistrationName = "ADQUIRIENTE DE EJEMPLO",
                         CompanyID = new CompanyID
                         {
+                            Text = 1017173008,
                             SchemeID = 3,
                             SchemeName = 31,
                             SchemeAgencyID = 195,

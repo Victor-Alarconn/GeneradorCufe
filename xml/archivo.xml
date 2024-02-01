@@ -114,7 +114,7 @@
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
         <cbc:RegistrationName>ADQUIRIENTE DE EJEMPLO</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">0</cbc:CompanyID>
+        <cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID>
         <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
         <cac:RegistrationAddress>
           <cbc:ID>66001</cbc:ID>
@@ -137,7 +137,7 @@
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
         <cbc:RegistrationName>ADQUIRIENTE DE EJEMPLO</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">0</cbc:CompanyID>
+        <cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
           <cbc:Name>1485596</cbc:Name>
         </cac:CorporateRegistrationScheme>
