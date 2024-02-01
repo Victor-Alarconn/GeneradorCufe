@@ -70,13 +70,13 @@
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
-          <cbc:TaxSchemeID>01</cbc:TaxSchemeID>
+          <cbc:ID>01</cbc:ID>
           <cbc:Name>IVA</cbc:Name>
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
-        <cac:RegistrationName>Cadena S.A.</cac:RegistrationName>
-        <cac:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">890930534</cac:CompanyID>
+        <cbc:RegistrationName>Cadena S.A.</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">890930534</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
           <cac:ID>SETT</cac:ID>
           <cac:Name>1485596</cac:Name>
@@ -131,7 +131,7 @@
           </cbc:Country>
         </cbc:RegistrationAddress>
         <cbc:TaxScheme>
-          <cbc:TaxSchemeID>01</cbc:TaxSchemeID>
+          <cbc:ID>01</cbc:ID>
           <cbc:Name>IVA</cbc:Name>
         </cbc:TaxScheme>
       </cbc:PartyTaxScheme>
@@ -160,7 +160,7 @@
       <cac:TaxCategory>
         <cbc:Percent>19,00</cbc:Percent>
         <cac:TaxScheme>
-          <cbc:TaxSchemeID>01</cbc:TaxSchemeID>
+          <cbc:ID>01</cbc:ID>
           <cbc:Name>IVA</cbc:Name>
         </cac:TaxScheme>
       </cac:TaxCategory>
@@ -184,7 +184,7 @@
         <cac:TaxCategory>
           <cbc:Percent>19,00</cbc:Percent>
           <cac:TaxScheme>
-            <cbc:TaxSchemeID>01</cbc:TaxSchemeID>
+            <cbc:ID>01</cbc:ID>
             <cbc:Name>IVA</cbc:Name>
           </cac:TaxScheme>
         </cac:TaxCategory>

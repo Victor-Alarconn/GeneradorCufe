@@ -225,7 +225,7 @@ namespace GeneradorCufe.Model
         [XmlRoot(ElementName = "TaxScheme")]
         public class TaxScheme
         {
-            [XmlElement(ElementName = "TaxSchemeID", Namespace = CbcNamespace)]
+            [XmlElement(ElementName = "ID", Namespace = CbcNamespace)]
             public string ID { get; set; }
 
             [XmlElement(ElementName = "Name", Namespace = CbcNamespace)]
@@ -268,10 +268,10 @@ namespace GeneradorCufe.Model
         public class PartyLegalEntity
         {
 
-            [XmlElement(ElementName = "RegistrationName")]
+            [XmlElement(ElementName = "RegistrationName", Namespace = CbcNamespace)]
             public string RegistrationName { get; set; }
 
-            [XmlElement(ElementName = "CompanyID")]
+            [XmlElement(ElementName = "CompanyID", Namespace = CbcNamespace)]
             public CompanyID CompanyID { get; set; }
 
             [XmlElement(ElementName = "CorporateRegistrationScheme")]
