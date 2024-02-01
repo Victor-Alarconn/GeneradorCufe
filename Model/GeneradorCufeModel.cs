@@ -257,11 +257,11 @@ namespace GeneradorCufe.Model
         public class CorporateRegistrationScheme
         {
 
-            [XmlElement(ElementName = "ID")]
+            [XmlElement(ElementName = "ID", Namespace = CbcNamespace)]
             public string ID { get; set; }
 
-            [XmlElement(ElementName = "Name")]
-            public int Name { get; set; }
+            [XmlElement(ElementName = "Name", Namespace = CbcNamespace)]
+            public string Name { get; set; }
         }
 
         [XmlRoot(ElementName = "PartyLegalEntity")]
@@ -343,7 +343,7 @@ namespace GeneradorCufe.Model
         public class AccountingCustomerParty
         {
 
-            [XmlElement(ElementName = "AdditionalAccountID")]
+            [XmlElement(ElementName = "AdditionalAccountID", Namespace = CbcNamespace)]
             public int AdditionalAccountID { get; set; }
 
             [XmlElement(ElementName = "PartyIdentification", Namespace = CacNamespace)]
@@ -634,7 +634,7 @@ namespace GeneradorCufe.Model
             [XmlElement(ElementName = "AccountingSupplierParty", Namespace = CacNamespace)]
             public AccountingSupplierParty AccountingSupplierParty { get; set; }
 
-            [XmlElement(ElementName = "AccountingCustomerParty", Namespace = CbcNamespace)]
+            [XmlElement(ElementName = "AccountingCustomerParty", Namespace = CacNamespace)]
             public AccountingCustomerParty AccountingCustomerParty { get; set; }
 
             [XmlElement(ElementName = "PaymentMeans", Namespace = CacNamespace)]

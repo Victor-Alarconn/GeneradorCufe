@@ -144,7 +144,7 @@ namespace GeneradorCufe.ViewModel
                         CorporateRegistrationScheme = new CorporateRegistrationScheme
                         {
                             ID = "SETT",
-                            Name = 1485596,
+                            Name = "1485596",
                         },
                     },
 
@@ -230,7 +230,7 @@ namespace GeneradorCufe.ViewModel
                         },
                         CorporateRegistrationScheme = new CorporateRegistrationScheme
                         {
-                            Name = 1485596,
+                            Name = "1485596",
                         }
                     },
                     Contact = new Contact

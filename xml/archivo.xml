@@ -78,8 +78,8 @@
         <cbc:RegistrationName>Cadena S.A.</cbc:RegistrationName>
         <cbc:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">890930534</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
-          <cac:ID>SETT</cac:ID>
-          <cac:Name>1485596</cac:Name>
+          <cbc:ID>SETT</cbc:ID>
+          <cbc:Name>1485596</cbc:Name>
         </cac:CorporateRegistrationScheme>
       </cac:PartyLegalEntity>
       <cac:Contact>
@@ -87,16 +87,16 @@
       </cac:Contact>
     </cac:Party>
   </cac:AccountingSupplierParty>
-  <cbc:AccountingCustomerParty>
+  <cac:AccountingCustomerParty>
     <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
     <cac:PartyIdentification>
       <cac:ID schemeName="13" schemeID="0">1017173008</cac:ID>
     </cac:PartyIdentification>
-    <cbc:Party>
+    <cac:Party>
       <cac:PartyName>
         <cbc:Name>ADQUIRIENTE DE EJEMPLO</cbc:Name>
       </cac:PartyName>
-      <cbc:PhysicalLocation>
+      <cac:PhysicalLocation>
         <cac:Address>
           <cbc:ID>66001</cbc:ID>
           <cbc:CityName>PEREIRA</cbc:CityName>
@@ -111,42 +111,42 @@
             <cac:Name languageID="es">Colombia</cac:Name>
           </cac:Country>
         </cac:Address>
-      </cbc:PhysicalLocation>
-      <cbc:PartyTaxScheme>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
         <cbc:RegistrationName>ADQUIRIENTE DE EJEMPLO</cbc:RegistrationName>
         <cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">0</cbc:CompanyID>
         <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
-        <cbc:RegistrationAddress>
+        <cac:RegistrationAddress>
           <cbc:ID>66001</cbc:ID>
           <cbc:CityName>PEREIRA</cbc:CityName>
           <cbc:PostalZone>54321</cbc:PostalZone>
           <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
           <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
-          <cbc:AddressLine>
+          <cac:AddressLine>
             <cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line>
-          </cbc:AddressLine>
-          <cbc:Country>
+          </cac:AddressLine>
+          <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cbc:Name languageID="es">Colombia</cbc:Name>
-          </cbc:Country>
-        </cbc:RegistrationAddress>
-        <cbc:TaxScheme>
+            <cac:Name languageID="es">Colombia</cac:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
           <cbc:ID>01</cbc:ID>
           <cbc:Name>IVA</cbc:Name>
-        </cbc:TaxScheme>
-      </cbc:PartyTaxScheme>
-      <cbc:PartyLegalEntity>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
         <cbc:RegistrationName>ADQUIRIENTE DE EJEMPLO</cbc:RegistrationName>
         <cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">0</cbc:CompanyID>
-        <cbc:CorporateRegistrationScheme>
+        <cac:CorporateRegistrationScheme>
           <cbc:Name>1485596</cbc:Name>
-        </cbc:CorporateRegistrationScheme>
-      </cbc:PartyLegalEntity>
+        </cac:CorporateRegistrationScheme>
+      </cac:PartyLegalEntity>
       <cac:Contact>
         <cbc:ElectronicMail>xxxx@xxxx.com</cbc:ElectronicMail>
       </cac:Contact>
-    </cbc:Party>
-  </cbc:AccountingCustomerParty>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
   <cac:PaymentMeans>
     <cac:ID>1</cac:ID>
     <cac:PaymentMeansCode>10</cac:PaymentMeansCode>
