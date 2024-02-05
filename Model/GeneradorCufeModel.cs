@@ -357,13 +357,13 @@ namespace GeneradorCufe.Model
         public class PaymentMeans
         {
 
-            [XmlElement(ElementName = "ID")]
-            public int ID { get; set; }
+            [XmlElement(ElementName = "ID", Namespace = CbcNamespace)]
+            public string ID { get; set; }
 
-            [XmlElement(ElementName = "PaymentMeansCode")]
+            [XmlElement(ElementName = "PaymentMeansCode", Namespace = CbcNamespace)]
             public int PaymentMeansCode { get; set; }
 
-            [XmlElement(ElementName = "PaymentID")]
+            [XmlElement(ElementName = "PaymentID", Namespace = CbcNamespace)]
             public string PaymentID { get; set; }
         }
 
@@ -444,7 +444,7 @@ namespace GeneradorCufe.Model
             public string CurrencyID { get; set; }
 
             [XmlText]
-            public double Text { get; set; }
+            public string Text { get; set; }
         }
 
         [XmlRoot(ElementName = "TaxInclusiveAmount")]
@@ -455,7 +455,7 @@ namespace GeneradorCufe.Model
             public string CurrencyID { get; set; }
 
             [XmlText]
-            public double Text { get; set; }
+            public string Text { get; set; }
         }
 
         [XmlRoot(ElementName = "PayableAmount")]
@@ -466,7 +466,7 @@ namespace GeneradorCufe.Model
             public string CurrencyID { get; set; }
 
             [XmlText]
-            public double Text { get; set; }
+            public string Text { get; set; }
         }
 
         [XmlRoot(ElementName = "LegalMonetaryTotal")]
@@ -543,11 +543,11 @@ namespace GeneradorCufe.Model
         public class InvoiceLine
         {
 
-            [XmlElement(ElementName = "ID")]
-            public int ID { get; set; }
+            [XmlElement(ElementName = "ID", Namespace = CbcNamespace)]
+            public string ID { get; set; }
 
             [XmlElement(ElementName = "InvoicedQuantity", Namespace = CbcNamespace)]
-            public double InvoicedQuantity { get; set; }
+            public string InvoicedQuantity { get; set; }
 
             [XmlElement(ElementName = "LineExtensionAmount", Namespace = CbcNamespace)]
             public LineExtensionAmount LineExtensionAmount { get; set; }
@@ -587,7 +587,7 @@ namespace GeneradorCufe.Model
             public Partnership Partnership { get; set; }
         }
 
-        [XmlRoot(ElementName = "Invoice")]
+        [XmlRoot("Invoice", Namespace = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2", IsNullable = false)]
         public class Invoice
         {
             

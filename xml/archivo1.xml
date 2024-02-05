@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-16"?>
-<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <UBLExtensions>
     <ext:UBLExtension>
       <ext:ExtensionContent>
@@ -149,7 +149,7 @@
     </cac:Party>
   </cac:AccountingCustomerParty>
   <cac:PaymentMeans>
-    <cbc:ID>1</cbc:ID>
+    <cac:ID>1</cac:ID>
     <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
     <cbc:PaymentID>Efectivo</cbc:PaymentID>
   </cac:PaymentMeans>
@@ -174,7 +174,7 @@
     <cbc:PayableAmount currencyID="COP">119000.00</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
-    <cbc:ID>1</cbc:ID>
+    <cac:ID>1</cac:ID>
     <cbc:InvoicedQuantity>1.00</cbc:InvoicedQuantity>
     <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
     <cac:TaxTotal>

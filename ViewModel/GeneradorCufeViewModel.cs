@@ -94,7 +94,7 @@ namespace GeneradorCufe.ViewModel
                             Country = new Country
                             {
                                 IdentificationCode = "CO",
-                                Name = new Name { Text = "Colombia", LanguageID = "es" }
+                                Name = new Name { Text = "Colombia", LanguageID = "es" } // Error
                             }
                         }
                     },
@@ -161,7 +161,7 @@ namespace GeneradorCufe.ViewModel
                 AdditionalAccountID = 2,
                 PartyIdentification = new PartyIdentification
                 {
-                    ID = new ID
+                    ID = new ID //Error
                     {
                         SchemeName = 13,
                         Text = 1017173008,
@@ -244,7 +244,7 @@ namespace GeneradorCufe.ViewModel
 
             MyInvoice.PaymentMeans = new PaymentMeans
             {
-                ID = 1,
+                ID = "1",
                 PaymentMeansCode = 10,
                 PaymentID = "Efectivo",
             };
@@ -254,23 +254,23 @@ namespace GeneradorCufe.ViewModel
                 TaxAmount = new TaxAmount
                 {
                     CurrencyID = "COP",
-                    Text = 19000.00.ToString("F2")
+                    Text = 19000.00.ToString("F2", CultureInfo.InvariantCulture)
                 },
                 TaxSubtotal = new TaxSubtotal
                 {
                     TaxableAmount = new TaxableAmount
                     {
                         CurrencyID = "COP",
-                        Text = 100000.00.ToString("F2")
+                        Text = 100000.00.ToString("F2", CultureInfo.InvariantCulture)
                     },
                     TaxAmount = new TaxAmount
                     {
                         CurrencyID = "COP",
-                        Text = 19000.00.ToString("F2")
+                        Text = 19000.00.ToString("F2", CultureInfo.InvariantCulture)
                     },
                     TaxCategory = new TaxCategory
                     {
-                        Percent = 19.00.ToString("F2"),
+                        Percent = 19.00.ToString("F2", CultureInfo.InvariantCulture),
                         TaxScheme = new TaxScheme
                         {
                             ID = "01",
@@ -285,56 +285,56 @@ namespace GeneradorCufe.ViewModel
                 LineExtensionAmount = new LineExtensionAmount
                 {
                     CurrencyID = "COP",
-                    Text = 100000.00.ToString("F2")
+                    Text = 100000.00.ToString("F2", CultureInfo.InvariantCulture)
                 },
                 TaxExclusiveAmount = new TaxExclusiveAmount
                 {
                     CurrencyID = "COP",
-                    Text = 100000.00
+                    Text = 100000.00.ToString("F2", CultureInfo.InvariantCulture)
                 },
                 TaxInclusiveAmount = new TaxInclusiveAmount
                 {
                     CurrencyID = "COP",
-                    Text = 119000.00
+                    Text = 119000.00.ToString("F2", CultureInfo.InvariantCulture)
                 },
                 PayableAmount = new PayableAmount
                 {
                     CurrencyID = "COP",
-                    Text = 119000.00
+                    Text = 119000.00.ToString("F2", CultureInfo.InvariantCulture)
                 }
             };
 
             MyInvoice.InvoiceLine = new InvoiceLine
             {
-                ID = 1,
-                InvoicedQuantity = 1.00,
+                ID = "1",
+                InvoicedQuantity = 1.00.ToString("F2", CultureInfo.InvariantCulture),
                 LineExtensionAmount = new LineExtensionAmount
                 {
                     CurrencyID = "COP",
-                    Text = 100000.00.ToString("F2")
+                    Text = 100000.00.ToString("F2", CultureInfo.InvariantCulture)
                 },
                 TaxTotal = new TaxTotal
                 {
                     TaxAmount = new TaxAmount
                     {
                         CurrencyID = "COP",
-                        Text = 19000.00.ToString("F2")
+                        Text = 19000.00.ToString("F2", CultureInfo.InvariantCulture)
                     },
                     TaxSubtotal = new TaxSubtotal
                     {
                         TaxableAmount = new TaxableAmount
                         {
                             CurrencyID = "COP",
-                            Text = 100000.00.ToString("F2")
+                            Text = 100000.00.ToString("F2", CultureInfo.InvariantCulture)
                         },
                         TaxAmount = new TaxAmount
                         {
                             CurrencyID = "COP",
-                            Text = 19000.00.ToString("F2")
+                            Text = 19000.00.ToString("F2", CultureInfo.InvariantCulture)
                         },
                         TaxCategory = new TaxCategory
                         {
-                            Percent = 19.00.ToString("F2"),
+                            Percent = 19.00.ToString("F2", CultureInfo.InvariantCulture),
                             TaxScheme = new TaxScheme
                             {
                                 ID = "01",
@@ -348,8 +348,9 @@ namespace GeneradorCufe.ViewModel
                     Description = "Frambuesa",
                     StandardItemIdentification = new StandardItemIdentification
                     {
-                        ID = "03222314-7",
-                        SchemeID = "999"
+                        SchemeID = "999",
+                        ID = "03222314-7"
+                       
                     }
                 },
                 Price = new Price
@@ -357,14 +358,14 @@ namespace GeneradorCufe.ViewModel
                     PriceAmount = new PriceAmount
                     {
                         CurrencyID = "COP",
-                        Text = 100000.00.ToString("F2")
+                        Text = 100000.00.ToString("F2", CultureInfo.InvariantCulture)
 
                     },
 
                     BaseQuantity = new BaseQuantity
                     {
                         UnitCode = "EA",
-                        Text = 1.00.ToString("F2")
+                        Text = 1.00.ToString("F2", CultureInfo.InvariantCulture)
                     }
 
 
@@ -391,32 +392,33 @@ namespace GeneradorCufe.ViewModel
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Invoice));
             XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+
             // Añadir espacios de nombres
-            namespaces.Add("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
-            namespaces.Add("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
             namespaces.Add("ds", "http://www.w3.org/2000/09/xmldsig#");
+            namespaces.Add("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
+            namespaces.Add("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
             namespaces.Add("ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2");
             namespaces.Add("sts", "dian:gov:co:facturaelectronica:Structures-2-1");
             namespaces.Add("xades", "http://uri.etsi.org/01903/v1.3.2#");
+            namespaces.Add("xades141", "http://uri.etsi.org/01903/v1.4.1#");
             namespaces.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
-            settings.OmitXmlDeclaration = true;
+            settings.OmitXmlDeclaration = false; // O ajustar según sea necesario
 
             using (StringWriter textWriter = new StringWriter())
             using (XmlWriter xmlWriter = XmlWriter.Create(textWriter, settings))
             {
                 serializer.Serialize(xmlWriter, MyInvoice, namespaces);
 
-                string xmlResult = textWriter.ToString();
-                // Agregar xsi:schemaLocation
-                xmlResult = xmlResult.Replace("<Invoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
-                     "<Invoice xsi:schemaLocation=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-
-                return xmlResult;
+                // La conversión a string ya incluye el xmlns correctamente por la definición en la clase
+                return textWriter.ToString();
             }
         }
+
+
+
 
 
 
