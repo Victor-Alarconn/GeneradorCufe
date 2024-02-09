@@ -57,6 +57,9 @@ namespace GeneradorCufe.Model
             public AuthorizedInvoices AuthorizedInvoices { get; set; }
         }
 
+
+
+
         [XmlRoot(ElementName = "DianExtensions")]
         // Clase DianExtensions
         public class DianExtensions
@@ -64,6 +67,7 @@ namespace GeneradorCufe.Model
             [XmlElement(ElementName = "InvoiceControl")]
             public InvoiceControl InvoiceControl { get; set; }
         }
+
         // Clase UBLExtension
         [XmlRoot(ElementName = "UBLExtension", Namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")]
         public class UBLExtension
@@ -72,21 +76,22 @@ namespace GeneradorCufe.Model
             public ExtensionContent ExtensionContent { get; set; }
         }
 
-        // Clase UBLExtensions
+
         [XmlRoot(ElementName = "UBLExtensions", Namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")]
         public class UBLExtensions
         {
             [XmlElement(ElementName = "UBLExtension", Namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")]
             public UBLExtension UBLExtension { get; set; }
         }
-    
 
-    // Clase ExtensionContent
-    public class ExtensionContent
+
+        // Clase ExtensionContent
+        public class ExtensionContent
         {
             [XmlElement(ElementName = "DianExtensions", Namespace = "dian:gov:co:facturaelectronica:Structures-2-1")]
             public DianExtensions DianExtensions { get; set; }
         }
+
 
 
 

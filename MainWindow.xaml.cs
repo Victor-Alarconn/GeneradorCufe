@@ -168,14 +168,20 @@ namespace GeneradorCufe
             var viewModel = DataContext as InvoiceViewModel;
             if (viewModel != null)
             {
-                string xmlContent = viewModel.GenerateXML(viewModel.MyInvoice);
+                // Generar el XML y la versión base64
+                (string xmlContent, string base64Content) = viewModel.GenerateXMLAndBase64(viewModel.MyInvoice);
 
-                // Utilizar el espacio de nombres completo para System.IO.Path
+                // Directorio donde se guardarán los archivos
                 string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 DirectoryInfo directoryInfo = new DirectoryInfo(appDirectory);
-                string projectDirectory = directoryInfo.Parent.Parent.Parent.FullName; // Ajusta según la estructura de tu proyecto
+                string projectDirectory = directoryInfo.Parent.Parent.Parent.FullName;
                 string xmlDirectory = System.IO.Path.Combine(projectDirectory, "xml");
-                string filePath = System.IO.Path.Combine(xmlDirectory, "archivo.xml");
+
+                // Ruta del archivo XML
+                string xmlFilePath = System.IO.Path.Combine(xmlDirectory, "archivo.xml");
+
+                // Ruta del archivo base64
+                string base64FilePath = System.IO.Path.Combine(xmlDirectory, "base64.txt");
 
                 // Crear el directorio si no existe
                 if (!System.IO.Directory.Exists(xmlDirectory))
@@ -183,11 +189,18 @@ namespace GeneradorCufe
                     System.IO.Directory.CreateDirectory(xmlDirectory);
                 }
 
-                viewModel.SaveXMLToFile(xmlContent, filePath);
+                // Guardar el XML en el archivo
+                viewModel.SaveXMLToFile(xmlContent, xmlFilePath);
 
-                MessageBox.Show("XML generado y guardado en: " + filePath);
+                // Guardar el contenido base64 en el archivo
+                File.WriteAllText(base64FilePath, base64Content);
+
+                // Mostrar mensaje de confirmación
+                MessageBox.Show("XML generado y guardado en: " + xmlFilePath + "\n" +
+                                "Archivo base64 generado y guardado en: " + base64FilePath);
             }
         }
+
 
 
 

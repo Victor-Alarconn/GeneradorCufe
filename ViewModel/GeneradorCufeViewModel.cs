@@ -397,11 +397,13 @@ namespace GeneradorCufe.ViewModel
             namespaces.Add("ds", "http://www.w3.org/2000/09/xmldsig#");
             namespaces.Add("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
             namespaces.Add("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
-            namespaces.Add("ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2");
             namespaces.Add("sts", "dian:gov:co:facturaelectronica:Structures-2-1");
             namespaces.Add("xades", "http://uri.etsi.org/01903/v1.3.2#");
             namespaces.Add("xades141", "http://uri.etsi.org/01903/v1.4.1#");
             namespaces.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+
+            // Agregar espacio de nombres "ext" para UBLExtension y ExtUBLExtension
+            namespaces.Add("ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2");
 
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
@@ -413,9 +415,31 @@ namespace GeneradorCufe.ViewModel
                 serializer.Serialize(xmlWriter, MyInvoice, namespaces);
 
                 // La conversión a string ya incluye el xmlns correctamente por la definición en la clase
-                return textWriter.ToString();
+                string xmlResult = textWriter.ToString();
+
+                // Sobrescribir la salida XML para agregar manualmente el espacio de nombres "ext"
+                xmlResult = xmlResult.Replace("<UBLExtension>", "<ext:UBLExtension>");
+                xmlResult = xmlResult.Replace("</UBLExtension>", "</ext:UBLExtension>");
+
+                return xmlResult;
             }
         }
+
+
+        public (string xmlContent, string base64Content) GenerateXMLAndBase64(Invoice MyInvoice)
+        {
+            // Generar el XML como lo estás haciendo actualmente
+            string xmlContent = GenerateXML(MyInvoice);
+
+            // Convertir el XML en un arreglo de bytes
+            byte[] bytes = Encoding.UTF8.GetBytes(xmlContent);
+
+            // Codificar el arreglo de bytes en base64
+            string base64Encoded = Convert.ToBase64String(bytes);
+
+            return (xmlContent, base64Encoded);
+        }
+
 
 
 
