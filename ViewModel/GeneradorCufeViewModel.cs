@@ -418,8 +418,8 @@ namespace GeneradorCufe.ViewModel
                 string xmlResult = textWriter.ToString();
 
                 // Sobrescribir la salida XML para agregar manualmente el espacio de nombres "ext"
-                xmlResult = xmlResult.Replace("<UBLExtension>", "<ext:UBLExtension>");
-                xmlResult = xmlResult.Replace("</UBLExtension>", "</ext:UBLExtension>");
+                xmlResult = xmlResult.Replace("<UBLExtensions>", "<ext:UBLExtensions>");
+                xmlResult = xmlResult.Replace("</UBLExtensions>", "</ext:UBLExtensions>");
 
                 return xmlResult;
             }
