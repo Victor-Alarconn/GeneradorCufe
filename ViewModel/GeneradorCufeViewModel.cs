@@ -401,9 +401,15 @@ namespace GeneradorCufe.ViewModel
             namespaces.Add("xades", "http://uri.etsi.org/01903/v1.3.2#");
             namespaces.Add("xades141", "http://uri.etsi.org/01903/v1.4.1#");
             namespaces.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-
-            // Agregar espacio de nombres "ext" para UBLExtension y ExtUBLExtension
             namespaces.Add("ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2");
+
+            // Definir el esquema de ubicación xsi:schemaLocation
+            string schemaLocation = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd";
+
+            // Establecer los atributos del elemento raíz
+            MyInvoice.Xmlns = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
+            MyInvoice.Xsi = "http://www.w3.org/2001/XMLSchema-instance";
+            MyInvoice.SchemaLocation = schemaLocation;
 
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
@@ -413,17 +419,16 @@ namespace GeneradorCufe.ViewModel
             using (XmlWriter xmlWriter = XmlWriter.Create(textWriter, settings))
             {
                 serializer.Serialize(xmlWriter, MyInvoice, namespaces);
-
-                // La conversión a string ya incluye el xmlns correctamente por la definición en la clase
                 string xmlResult = textWriter.ToString();
 
-                // Sobrescribir la salida XML para agregar manualmente el espacio de nombres "ext"
+                // Sobrescribir la salida XML para agregar manualmente el espacio de nombres "ext" a UBLExtensions
                 xmlResult = xmlResult.Replace("<UBLExtensions>", "<ext:UBLExtensions>");
                 xmlResult = xmlResult.Replace("</UBLExtensions>", "</ext:UBLExtensions>");
 
                 return xmlResult;
             }
         }
+
 
 
         public (string xmlContent, string base64Content) GenerateXMLAndBase64(Invoice MyInvoice)
