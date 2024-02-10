@@ -48,7 +48,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cac:Name languageID="es">Colombia</cac:Name>
+            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
           </cac:Country>
         </cac:Address>
       </cac:PhysicalLocation>
@@ -67,7 +67,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cac:Name languageID="es">Colombia</cac:Name>
+            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
@@ -109,7 +109,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cac:Name languageID="es">Colombia</cac:Name>
+            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
           </cac:Country>
         </cac:Address>
       </cac:PhysicalLocation>
@@ -128,7 +128,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cac:Name languageID="es">Colombia</cac:Name>
+            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>

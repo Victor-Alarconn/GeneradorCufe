@@ -94,7 +94,7 @@ namespace GeneradorCufe.ViewModel
                             Country = new Country
                             {
                                 IdentificationCode = "CO",
-                                Name = new Name { Text = "Colombia", LanguageID = "es" } // Error
+                                Name = new CbcName { Text = "Colombia", LanguageID = "es" } // Error
                             }
                         }
                     },
@@ -121,7 +121,7 @@ namespace GeneradorCufe.ViewModel
                             Country = new Country
                             {
                                 IdentificationCode = "CO",
-                                Name = new Name { Text = "Colombia", LanguageID = "es" }
+                                Name = new CbcName { Text = "Colombia", LanguageID = "es" }
                             }
                         },
                         TaxScheme = new TaxScheme
@@ -183,7 +183,7 @@ namespace GeneradorCufe.ViewModel
                             Country = new Country
                             {
                                 IdentificationCode = "CO",
-                                Name = new Name { Text = "Colombia", LanguageID = "es" }
+                                Name = new CbcName { Text = "Colombia", LanguageID = "es" }
                             }
                         }
                     },
@@ -210,7 +210,7 @@ namespace GeneradorCufe.ViewModel
                             Country = new Country
                             {
                                 IdentificationCode = "CO",
-                                Name = new Name { Text = "Colombia", LanguageID = "es" }
+                                Name = new CbcName { Text = "Colombia", LanguageID = "es" }
                             }
                         },
                         TaxScheme = new TaxScheme

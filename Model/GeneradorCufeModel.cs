@@ -123,28 +123,26 @@ namespace GeneradorCufe.Model
 
             [XmlElement(ElementName = "Line", Namespace = CbcNamespace)]
             public string Line { get; set; }
+
+        }
+        [XmlRoot(ElementName = "Country", Namespace = CacNamespace)]
+        public class Country
+        {
+            [XmlElement(ElementName = "IdentificationCode", Namespace = CbcNamespace)]
+            public string IdentificationCode { get; set; }
+
+            [XmlElement(ElementName = "CbcName", Namespace = CbcNamespace)] // Cambiado a "CbcName"
+            public CbcName Name { get; set; }
         }
 
-        [XmlRoot(ElementName = "Name")]
-        public class Name
-        {
 
+        public class CbcName
+        {
             [XmlAttribute(AttributeName = "languageID")]
             public string LanguageID { get; set; }
 
             [XmlText]
             public string Text { get; set; }
-        }
-
-        [XmlRoot(ElementName = "Country")]
-        public class Country
-        {
-
-            [XmlElement(ElementName = "IdentificationCode", Namespace = CbcNamespace)]
-            public string IdentificationCode { get; set; }
-
-            [XmlElement(ElementName = "Name")]
-            public Name Name { get; set; }
         }
 
         [XmlRoot(ElementName = "Address")]
