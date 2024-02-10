@@ -596,6 +596,7 @@ namespace GeneradorCufe.Model
         public class Invoice
         {
             
+
             [XmlElement(ElementName = "UBLExtensions")]
             public UBLExtensions UBLExtensions { get; set; }
 

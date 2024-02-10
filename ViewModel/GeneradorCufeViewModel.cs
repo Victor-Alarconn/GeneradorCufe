@@ -386,38 +386,35 @@ namespace GeneradorCufe.ViewModel
             };
         }
 
-
-
         public string GenerateXML(Invoice MyInvoice)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Invoice));
-            XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
 
-            // Añadir espacios de nombres
+            // Crear los espacios de nombres
+            XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
             namespaces.Add("ds", "http://www.w3.org/2000/09/xmldsig#");
+            MyInvoice.Xmlns = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
             namespaces.Add("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
             namespaces.Add("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
+            namespaces.Add("ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2");
             namespaces.Add("sts", "dian:gov:co:facturaelectronica:Structures-2-1");
             namespaces.Add("xades", "http://uri.etsi.org/01903/v1.3.2#");
             namespaces.Add("xades141", "http://uri.etsi.org/01903/v1.4.1#");
             namespaces.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            namespaces.Add("ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2");
 
-            // Definir el esquema de ubicación xsi:schemaLocation
-            string schemaLocation = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd";
+            // Establecer el atributo schemaLocation en el elemento raíz
+           
+            MyInvoice.SchemaLocation = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd";
 
-            // Establecer los atributos del elemento raíz
-            MyInvoice.Xmlns = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
-            MyInvoice.Xsi = "http://www.w3.org/2001/XMLSchema-instance";
-            MyInvoice.SchemaLocation = schemaLocation;
-
+            // Configurar el XmlWriter para la serialización
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
-            settings.OmitXmlDeclaration = false; // O ajustar según sea necesario
+            settings.OmitXmlDeclaration = false;
 
             using (StringWriter textWriter = new StringWriter())
             using (XmlWriter xmlWriter = XmlWriter.Create(textWriter, settings))
             {
+                // Serializar el objeto Invoice
                 serializer.Serialize(xmlWriter, MyInvoice, namespaces);
                 string xmlResult = textWriter.ToString();
 
@@ -425,9 +422,20 @@ namespace GeneradorCufe.ViewModel
                 xmlResult = xmlResult.Replace("<UBLExtensions>", "<ext:UBLExtensions>");
                 xmlResult = xmlResult.Replace("</UBLExtensions>", "</ext:UBLExtensions>");
 
+                // Reemplazar el atributo schemaLocation por xsi:schemaLocation
+                xmlResult = xmlResult.Replace("schemaLocation=", "xsi:schemaLocation=");
+
                 return xmlResult;
             }
         }
+
+
+
+
+
+
+
+
 
 
 
