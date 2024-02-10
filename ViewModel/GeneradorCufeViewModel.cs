@@ -94,7 +94,7 @@ namespace GeneradorCufe.ViewModel
                             Country = new Country
                             {
                                 IdentificationCode = "CO",
-                                Name = new CbcName { Text = "Colombia", LanguageID = "es" } // Error
+                                Name = new CbcName { Text = "Colombia", LanguageID = "es" } 
                             }
                         }
                     },
@@ -349,11 +349,15 @@ namespace GeneradorCufe.ViewModel
                     StandardItemIdentification = new StandardItemIdentification
                     {
                         SchemeID = "999",
-                        ID = "03222314-7"
-                       
+                        ItemID = new ID
+                        {
+                            Text = 03222314-7
+                        }
                     }
                 },
-                Price = new Price
+
+
+            Price = new Price
                 {
                     PriceAmount = new PriceAmount
                     {

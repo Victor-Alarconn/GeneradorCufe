@@ -193,7 +193,9 @@
     </cac:TaxTotal>
     <cac:Item>
       <cbc:Description>Frambuesa</cbc:Description>
-      <cac:StandardItemIdentification schemeID="999">03222314-7</cac:StandardItemIdentification>
+      <cac:StandardItemIdentification schemeID="999">
+        <cbc:ID>03222314-7</cbc:ID>
+      </cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
       <cbc:PriceAmount currencyID="COP">100000.00</cbc:PriceAmount>

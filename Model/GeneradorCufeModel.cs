@@ -323,12 +323,11 @@ namespace GeneradorCufe.Model
         [XmlRoot(ElementName = "ID")]
         public class ID
         {
+            [XmlText]
+            public int Text { get; set; }
 
             [XmlAttribute(AttributeName = "schemeName")]
             public int SchemeName { get; set; }
-
-            [XmlText]
-            public int Text { get; set; }
 
             [XmlAttribute(AttributeName = "schemeID")]
             public int SchemeID { get; set; }
@@ -489,25 +488,26 @@ namespace GeneradorCufe.Model
             public PayableAmount PayableAmount { get; set; }
         }
 
-        [XmlRoot(ElementName = "StandardItemIdentification")]
-        public class StandardItemIdentification
-        {
-            [XmlAttribute(AttributeName = "schemeID")]
-            public string SchemeID { get; set; }
-
-            [XmlText]
-            public string ID { get; set; }
-        }
-
         [XmlRoot(ElementName = "Item", Namespace = CacNamespace)]
         public class Item
         {
             [XmlElement(ElementName = "Description", Namespace = CbcNamespace)]
             public string Description { get; set; }
 
-            [XmlElement(ElementName = "StandardItemIdentification")]
+            [XmlElement(ElementName = "StandardItemIdentification", Namespace = CacNamespace)]
             public StandardItemIdentification StandardItemIdentification { get; set; }
         }
+
+        public class StandardItemIdentification
+        {
+            [XmlElement(ElementName = "ID", Namespace = CbcNamespace)]
+            public ID ItemID { get; set; }
+
+            [XmlAttribute(AttributeName = "schemeID")]
+            public string SchemeID { get; set; }
+        }
+
+
 
         [XmlRoot(ElementName = "PriceAmount", Namespace = CbcNamespace)]
         public class PriceAmount
