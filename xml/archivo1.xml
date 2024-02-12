@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-16"?>
-<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
   <ext:UBLExtensions>
     <ext:UBLExtension>
       <ext:ExtensionContent>
@@ -48,7 +48,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cac:Name languageID="es">Colombia</cac:Name>
+            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
           </cac:Country>
         </cac:Address>
       </cac:PhysicalLocation>
@@ -67,7 +67,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cac:Name languageID="es">Colombia</cac:Name>
+            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
@@ -91,7 +91,7 @@
   <cac:AccountingCustomerParty>
     <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
     <cac:PartyIdentification>
-      <cac:ID schemeName="13" schemeID="0">1017173008</cac:ID>
+      <cac:ID schemeName="13">1017173008</cac:ID>
     </cac:PartyIdentification>
     <cac:Party>
       <cac:PartyName>
@@ -109,7 +109,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cac:Name languageID="es">Colombia</cac:Name>
+            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
           </cac:Country>
         </cac:Address>
       </cac:PhysicalLocation>
@@ -128,7 +128,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cac:Name languageID="es">Colombia</cac:Name>
+            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
@@ -193,7 +193,9 @@
     </cac:TaxTotal>
     <cac:Item>
       <cbc:Description>Frambuesa</cbc:Description>
-      <cac:StandardItemIdentification schemeID="999">03222314-7</cac:StandardItemIdentification>
+      <cac:StandardItemIdentification schemeID="999">
+        <cbc:ID>03222314-7</cbc:ID>
+      </cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
       <cbc:PriceAmount currencyID="COP">100000.00</cbc:PriceAmount>

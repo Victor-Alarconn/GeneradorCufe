@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using static GeneradorCufe.Model.GeneradorCufeModel;
 
@@ -46,7 +47,7 @@ namespace GeneradorCufe.ViewModel
             };
             // Crear y configurar AuthorizationPeriod
             AuthorizationPeriod authorizationPeriod = new AuthorizationPeriod();
-            authorizationPeriod.SetDates(new DateTime(2019, 1, 19), new DateTime(2030, 1, 19));
+            authorizationPeriod.SetDates(new DateTime(2024, 2, 12), new DateTime(2030, 2, 12));
 
             // Asignar AuthorizationPeriod al InvoiceControl
             MyUBLExtensions.UBLExtension.ExtensionContent.DianExtensions.InvoiceControl.AuthorizationPeriod = authorizationPeriod;
@@ -62,7 +63,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     SchemeID = 2,
                     SchemeName = "CUFE-SHA384",
-                    Text = "f1c96d3ff4fc199817fa21ea2bc8a929b9b8c8b0fb50db6885ea48470e9ebabef994094272dbab11ddc93d8893dacb69"
+                    Text = "b05ff3585da3bdb6fde8fab177106529f14e69c4e89aef9a334ba56400a645116d2aeb52bc34bf226cdd0f51500b6762"
                 },
                 InvoiceTypeCode = "01",
                 Note = "Prueba Factura Electronica Datos Reales 2",
@@ -70,7 +71,7 @@ namespace GeneradorCufe.ViewModel
                 LineCountNumeric = 1,
                 // Inicializar AccountingSupplierParty y otras propiedades necesarias aquí
             };
-            DateTime issueDate = new DateTime(2022, 4, 7);
+            DateTime issueDate = new DateTime(2024, 02, 12);
             DateTime issueTime = DateTime.ParseExact("12:53:36-05:00", "HH:mm:ssK", CultureInfo.InvariantCulture);
 
             MyInvoice.SetIssueDateAndTime(issueDate, issueTime);
@@ -161,10 +162,10 @@ namespace GeneradorCufe.ViewModel
                 AdditionalAccountID = 2,
                 PartyIdentification = new PartyIdentification
                 {
-                    ID = new ID //Error
+                    ID = new ID 
                     {
-                        SchemeName = 13,
-                        Text = 1017173008,
+                        SchemeName = "13",
+                        Text = "1017173008",
                     }
                 },
                 Party = new Party
@@ -345,14 +346,11 @@ namespace GeneradorCufe.ViewModel
                 },
                 Item = new Item
                 {
-                    Description = "Frambuesa",
+                    Description = "RM SOFT CASA DE SOFTWARE S.A.S",
                     StandardItemIdentification = new StandardItemIdentification
                     {
-                        SchemeID = "999",
-                        ItemID = new ID
-                        {
-                            Text = 03222314-7
-                        }
+                        ID = "900770401-8",
+                        SchemeID = "999"
                     }
                 },
 
@@ -384,7 +382,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     ID = 99999999,
                     TechKey = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
-                    SetTestID = "b9ca446f-395e-44e2-847d-300e1a0f61fe"
+                    SetTestID = "5301e97c-b68c-4d30-81cc-4d96292b6f14" // Rm
 
                 }
             };
@@ -414,26 +412,72 @@ namespace GeneradorCufe.ViewModel
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.OmitXmlDeclaration = false;
-
+            string xmlResult;
             using (StringWriter textWriter = new StringWriter())
             using (XmlWriter xmlWriter = XmlWriter.Create(textWriter, settings))
             {
                 // Serializar el objeto Invoice
                 serializer.Serialize(xmlWriter, MyInvoice, namespaces);
-                string xmlResult = textWriter.ToString();
-
-                // Sobrescribir la salida XML para agregar manualmente el espacio de nombres "ext" a UBLExtensions
-                xmlResult = xmlResult.Replace("<UBLExtensions>", "<ext:UBLExtensions>");
-                xmlResult = xmlResult.Replace("</UBLExtensions>", "</ext:UBLExtensions>");
-
-                // Reemplazar el atributo schemaLocation por xsi:schemaLocation
-                xmlResult = xmlResult.Replace("schemaLocation=", "xsi:schemaLocation=");
-
-                return xmlResult;
+                xmlResult = textWriter.ToString();
             }
+
+            // Ajustar el XML generado para corregir la estructura
+            xmlResult = AdjustXML(xmlResult);
+
+            // Sobrescribir la salida XML para ajustes adicionales si son necesarios
+            xmlResult = xmlResult.Replace("<UBLExtensions>", "<ext:UBLExtensions>");
+            xmlResult = xmlResult.Replace("</UBLExtensions>", "</ext:UBLExtensions>");
+            xmlResult = xmlResult.Replace("schemaLocation=", "xsi:schemaLocation=");
+
+            return xmlResult;
         }
 
+        public string AdjustXML(string xmlResult)
+        {
+            // Cargar el XML resultante en un XDocument
+            XDocument doc = XDocument.Parse(xmlResult);
 
+            // Encontrar todos los elementos que necesitan ser ajustados
+            var items = doc.Descendants(XName.Get("StandardItemIdentification", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"));
+
+            foreach (var item in items)
+            {
+                // Verifica si el elemento ID existe y tiene un atributo schemeID
+                var idElement = item.Element(XName.Get("ID", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"));
+                if (idElement != null && item.Attribute("schemeID") != null)
+                {
+                    // Mover el atributo schemeID al elemento ID
+                    var schemeID = item.Attribute("schemeID").Value;
+                    idElement.SetAttributeValue("schemeID", schemeID);
+
+                    // Remover el atributo schemeID del elemento StandardItemIdentification
+                    item.Attribute("schemeID").Remove();
+                }
+            }
+
+            var partyIdentifications = doc.Descendants(XName.Get("PartyIdentification", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"));
+            foreach (var partyIdentification in partyIdentifications)
+            {
+                var idElement = partyIdentification.Element(XName.Get("ID", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"));
+                if (idElement != null)
+                {
+                    // Crear un nuevo elemento ID con el espacio de nombres correcto (cbc) y los atributos necesarios
+                    XElement newIdElement = new XElement(XName.Get("ID", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"),
+                        new XAttribute(XName.Get("schemeName"), idElement.Attribute("schemeName")?.Value),
+                        idElement.Value);
+
+                    // Reemplazar el elemento ID antiguo con el nuevo
+                    idElement.ReplaceWith(newIdElement);
+                }
+            }
+
+            // Convertir el XDocument modificado de nuevo a una cadena de texto XML
+            using (var writer = new StringWriter())
+            {
+                doc.Save(writer);
+                return writer.ToString();
+            }
+        }
 
 
 

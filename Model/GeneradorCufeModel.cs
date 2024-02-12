@@ -324,14 +324,15 @@ namespace GeneradorCufe.Model
         public class ID
         {
             [XmlText]
-            public int Text { get; set; }
-
-            [XmlAttribute(AttributeName = "schemeName")]
-            public int SchemeName { get; set; }
+            public string Text { get; set; }
 
             [XmlAttribute(AttributeName = "schemeID")]
-            public int SchemeID { get; set; }
+            public string SchemeID { get; set; }
+
+            [XmlAttribute(AttributeName = "schemeName")]
+            public string SchemeName { get; set; }
         }
+
 
         [XmlRoot(ElementName = "PartyIdentification")]
         public class PartyIdentification
@@ -500,12 +501,17 @@ namespace GeneradorCufe.Model
 
         public class StandardItemIdentification
         {
-            [XmlElement(ElementName = "ID", Namespace = CbcNamespace)]
-            public ID ItemID { get; set; }
+            // Cambia de usar un objeto ID a un string directamente para el ID.
+            [XmlElement(ElementName = "ID", Namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")]
+            public string ID { get; set; }
 
+            // Mueve el SchemeID como un atributo de este objeto.
             [XmlAttribute(AttributeName = "schemeID")]
             public string SchemeID { get; set; }
         }
+
+
+
 
 
 
