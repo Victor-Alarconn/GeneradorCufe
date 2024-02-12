@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -13,8 +15,94 @@ using static GeneradorCufe.Model.GeneradorCufeModel;
 namespace GeneradorCufe.ViewModel
 {
 
-        public class InvoiceViewModel
+    public class InvoiceViewModel : INotifyPropertyChanged
+    {
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private string _numeroFactura;
+        public string NumeroFactura
+        {
+            get { return _numeroFactura; }
+            set { _numeroFactura = value; OnPropertyChanged(); }
+        }
+
+        private DateTime _fechaFactura;
+        public DateTime FechaFactura
+        {
+            get { return _fechaFactura; }
+            set { _fechaFactura = value; OnPropertyChanged(); }
+        }
+
+        // Nuevas propiedades
+        private string _valorSubtotal;
+        public string ValorSubtotal
+        {
+            get { return _valorSubtotal; }
+            set { _valorSubtotal = value; OnPropertyChanged(); }
+        }
+
+        private string _horaGeneracion;
+        public string HoraGeneracion
+        {
+            get { return _horaGeneracion; }
+            set { _horaGeneracion = value; OnPropertyChanged(); }
+        }
+
+        private string _valorIVA;
+        public string ValorIVA
+        {
+            get { return _valorIVA; }
+            set { _valorIVA = value; OnPropertyChanged(); }
+        }
+
+        private string _valorImpuesto2;
+        public string ValorImpuesto2
+        {
+            get { return _valorImpuesto2; }
+            set { _valorImpuesto2 = value; OnPropertyChanged(); }
+        }
+
+        private string _valorImpuesto3;
+        public string ValorImpuesto3
+        {
+            get { return _valorImpuesto3; }
+            set { _valorImpuesto3 = value; OnPropertyChanged(); }
+        }
+
+        private string _totalPagar;
+        public string TotalPagar
+        {
+            get { return _totalPagar; }
+            set { _totalPagar = value; OnPropertyChanged(); }
+        }
+
+        private string _nitFacturadorElectronico;
+        public string NITFacturadorElectronico
+        {
+            get { return _nitFacturadorElectronico; }
+            set { _nitFacturadorElectronico = value; OnPropertyChanged(); }
+        }
+
+        private string _numeroIdentificacionCliente;
+        public string NumeroIdentificacionCliente
+        {
+            get { return _numeroIdentificacionCliente; }
+            set { _numeroIdentificacionCliente = value; OnPropertyChanged(); }
+        }
+
+        private string _claveTecnicaControl;
+        public string ClaveTecnicaControl
+        {
+            get { return _claveTecnicaControl; }
+            set { _claveTecnicaControl = value; OnPropertyChanged(); }
+        }
+
         public DianExtensions MyDianExtensions { get; set; }
         public Invoice MyInvoice { get; set; }
         public UBLExtensions MyUBLExtensions { get; set; }
@@ -63,7 +151,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     SchemeID = 2,
                     SchemeName = "CUFE-SHA384",
-                    Text = "b05ff3585da3bdb6fde8fab177106529f14e69c4e89aef9a334ba56400a645116d2aeb52bc34bf226cdd0f51500b6762"
+                    Text = "7b229459201040f961ef86787dd70a078d4a9c72de313f3741457ae2ffc3294e4d443779fe89a4cdd242059eae73fce9"
                 },
                 InvoiceTypeCode = "01",
                 Note = "Prueba Factura Electronica Datos Reales 2",
@@ -95,7 +183,7 @@ namespace GeneradorCufe.ViewModel
                             Country = new Country
                             {
                                 IdentificationCode = "CO",
-                                Name = new CbcName { Text = "Colombia", LanguageID = "es" } 
+                                Name = new CbcName { Text = "Colombia", LanguageID = "es" }
                             }
                         }
                     },
@@ -162,7 +250,7 @@ namespace GeneradorCufe.ViewModel
                 AdditionalAccountID = 2,
                 PartyIdentification = new PartyIdentification
                 {
-                    ID = new ID 
+                    ID = new ID
                     {
                         SchemeName = "13",
                         Text = "1017173008",
@@ -346,7 +434,7 @@ namespace GeneradorCufe.ViewModel
                 },
                 Item = new Item
                 {
-                    Description = "RM SOFT CASA DE SOFTWARE S.A.S",
+                    Description = "Frambuesas",
                     StandardItemIdentification = new StandardItemIdentification
                     {
                         ID = "900770401-8",
@@ -355,7 +443,7 @@ namespace GeneradorCufe.ViewModel
                 },
 
 
-            Price = new Price
+                Price = new Price
                 {
                     PriceAmount = new PriceAmount
                     {
@@ -405,7 +493,7 @@ namespace GeneradorCufe.ViewModel
             namespaces.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
             // Establecer el atributo schemaLocation en el elemento raíz
-           
+
             MyInvoice.SchemaLocation = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd";
 
             // Configurar el XmlWriter para la serialización
@@ -481,12 +569,6 @@ namespace GeneradorCufe.ViewModel
 
 
 
-
-
-
-
-
-
         public (string xmlContent, string base64Content) GenerateXMLAndBase64(Invoice MyInvoice)
         {
             // Generar el XML como lo estás haciendo actualmente
@@ -502,15 +584,34 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-
-
-
-
-
-
         public void SaveXMLToFile(string xmlContent, string filePath)
-            {
-                File.WriteAllText(filePath, xmlContent);
-            }
+        {
+            File.WriteAllText(filePath, xmlContent);
         }
+    }
+
+    public static class DataSerializer
+    {
+        private const string FilePath = "data.txt";
+
+        public static void SaveData(string data)
+        {
+            // Escribe los datos en el archivo de texto
+            File.WriteAllText(FilePath, data);
+        }
+
+        public static string LoadData()
+        {
+            if (!File.Exists(FilePath))
+            {
+                // Si el archivo no existe, devuelve una cadena vacía
+                return "";
+            }
+
+            // Lee los datos desde el archivo de texto
+            return File.ReadAllText(FilePath);
+        }
+    }
+
+
 }

@@ -1,4 +1,6 @@
 ﻿using GeneradorCufe.ViewModel;
+using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,16 +16,54 @@ using System.Windows.Shapes;
 
 namespace GeneradorCufe
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+
     public partial class MainWindow : Window
     {
+        private InvoiceViewModel _viewModel;
+
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new InvoiceViewModel();
+            string loadedData = DataSerializer.LoadData();
+            string[] parts = loadedData.Split(',');
+
+            if (parts.Length >= 11)
+            {
+                _viewModel = new InvoiceViewModel
+                {
+                    NumeroFactura = parts[0],
+                    FechaFactura = string.IsNullOrEmpty(parts[1]) ? DateTime.MinValue : DateTime.ParseExact(parts[1], "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+                    ValorSubtotal = parts[2],
+                    HoraGeneracion = parts[3],
+                    ValorIVA = parts[4],
+                    ValorImpuesto2 = parts[5],
+                    ValorImpuesto3 = parts[6],
+                    TotalPagar = parts[7],
+                    NITFacturadorElectronico = parts[8],
+                    NumeroIdentificacionCliente = parts[9],
+                    ClaveTecnicaControl = parts[10]
+                };
+            }
+            else
+            {
+                // Si no hay suficientes elementos en el arreglo, crea un nuevo objeto InvoiceViewModel
+                _viewModel = new InvoiceViewModel();
+            }
+
+            DataContext = _viewModel;
+
+            Closing += MainWindow_Closing;
         }
+
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            // Convierte el ViewModel a una cadena de texto antes de guardarlos
+            string dataToSave = $"{_viewModel.NumeroFactura},{_viewModel.FechaFactura.ToString("yyyy-MM-dd HH:mm:ss")},{_viewModel.ValorSubtotal},{_viewModel.HoraGeneracion},{_viewModel.ValorIVA},{_viewModel.ValorImpuesto2},{_viewModel.ValorImpuesto3},{_viewModel.TotalPagar},{_viewModel.NITFacturadorElectronico},{_viewModel.NumeroIdentificacionCliente},{_viewModel.ClaveTecnicaControl}";
+
+            DataSerializer.SaveData(dataToSave);
+        }
+
+
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -127,11 +167,11 @@ namespace GeneradorCufe
             string fechaFactura = PikerFecha.SelectedDate?.ToString("yyyy-MM-dd") ?? "";
             string horaFactura = TextHora.Text; // formato correcto
             string valorSubtotal = Subtotal.Text;
-            int codigo = 01;
+            string codigo = "01";
             string iva = Iva.Text;
-            int codigo2 = 04;
+            string codigo2 = "04";
             string impuesto2 = Impuesto2.Text;
-            int codigo3 = 03;
+            string codigo3 = "03";
             string impuesto3 = Impuesto3.Text;
             string total = Total.Text;
             string nitFacturador = NITFacturador.Text;
@@ -157,11 +197,12 @@ namespace GeneradorCufe
                 // Aplicar SHA-384
                 byte[] hashBytes = sha384.ComputeHash(bytesCadena);
 
-                // Convertir el resultado del hash en una cadena hexadecimal
-                string cufe = BitConverter.ToString(hashBytes).Replace("-", "").ToUpper();
+                // Convertir el resultado del hash en una cadena hexadecimal en minúsculas
+                string cufe = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
                 return cufe;
             }
         }
+
 
         private void BtnCufe_Click_2(object sender, RoutedEventArgs e)
         {

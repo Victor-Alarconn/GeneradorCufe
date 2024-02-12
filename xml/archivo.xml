@@ -23,7 +23,7 @@
   <cbc:CustomizationID>10</cbc:CustomizationID>
   <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
   <cbc:ID>SETT1</cbc:ID>
-  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">b05ff3585da3bdb6fde8fab177106529f14e69c4e89aef9a334ba56400a645116d2aeb52bc34bf226cdd0f51500b6762</cbc:UUID>
+  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">7b229459201040f961ef86787dd70a078d4a9c72de313f3741457ae2ffc3294e4d443779fe89a4cdd242059eae73fce9</cbc:UUID>
   <cbc:IssueDate>2024-02-12</cbc:IssueDate>
   <cbc:IssueTime>12:53:36-05:00</cbc:IssueTime>
   <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
@@ -192,9 +192,9 @@
       </cac:TaxSubtotal>
     </cac:TaxTotal>
     <cac:Item>
-      <cbc:Description>RM SOFT CASA DE SOFTWARE S.A.S</cbc:Description>
+      <cbc:Description>Frambuesas</cbc:Description>
       <cac:StandardItemIdentification>
-        <cbc:ID schemeID="999">03222314-7</cbc:ID>
+        <cbc:ID schemeID="999">900770401-8</cbc:ID>
       </cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
