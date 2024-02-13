@@ -1,4 +1,5 @@
 ﻿using GeneradorCufe.ViewModel;
+using Microsoft.Win32;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -231,10 +232,48 @@ namespace GeneradorCufe
             }
         }
 
+        private void ConvertirXML_Click(object sender, RoutedEventArgs e)
+        {
+            // Crear un cuadro de diálogo para seleccionar archivos XML
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Archivos XML (*.xml)|*.xml";
+            openFileDialog.Multiselect = false;
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Directorio inicial
 
+            // Mostrar el cuadro de diálogo
+            bool? result = openFileDialog.ShowDialog();
 
+            if (result == true)
+            {
+                // Obtener la ruta del archivo XML seleccionado
+                string xmlFilePath = openFileDialog.FileName;
 
+                try
+                {
+                    // Leer el contenido del archivo XML
+                    string xmlContent = File.ReadAllText(xmlFilePath);
 
+                    // Convertir el contenido a base64
+                    byte[] bytes = Encoding.UTF8.GetBytes(xmlContent);
+                    string base64Content = Convert.ToBase64String(bytes);
+
+                    // Obtener el nombre del archivo sin la extensión
+                    string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(xmlFilePath);
+
+                    // Guardar el contenido base64 en un archivo de texto con el mismo nombre
+                    string base64FilePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(xmlFilePath), fileNameWithoutExtension + ".txt");
+                    File.WriteAllText(base64FilePath, base64Content);
+
+                    // Mostrar mensaje de éxito
+                    MessageBox.Show("El archivo XML se ha convertido a base64 y se ha guardado en: " + base64FilePath, "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    // Mostrar mensaje de error si ocurre una excepción
+                    MessageBox.Show("Error al convertir el archivo XML a base64: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
 
     }
 }
