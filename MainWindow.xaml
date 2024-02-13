@@ -30,7 +30,7 @@
         <Label Content="Valor Subtotal" HorizontalAlignment="Left" Margin="91,217,0,0" VerticalAlignment="Top" Width="154"/>
         <DatePicker x:Name="PikerFecha" SelectedDate="{Binding FechaFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="91,180,0,0" VerticalAlignment="Top" Width="172"/>
         <Label Content="Hora de generación" HorizontalAlignment="Left" Height="25" Margin="326,148,0,0" VerticalAlignment="Top" Width="118"/>
-        <TextBox x:Name="TextHora" HorizontalAlignment="Left" Height="23" Margin="322,180,0,0" TextWrapping="Wrap" Text="HH:MM:SS" VerticalAlignment="Top" Width="122" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextChanged="MiTextBoxHora_TextChanged"/>
+        <TextBox x:Name="TextHora" Text="{Binding FechaFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="322,180,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="122" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextChanged="MiTextBoxHora_TextChanged"/>
         <Label Content="Valor IVA" HorizontalAlignment="Left" Height="25" Margin="322,218,0,0" VerticalAlignment="Top" Width="111"/>
         <TextBox x:Name="Subtotal" Text="{Binding ValorSubtotal, Mode=TwoWay}" HorizontalAlignment="Left" Height="19" Margin="91,248,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172"/>
         <TextBox x:Name="Iva" Text="{Binding ValorIVA, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="318,248,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="126"/>
@@ -42,11 +42,11 @@
         <TextBox x:Name="Total" Text="{Binding TotalPagar, Mode=TwoWay}" HorizontalAlignment="Left" Height="24" Margin="91,377,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="362"/>
         <Label Content="NIT facturador electrónico" HorizontalAlignment="Left" Margin="94,414,0,0" VerticalAlignment="Top" Width="163" Height="27"/>
         <Label Content="Tipo de documento del Cliente" HorizontalAlignment="Left" Margin="289,414,0,0" VerticalAlignment="Top" Width="179" Height="27"/>
-        <TextBox x:Name="NITFacturador" Text="{Binding NITFacturador, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="94,446,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
+        <TextBox x:Name="NITFacturador" Text="{Binding NITFacturadorElectronico, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="94,446,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
         <Label Content="Número de identificación" HorizontalAlignment="Left" Margin="96,491,0,0" VerticalAlignment="Top" Width="163" Height="27"/>
-        <TextBox x:Name="NumeroIdentificacion" Text="{Binding NumeroIdentificacion, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="92,523,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
+        <TextBox x:Name="NumeroIdentificacion" Text="{Binding NumeroIdentificacionCliente, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="92,523,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
         <Label Content="Clave Técnica de Control (CTC)" HorizontalAlignment="Left" Margin="297,491,0,0" VerticalAlignment="Top" Width="174" Height="27"/>
-        <TextBox x:Name="Clave" Text="{Binding Clave, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="293,522,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
+        <TextBox x:Name="Clave" Text="{Binding ClaveTecnicaControl, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="293,522,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
         <ListBox HorizontalAlignment="Left" Height="27" Margin="304,449,0,0" VerticalAlignment="Top" Width="151" Cursor="AppStarting" SelectionChanged="ListBox_SelectionChanged">
             <ListBoxItem x:Name="TipoDocumento">Cédula Ciudadana</ListBoxItem>
             <ListBoxItem>Cédula Extranjera</ListBoxItem>
