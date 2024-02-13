@@ -103,6 +103,54 @@ namespace GeneradorCufe.ViewModel
             set { _claveTecnicaControl = value; OnPropertyChanged(); }
         }
 
+        private string _cadenaCUFE;
+        public string CadenaCUFE
+        {
+            get { return _cadenaCUFE; }
+            set { _cadenaCUFE = value; OnPropertyChanged(nameof(CadenaCUFE)); }
+        }
+
+        private string _cufe;
+        public string CUFE
+        {
+            get => _cufe;
+            set
+            {
+                if (_cufe != value)
+                {
+                    _cufe = value;
+                    OnPropertyChanged(nameof(CUFE));
+                    if (MyInvoice != null && MyInvoice.UUID != null)
+                    {
+                        MyInvoice.UUID.Text = _cufe; // Actualizar solo el Text.
+                    }
+                }
+            }
+        }
+
+        private string _setTestId;
+        public string SetTestId
+        {
+            get => _setTestId;
+            set
+            {
+                if (_setTestId != value)
+                {
+                    _setTestId = value;
+                    OnPropertyChanged(nameof(SetTestId));
+                    if (MyInvoice != null && MyInvoice.DATA != null) 
+                    {
+                        if (MyInvoice.DATA.Partnership == null)
+                            MyInvoice.DATA.Partnership = new Partnership(); // Inicializa Partnership si es necesario
+
+                        MyInvoice.DATA.Partnership.SetTestID = _setTestId; 
+                    }
+                }
+            }
+        }
+
+
+
         public DianExtensions MyDianExtensions { get; set; }
         public Invoice MyInvoice { get; set; }
         public UBLExtensions MyUBLExtensions { get; set; }
@@ -150,8 +198,8 @@ namespace GeneradorCufe.ViewModel
                 UUID = new UUID
                 {
                     SchemeID = 2,
-                    SchemeName = "CUFE-SHA384",
-                    Text = "7b229459201040f961ef86787dd70a078d4a9c72de313f3741457ae2ffc3294e4d443779fe89a4cdd242059eae73fce9"
+                    SchemeName = "CUFE-SHA384"
+                    // Text  se encuentra en la propiedad CUFE donde se almacena el valor osea arriba
                 },
                 InvoiceTypeCode = "01",
                 Note = "Prueba Factura Electronica Datos Reales 2",
@@ -470,7 +518,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     ID = 99999999,
                     TechKey = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
-                    SetTestID = "5301e97c-b68c-4d30-81cc-4d96292b6f14" // Rm
+                    SetTestID = this.SetTestId  // Rm
 
                 }
             };

@@ -30,7 +30,7 @@
         <Label Content="Valor Subtotal" HorizontalAlignment="Left" Margin="91,217,0,0" VerticalAlignment="Top" Width="154"/>
         <DatePicker x:Name="PikerFecha" SelectedDate="{Binding FechaFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="91,180,0,0" VerticalAlignment="Top" Width="172"/>
         <Label Content="Hora de generación" HorizontalAlignment="Left" Height="25" Margin="326,148,0,0" VerticalAlignment="Top" Width="118"/>
-        <TextBox x:Name="TextHora" Text="{Binding FechaFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="322,180,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="122" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextChanged="MiTextBoxHora_TextChanged"/>
+        <TextBox x:Name="TextHora" Text="{Binding HoraGeneracion, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="322,180,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="122" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextChanged="MiTextBoxHora_TextChanged"/>
         <Label Content="Valor IVA" HorizontalAlignment="Left" Height="25" Margin="322,218,0,0" VerticalAlignment="Top" Width="111"/>
         <TextBox x:Name="Subtotal" Text="{Binding ValorSubtotal, Mode=TwoWay}" HorizontalAlignment="Left" Height="19" Margin="91,248,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172"/>
         <TextBox x:Name="Iva" Text="{Binding ValorIVA, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="318,248,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="126"/>
@@ -46,15 +46,17 @@
         <Label Content="Número de identificación" HorizontalAlignment="Left" Margin="96,491,0,0" VerticalAlignment="Top" Width="163" Height="27"/>
         <TextBox x:Name="NumeroIdentificacion" Text="{Binding NumeroIdentificacionCliente, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="92,523,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
         <Label Content="Clave Técnica de Control (CTC)" HorizontalAlignment="Left" Margin="297,491,0,0" VerticalAlignment="Top" Width="174" Height="27"/>
-        <TextBox x:Name="Clave" Text="{Binding ClaveTecnicaControl, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="293,522,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
+        <TextBox x:Name="Clave" Text="{Binding ClaveTecnicaControl, Mode=TwoWay}" HorizontalAlignment="Left" Height="35" Margin="293,522,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
         <ListBox HorizontalAlignment="Left" Height="27" Margin="304,449,0,0" VerticalAlignment="Top" Width="151" Cursor="AppStarting" SelectionChanged="ListBox_SelectionChanged">
             <ListBoxItem x:Name="TipoDocumento">Cédula Ciudadana</ListBoxItem>
             <ListBoxItem>Cédula Extranjera</ListBoxItem>
         </ListBox>
 
         <Button x:Name="BtnCufe" Content="Generar Cufe" HorizontalAlignment="Left" Height="29" Margin="99,570,0,0" VerticalAlignment="Top" Width="384" Background="#FF925BE6" Click="BtnCufe_Click_1"/>
-        <TextBox x:Name="TxtCadenaCUFE" HorizontalAlignment="Left" Height="84" Margin="527,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" Visibility="Collapsed"/>
-        <TextBox x:Name="TxtCUFE" HorizontalAlignment="Left" Height="78" Margin="526,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" Visibility="Collapsed"/>
+        <TextBox x:Name="TxtCadenaCUFE" Text="{Binding CadenaCUFE, Mode=TwoWay}"  HorizontalAlignment="Left" Height="84" Margin="527,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220"/>
+        <TextBox x:Name="TxtCUFE" Text="{Binding CUFE, Mode=TwoWay}"  HorizontalAlignment="Left" Height="78" Margin="526,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" />
+        <Label Content="SetTestID" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="526,30,0,0" />
+        <TextBox x:Name="TxtSetTestId" Text="{Binding SetTestId, Mode=TwoWay}"  HorizontalAlignment="Left" Height="78" Margin="526,131,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="220" />
         <Button x:Name="BtnXML" Content="Generar XML" HorizontalAlignment="Left" Height="29" Margin="99,620,0,0" VerticalAlignment="Top" Width="384" Background="#FF90A2DC" Click="BtnCufe_Click_2"/>
 
     </Grid>
