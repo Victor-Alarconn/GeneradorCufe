@@ -183,7 +183,7 @@ namespace GeneradorCufe.ViewModel
             };
             // Crear y configurar AuthorizationPeriod
             AuthorizationPeriod authorizationPeriod = new AuthorizationPeriod();
-            authorizationPeriod.SetDates(new DateTime(2024, 2, 12), new DateTime(2030, 2, 12));
+            authorizationPeriod.SetDates(new DateTime(2019, 01, 19), new DateTime(2030, 01, 19));
 
             // Asignar AuthorizationPeriod al InvoiceControl
             MyUBLExtensions.UBLExtension.ExtensionContent.DianExtensions.InvoiceControl.AuthorizationPeriod = authorizationPeriod;
@@ -208,7 +208,7 @@ namespace GeneradorCufe.ViewModel
                 // Inicializar AccountingSupplierParty y otras propiedades necesarias aquí
             };
             DateTime issueDate = new DateTime(2024, 02, 12);
-            DateTime issueTime = DateTime.ParseExact("12:53:36-05:00", "HH:mm:ssK", CultureInfo.InvariantCulture);
+            DateTime issueTime = DateTime.ParseExact("00:00:00-05:00", "HH:mm:ssK", CultureInfo.InvariantCulture);
 
             MyInvoice.SetIssueDateAndTime(issueDate, issueTime);
 
@@ -217,7 +217,7 @@ namespace GeneradorCufe.ViewModel
                 AdditionalAccountID = 1,
                 Party = new Party
                 {
-                    PartyName = new PartyName { Name = "Cadena S.A." },
+                    PartyName = new PartyName { Name = "RM SOFT CASA DE SOFTWARE S.A.S" },
                     PhysicalLocation = new PhysicalLocation
                     {
                         Address = new Address
@@ -237,11 +237,11 @@ namespace GeneradorCufe.ViewModel
                     },
                     PartyTaxScheme = new PartyTaxScheme
                     {
-                        RegistrationName = "Cadena S.A.",
+                        RegistrationName = "RM SOFT CASA DE SOFTWARE S.A.S",
                         CompanyID = new CompanyID
                         {
-                            Text = 890930534,
-                            SchemeID = 0,
+                            Text = 900770401,
+                            SchemeID = 8,
                             SchemeName = 31,
                             SchemeAgencyID = 195,
                             SchemeAgencyName = "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
@@ -269,11 +269,11 @@ namespace GeneradorCufe.ViewModel
                     },
                     PartyLegalEntity = new PartyLegalEntity
                     {
-                        RegistrationName = "Cadena S.A.",
+                        RegistrationName = "RM SOFT CASA DE SOFTWARE S.A.S",
                         CompanyID = new CompanyID
                         {
-                            Text = 890930534,
-                            SchemeID = 0,
+                            Text = 900770401,
+                            SchemeID = 8,
                             SchemeName = 31,
                             SchemeAgencyID = 195,
                             SchemeAgencyName = "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
@@ -320,7 +320,7 @@ namespace GeneradorCufe.ViewModel
                             Country = new Country
                             {
                                 IdentificationCode = "CO",
-                                Name = new CbcName { Text = "Colombia", LanguageID = "es" }
+                                Name = new CbcName { Text = "Colombia", LanguageID = "es" } // esta bueno
                             }
                         }
                     },
@@ -516,7 +516,7 @@ namespace GeneradorCufe.ViewModel
 
                 Partnership = new Partnership
                 {
-                    ID = 99999999,
+                    ID = 900770401,
                     TechKey = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
                     SetTestID = this.SetTestId  // Rm
 
@@ -605,6 +605,19 @@ namespace GeneradorCufe.ViewModel
                     // Reemplazar el elemento ID antiguo con el nuevo
                     idElement.ReplaceWith(newIdElement);
                 }
+            }
+
+            // Encontrar todos los elementos <cbc:CbcName> y reemplazarlos con <cbc:Name>
+            var cbcNameElements = doc.Descendants(XName.Get("CbcName", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"));
+            foreach (var cbcNameElement in cbcNameElements.ToList()) // ToList para evitar modificaciones durante la iteración
+            {
+                // Crear un nuevo elemento <cbc:Name> con los mismos atributos y valor que <cbc:CbcName>
+                XElement newNameElement = new XElement(XName.Get("Name", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"),
+                    cbcNameElement.Attributes(),
+                    cbcNameElement.Value);
+
+                // Reemplazar el elemento <cbc:CbcName> con el nuevo <cbc:Name>
+                cbcNameElement.ReplaceWith(newNameElement);
             }
 
             // Convertir el XDocument modificado de nuevo a una cadena de texto XML

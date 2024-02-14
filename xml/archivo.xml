@@ -7,8 +7,8 @@
           <sts:InvoiceControl>
             <sts:InvoiceAuthorization>18760000001</sts:InvoiceAuthorization>
             <sts:AuthorizationPeriod>
-              <cbc:StartDate>2024-02-12</cbc:StartDate>
-              <cbc:EndDate>2030-02-12</cbc:EndDate>
+              <cbc:StartDate>2019-01-19</cbc:StartDate>
+              <cbc:EndDate>2030-01-19</cbc:EndDate>
             </sts:AuthorizationPeriod>
             <sts:AuthorizedInvoices>
               <sts:Prefix>SETT</sts:Prefix>
@@ -23,9 +23,9 @@
   <cbc:CustomizationID>10</cbc:CustomizationID>
   <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
   <cbc:ID>SETT1</cbc:ID>
-  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">7b229459201040f961ef86787dd70a078d4a9c72de313f3741457ae2ffc3294e4d443779fe89a4cdd242059eae73fce9</cbc:UUID>
+  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">bf70b23b6a622d835e308386bedb935eeca2dff4fee8053d77cec45ca5891f4277a4b9e1cbfd578facdaa8043622de14</cbc:UUID>
   <cbc:IssueDate>2024-02-12</cbc:IssueDate>
-  <cbc:IssueTime>12:53:36-05:00</cbc:IssueTime>
+  <cbc:IssueTime>00:00:00-05:00</cbc:IssueTime>
   <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
   <cbc:Note>Prueba Factura Electronica Datos Reales 2</cbc:Note>
   <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
@@ -34,7 +34,7 @@
     <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
     <cac:Party>
       <cac:PartyName>
-        <cbc:Name>Cadena S.A.</cbc:Name>
+        <cbc:Name>RM SOFT CASA DE SOFTWARE S.A.S</cbc:Name>
       </cac:PartyName>
       <cac:PhysicalLocation>
         <cac:Address>
@@ -48,13 +48,13 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
           </cac:Country>
         </cac:Address>
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
-        <cbc:RegistrationName>Cadena S.A.</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">890930534</cbc:CompanyID>
+        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE S.A.S</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
         <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
         <cac:RegistrationAddress>
           <cbc:ID>05380</cbc:ID>
@@ -67,7 +67,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
@@ -76,8 +76,8 @@
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
-        <cbc:RegistrationName>Cadena S.A.</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">890930534</cbc:CompanyID>
+        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE S.A.S</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
           <cbc:ID>SETT</cbc:ID>
           <cbc:Name>1485596</cbc:Name>
@@ -109,7 +109,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
           </cac:Country>
         </cac:Address>
       </cac:PhysicalLocation>
@@ -128,7 +128,7 @@
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cbc:CbcName languageID="es">Colombia</cbc:CbcName>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
@@ -205,7 +205,7 @@
   <DATA>
     <UBL21>true</UBL21>
     <Partnership>
-      <ID>99999999</ID>
+      <ID>900770401</ID>
       <TechKey>fc8eac422eba16e22ffd8c6f94b3f40a6e38162c</TechKey>
       <SetTestID>956c2978-9664-4092-8294-682f649dad0e</SetTestID>
     </Partnership>
