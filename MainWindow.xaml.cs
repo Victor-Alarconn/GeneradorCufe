@@ -126,13 +126,6 @@ namespace GeneradorCufe
                 return false;
             }
 
-            // Validar fecha
-         
-
-            // Validar hora (asegúrate de que el formato es correcto)
-           
-
-
             return true;
         }
 
@@ -199,38 +192,32 @@ namespace GeneradorCufe
             var viewModel = DataContext as InvoiceViewModel;
             if (viewModel != null)
             {
-                // Generar el XML y la versión base64
-                (string xmlContent, string base64Content) = viewModel.GenerateXMLAndBase64(viewModel.MyInvoice);
+                // Generar el XML y la versión base64 sin pasar MyInvoice
+                (string xmlContent, string base64Content) = viewModel.GenerateXMLAndBase64();
 
                 // Directorio donde se guardarán los archivos
-                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                DirectoryInfo directoryInfo = new DirectoryInfo(appDirectory);
-                string projectDirectory = directoryInfo.Parent.Parent.Parent.FullName;
-                string xmlDirectory = System.IO.Path.Combine(projectDirectory, "xml");
+                string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
 
-                // Ruta del archivo XML
-                string xmlFilePath = System.IO.Path.Combine(xmlDirectory, "archivo.xml");
-
-                // Ruta del archivo base64
-                string base64FilePath = System.IO.Path.Combine(xmlDirectory, "base64.txt");
-
-                // Crear el directorio si no existe
-                if (!System.IO.Directory.Exists(xmlDirectory))
+                // Asegurarte de que el directorio 'xml' existe
+                if (!Directory.Exists(xmlDirectory))
                 {
-                    System.IO.Directory.CreateDirectory(xmlDirectory);
+                    Directory.CreateDirectory(xmlDirectory);
                 }
 
-                // Guardar el XML en el archivo
-                viewModel.SaveXMLToFile(xmlContent, xmlFilePath);
+                // Rutas para guardar los archivos XML y base64
+                string xmlFilePath = System.IO.Path.Combine(xmlDirectory, "archivo.xml");
+                string base64FilePath = System.IO.Path.Combine(xmlDirectory, "base64.txt");
 
-                // Guardar el contenido base64 en el archivo
+                // Guardar el XML y la versión base64 en las ubicaciones finales
+                File.WriteAllText(xmlFilePath, xmlContent);
                 File.WriteAllText(base64FilePath, base64Content);
 
                 // Mostrar mensaje de confirmación
-                MessageBox.Show("XML generado y guardado en: " + xmlFilePath + "\n" +
-                                "Archivo base64 generado y guardado en: " + base64FilePath);
+                MessageBox.Show("XML generado y guardado en: " + xmlFilePath + "\nArchivo base64 generado y guardado en: " + base64FilePath);
             }
         }
+
+
 
         private void ConvertirXML_Click(object sender, RoutedEventArgs e)
         {

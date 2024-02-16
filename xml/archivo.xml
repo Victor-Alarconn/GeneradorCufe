@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-16"?>
-<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2     http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">
   <ext:UBLExtensions>
     <ext:UBLExtension>
       <ext:ExtensionContent>
@@ -7,8 +6,8 @@
           <sts:InvoiceControl>
             <sts:InvoiceAuthorization>18760000001</sts:InvoiceAuthorization>
             <sts:AuthorizationPeriod>
-              <cbc:StartDate>2019-01-19</cbc:StartDate>
-              <cbc:EndDate>2030-01-19</cbc:EndDate>
+              <cbc:StartDate>2024-02-13</cbc:StartDate>
+              <cbc:EndDate>2024-02-13</cbc:EndDate>
             </sts:AuthorizationPeriod>
             <sts:AuthorizedInvoices>
               <sts:Prefix>SETT</sts:Prefix>
@@ -21,30 +20,41 @@
     </ext:UBLExtension>
   </ext:UBLExtensions>
   <cbc:CustomizationID>10</cbc:CustomizationID>
+  <!--Indicador del tipo de operación [1..1] tabla 6.1.5-->
   <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
-  <cbc:ID>SETT1</cbc:ID>
+  <!-- Tipo de ambiente [1..1] Tabla 6.5.1.2 -->
+  <cbc:ID>18760000001</cbc:ID>
+  <!--Número de factura o factura cambiaria. Incluye prefijo + consecutivo de factura autorizados por la DIAN  [1..1] -->
   <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">bf70b23b6a622d835e308386bedb935eeca2dff4fee8053d77cec45ca5891f4277a4b9e1cbfd578facdaa8043622de14</cbc:UUID>
-  <cbc:IssueDate>2024-02-12</cbc:IssueDate>
-  <cbc:IssueTime>00:00:00-05:00</cbc:IssueTime>
+  <!-- Definido en el numeral 10.1 Rechazo: Si el valor UUID no está correctamente calculad [1..1] Tabla 6.5.1.2 -->
+  <cbc:IssueDate>2024-02-16</cbc:IssueDate>
+  <!-- Fecha de generación de la factura [1..1] formato aaaa-mm-dd-->
+  <cbc:IssueTime>17:46:21-05:00</cbc:IssueTime>
+  <!--Hora de emisión [1..1] -->
   <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
-  <cbc:Note>Prueba Factura Electronica Datos Reales 2</cbc:Note>
+  <!--Tipo de Factura [1..1] Tabla 6.1.3 -->
+  <cbc:Note>Prueba Factura Electronica Datos de victor</cbc:Note>
+  <!--Información adicional: Texto libre, relativo al documento [0..N] -->
   <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
+  <!--Divisa de la Factura: Divisa aplicable a toda la factura [1..1] Tabla 6.3.3  -->
   <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
+  <!--Número o cantidad de elementos InvoiceLine de la factura [1..1]-->
   <cac:AccountingSupplierParty>
-    <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+    <!--Grupo con información que definen el obligado a facturar: Emisor de la factura [1..1]-->
+    <cbc:AdditionalAccountID>{AdditionalAccountID}</cbc:AdditionalAccountID>
     <cac:Party>
       <cac:PartyName>
-        <cbc:Name>RM SOFT CASA DE SOFTWARE S.A.S</cbc:Name>
+        <cbc:Name>{PartyNameName}</cbc:Name>
       </cac:PartyName>
       <cac:PhysicalLocation>
         <cac:Address>
-          <cbc:ID>05380</cbc:ID>
-          <cbc:CityName>LA ESTRELLA</cbc:CityName>
-          <cbc:PostalZone>055460</cbc:PostalZone>
-          <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
-          <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
+          <cbc:ID>{PhysicalLocationID}</cbc:ID>
+          <cbc:CityName>{PhysicalLocationCity}</cbc:CityName>
+          <cbc:PostalZone>{PhysicalLocationPostalZone}</cbc:PostalZone>
+          <cbc:CountrySubentity>{PhysicalLocationCountrySubentity}</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>{PhysicalLocationCountrySubentityCode}</cbc:CountrySubentityCode>
           <cac:AddressLine>
-            <cbc:Line>Cra. 50 #97a Sur-180 a 97a Sur-394</cbc:Line>
+            <cbc:Line>{PhysicalLocationLine}</cbc:Line>
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
@@ -53,113 +63,63 @@
         </cac:Address>
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
-        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE S.A.S</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
-        <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
+        <cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyTaxSchemeCompanyID}</cbc:CompanyID>
+        <cbc:TaxLevelCode>{TaxLevelCode}</cbc:TaxLevelCode>
+        <!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] -->
         <cac:RegistrationAddress>
-          <cbc:ID>05380</cbc:ID>
-          <cbc:CityName>LA ESTRELLA</cbc:CityName>
-          <cbc:PostalZone>055460</cbc:PostalZone>
-          <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
-          <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
+          <cbc:ID>{PartyTaxSchemeID}</cbc:ID>
+          <cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName>
+          <cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone>
+          <cbc:CountrySubentity>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentityCode>
           <cac:AddressLine>
-            <cbc:Line>Cra. 50 #97a Sur-180 a 97a Sur-394</cbc:Line>
+            <cbc:Line>{PartyTaxSchemeLine}</cbc:Line>
           </cac:AddressLine>
           <cac:Country>
-            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cbc:Name languageID="es">Colombia</cbc:Name>
+            <cbc:IdentificationCode>{CountryIdentificationCode}</cbc:IdentificationCode>
+            <cbc:Name languageID="es">{CountryName}</cbc:Name>
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
-          <cbc:ID>01</cbc:ID>
-          <cbc:Name>IVA</cbc:Name>
+          <cbc:ID>{TaxSchemeID}</cbc:ID>
+          <cbc:Name>{TaxSchemeName}</cbc:Name>
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
-        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE S.A.S</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
+        <cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyLegalEntityCompanyID}</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
-          <cbc:ID>SETT</cbc:ID>
-          <cbc:Name>1485596</cbc:Name>
+          <cbc:ID>{CorporateRegistrationSchemeID}</cbc:ID>
+          <cbc:Name>{CorporateRegistrationSchemeName}</cbc:Name>
         </cac:CorporateRegistrationScheme>
       </cac:PartyLegalEntity>
       <cac:Contact>
-        <cbc:ElectronicMail>xxxxx@xxxxx.com.co</cbc:ElectronicMail>
+        <cbc:ElectronicMail>{ContactElectronicMail}</cbc:ElectronicMail>
       </cac:Contact>
     </cac:Party>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
-    <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
-    <cac:PartyIdentification>
-      <cbc:ID schemeName="13">1017173008</cbc:ID>
-    </cac:PartyIdentification>
-    <cac:Party>
-      <cac:PartyName>
-        <cbc:Name>ADQUIRIENTE DE EJEMPLO</cbc:Name>
-      </cac:PartyName>
-      <cac:PhysicalLocation>
-        <cac:Address>
-          <cbc:ID>66001</cbc:ID>
-          <cbc:CityName>PEREIRA</cbc:CityName>
-          <cbc:PostalZone>54321</cbc:PostalZone>
-          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
-          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
-          <cac:AddressLine>
-            <cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line>
-          </cac:AddressLine>
-          <cac:Country>
-            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cbc:Name languageID="es">Colombia</cbc:Name>
-          </cac:Country>
-        </cac:Address>
-      </cac:PhysicalLocation>
-      <cac:PartyTaxScheme>
-        <cbc:RegistrationName>ADQUIRIENTE DE EJEMPLO</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID>
-        <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
-        <cac:RegistrationAddress>
-          <cbc:ID>66001</cbc:ID>
-          <cbc:CityName>PEREIRA</cbc:CityName>
-          <cbc:PostalZone>54321</cbc:PostalZone>
-          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
-          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
-          <cac:AddressLine>
-            <cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line>
-          </cac:AddressLine>
-          <cac:Country>
-            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-            <cbc:Name languageID="es">Colombia</cbc:Name>
-          </cac:Country>
-        </cac:RegistrationAddress>
-        <cac:TaxScheme>
-          <cbc:ID>01</cbc:ID>
-          <cbc:Name>IVA</cbc:Name>
-        </cac:TaxScheme>
-      </cac:PartyTaxScheme>
-      <cac:PartyLegalEntity>
-        <cbc:RegistrationName>ADQUIRIENTE DE EJEMPLO</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID>
-        <cac:CorporateRegistrationScheme>
-          <cbc:Name>1485596</cbc:Name>
-        </cac:CorporateRegistrationScheme>
-      </cac:PartyLegalEntity>
-      <cac:Contact>
-        <cbc:ElectronicMail>xxxx@xxxx.com</cbc:ElectronicMail>
-      </cac:Contact>
-    </cac:Party>
-  </cac:AccountingCustomerParty>
+    <!--Grupo con información que definen el Adquiriente [1..1]-->
+    <cbc:AdditionalAccountID>{AdditionalAccountID}</cbc:AdditionalAccountID>
+    <!-- Grupo con información que definen el Adquiriente [1..1]-->
+		   <cac:PartyIdentification><!-- Grupo para informar el documento del adquirente [0..1]-->
+            	<cbc:ID schemeName="{PartyIdentificationschemeName}">{PartyIdentificationID}</cbc:ID><!--Identificación del adquirente, @schemeName Ver lista de valores posibles en la columna “Código” del numeral 6.2.1. [1..1] -->
+    		</cac:PartyIdentification><cac:Party><cac:PartyName><cbc:Name>{AccountingCustomerPartyName}</cbc:Name></cac:PartyName><cac:PhysicalLocation><cac:Address><cbc:ID>{AccountingCustomerPartyID}</cbc:ID><cbc:CityName>{AccountingCustomerPartyCityName}</cbc:CityName><cbc:PostalZone>{AccountingCustomerPartyPostalZone}</cbc:PostalZone><cbc:CountrySubentity>{AccountingCustomerPartyCountrySubentity}</cbc:CountrySubentity><cbc:CountrySubentityCode>{AccountingCustomerPartyCountrySubentityCode}</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>{AccountingCustomerPartyLine}</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:Address></cac:PhysicalLocation><cac:PartyTaxScheme><cbc:RegistrationName>{PartyTaxScheme}</cbc:RegistrationName><cbc:CompanyID schemeID="PartyTaxSchemeDV" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyTaxSchemeCompanyID}</cbc:CompanyID><cbc:TaxLevelCode>{PartyTaxSchemeTaxLevelCode}</cbc:TaxLevelCode><!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] --><cac:RegistrationAddress><cbc:ID>{PartyTaxSchemeID}</cbc:ID><cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName><cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone><cbc:CountrySubentity>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentity><cbc:CountrySubentityCode>{PartyTaxSchemeCountrySubentityCode}</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>{PartyTaxSchemeLine}</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:RegistrationAddress><cac:TaxScheme><cbc:ID>{TaxSchemeID}</cbc:ID><cbc:Name>{TaxSchemeName}</cbc:Name></cac:TaxScheme></cac:PartyTaxScheme><cac:PartyLegalEntity><cbc:RegistrationName>{PartyLegalEntityRegistrationName}</cbc:RegistrationName><cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyLegalEntityCompanyID}</cbc:CompanyID><cac:CorporateRegistrationScheme><cbc:Name>{PartyLegalEntityName}</cbc:Name></cac:CorporateRegistrationScheme></cac:PartyLegalEntity><cac:Contact><cbc:ElectronicMail>{PartyLegalEntityElectronicMail}</cbc:ElectronicMail></cac:Contact></cac:Party></cac:AccountingCustomerParty>
   <cac:PaymentMeans>
-    <cbc:ID>1</cbc:ID>
-    <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
-    <cbc:PaymentID>Efectivo</cbc:PaymentID>
+    <!--Grupo de campos para información relacionadas con el pago de la factura. [1..N] -->
+    <cbc:ID>{PaymentMeansID}</cbc:ID>
+    <cbc:PaymentMeansCode>{PaymentMeansPaymentMeansCode}</cbc:PaymentMeansCode>
+    <cbc:PaymentID>{PaymentMeansPaymentID}</cbc:PaymentID>
   </cac:PaymentMeans>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+    <!--Grupo de campos para información totales relacionadas con un tributo [0..N]-->
+    <cbc:TaxAmount currencyID="COP">{TaxTotalaxAmount}</cbc:TaxAmount>
     <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
-      <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+      <cbc:TaxableAmount currencyID="COP">{TaxTotalTaxableAmount}</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">{TaxTotalTaxAmount}</cbc:TaxAmount>
       <cac:TaxCategory>
-        <cbc:Percent>19.00</cbc:Percent>
+        <cbc:Percent>{TaxTotalPercent}</cbc:Percent>
         <cac:TaxScheme>
           <cbc:ID>01</cbc:ID>
           <cbc:Name>IVA</cbc:Name>
@@ -168,46 +128,51 @@
     </cac:TaxSubtotal>
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
-    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
-    <cbc:TaxExclusiveAmount currencyID="COP">100000.00</cbc:TaxExclusiveAmount>
-    <cbc:TaxInclusiveAmount currencyID="COP">119000.00</cbc:TaxInclusiveAmount>
-    <cbc:PayableAmount currencyID="COP">119000.00</cbc:PayableAmount>
+    <!--Grupo de campos para información relacionadas con los valores totales aplicables a la factura [1..1]-->
+    <cbc:LineExtensionAmount currencyID="COP">{LegalMonetaryTotalLineExtensionAmount}</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="COP">{LegalMonetaryTotalTaxExclusiveAmount}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="COP">{LegalMonetaryTotalTaxInclusiveAmount}</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="COP">{LegalMonetaryTotalPayableAmount}</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
-    <cbc:ID>1</cbc:ID>
-    <cbc:InvoicedQuantity>1.00</cbc:InvoicedQuantity>
-    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
+    <!--Grupo de campos para información relacionadas con una línea de factura [1..N] -->
+    <cbc:ID>{InvoiceLineID}</cbc:ID>
+    <cbc:InvoicedQuantity>{InvoiceLineInvoicedQuantity}</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">{InvoiceLineLineExtensionAmount}</cbc:LineExtensionAmount>
     <cac:TaxTotal>
-      <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+      <cbc:TaxAmount currencyID="COP">{InvoiceLineTaxAmount}</cbc:TaxAmount>
       <cac:TaxSubtotal>
-        <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
-        <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+        <cbc:TaxableAmount currencyID="COP">{InvoiceLineTaxableAmount}</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">{InvoiceLineTaxAmount}</cbc:TaxAmount>
         <cac:TaxCategory>
-          <cbc:Percent>19.00</cbc:Percent>
+          <cbc:Percent>{InvoiceLinePercent}</cbc:Percent>
           <cac:TaxScheme>
-            <cbc:ID>01</cbc:ID>
-            <cbc:Name>IVA</cbc:Name>
+            <cbc:ID>{TaxSchemeID}</cbc:ID>
+            <cbc:Name>TaxSchemeName</cbc:Name>
           </cac:TaxScheme>
         </cac:TaxCategory>
       </cac:TaxSubtotal>
     </cac:TaxTotal>
     <cac:Item>
-      <cbc:Description>Frambuesas</cbc:Description>
+      <cbc:Description>{ItemDescription}</cbc:Description>
       <cac:StandardItemIdentification>
-        <cbc:ID schemeID="999">900770401-8</cbc:ID>
+        <cbc:ID schemeID="999">{ItemID}</cbc:ID>
       </cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
-      <cbc:PriceAmount currencyID="COP">100000.00</cbc:PriceAmount>
-      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+      <cbc:PriceAmount currencyID="{PriceCurrencyID}">{PricePriceAmount}</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="{PriceBaseUnitCode}">{PriceBaseQuantity}</cbc:BaseQuantity>
     </cac:Price>
   </cac:InvoiceLine>
   <DATA>
     <UBL21>true</UBL21>
     <Partnership>
-      <ID>900770401</ID>
+      <ID>{PartnershipID}</ID>
+      <!--Identificación de la Alianza "A" [1..1] -->
       <TechKey>fc8eac422eba16e22ffd8c6f94b3f40a6e38162c</TechKey>
-      <SetTestID>956c2978-9664-4092-8294-682f649dad0e</SetTestID>
+      <!--Clave Técnica [1..1]-->
+      <SetTestID>{SetTestID}</SetTestID>
+      <!-- TestID Sólo Aplica para pruebas [1..1] -->
     </Partnership>
   </DATA>
 </Invoice>
