@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:GeneradorCufe"
         xmlns:vm="clr-namespace:GeneradorCufe.ViewModel"
         mc:Ignorable="d"
-        Title="Generador de Cufe" Height="750" Width="800">
+        Title="Generador de Cufe" Height="850" Width="1000">
 
     <Window.DataContext>
         <vm:InvoiceViewModel/>
     </Window.DataContext>
-    
-    <Grid Margin="0,0,0,-82" RenderTransformOrigin="0.5,0.5" Cursor="AppStarting">
+
+    <Grid Margin="0,0,-242,-82" RenderTransformOrigin="0.5,0.5" Cursor="AppStarting">
         <Grid.RenderTransform>
             <TransformGroup>
                 <ScaleTransform/>
@@ -21,12 +21,12 @@
                 <TranslateTransform/>
             </TransformGroup>
         </Grid.RenderTransform>
-        <Label Content="Generador de CUFE" HorizontalAlignment="Left" Height="41" Margin="326,25,0,0" VerticalAlignment="Top" Width="122" />
-        <Label Content="Numero  de Factura" HorizontalAlignment="Left" Height="24" Margin="91,75,0,0" VerticalAlignment="Top" Width="122"/>
-        <TextBox x:Name="TxtFactura" Text="{Binding NumeroFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="31" Margin="91,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="270" TextChanged="TextBox_TextChanged_1"/>
-       
+        <Label Content="Generador de la Factura" HorizontalAlignment="Left" Height="26" Margin="430,8,0,0" VerticalAlignment="Top" Width="146" />
+        <Label Content="Numero  de Factura" HorizontalAlignment="Left" Height="24" Margin="524,232,0,0" VerticalAlignment="Top" Width="122"/>
+        <TextBox x:Name="TxtFactura" Text="{Binding NumeroFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="31" Margin="524,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="270" TextChanged="TextBox_TextChanged_1"/>
+
         <Label Content="Fecha de la Factura" HorizontalAlignment="Left" Height="24" Margin="91,148,0,0" VerticalAlignment="Top" Width="112"/>
-       
+
         <Label Content="Valor Subtotal" HorizontalAlignment="Left" Margin="91,217,0,0" VerticalAlignment="Top" Width="154"/>
         <DatePicker x:Name="PikerFecha" SelectedDate="{Binding FechaFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="91,180,0,0" VerticalAlignment="Top" Width="172"/>
         <Label Content="Hora de generación" HorizontalAlignment="Left" Height="25" Margin="326,148,0,0" VerticalAlignment="Top" Width="118"/>
@@ -59,6 +59,9 @@
         <TextBox x:Name="TxtSetTestId" Text="{Binding SetTestId, Mode=TwoWay}"  HorizontalAlignment="Left" Height="78" Margin="526,131,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="220" />
         <Button x:Name="BtnXML" Content="Generar XML" HorizontalAlignment="Left" Height="29" Margin="99,620,0,0" VerticalAlignment="Top" Width="384" Background="#FF90A2DC" Click="BtnCufe_Click_2"/>
         <Button x:Name="ConvertirXML" Content="Convertir a Base64" HorizontalAlignment="Left" Height="29" Margin="565,578,0,0" VerticalAlignment="Top" Width="138" Click="ConvertirXML_Click"/>
+        <TextBox HorizontalAlignment="Left" Margin="740,322,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="50" TextChanged="TextBox_TextChanged_5"/>
+        <Label Content="Datos Resolución de Numeración" HorizontalAlignment="Left" Margin="28,22,0,0" VerticalAlignment="Top" Width="191"/>
+        <Label Content="Número autorización" HorizontalAlignment="Left" Margin="3,47,0,0" VerticalAlignment="Top" Width="103" Height="23" FontSize="10"/>
 
     </Grid>
 </Window>

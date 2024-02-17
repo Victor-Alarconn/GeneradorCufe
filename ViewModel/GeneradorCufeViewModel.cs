@@ -133,6 +133,9 @@ namespace GeneradorCufe.ViewModel
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
             // Namespace para elementos 'cbc'
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+            // Namespace para elementos 'cac'
+            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+
 
             // Actualizar el elemento 'InvoiceAuthorization'
             xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue(this.NumeroFactura);
@@ -151,20 +154,46 @@ namespace GeneradorCufe.ViewModel
             }
             DateTimeOffset now = DateTimeOffset.Now;
             // Actualizar 'CustomizationID'
-            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("10"); // Asume que 'this.CustomizationID' existe en tu ViewModel
+            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("10");
 
             // Actualizar 'ProfileExecutionID'
-            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2"); // Asume que 'this.ProfileExecutionID' existe en tu ViewModel
+            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2");
 
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(this.NumeroFactura);
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(this.CUFE); // Asegúrate de que el valor UUID incluya los atributos schemeID y schemeName si son necesarios
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(this.CUFE);
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(now.ToString("yyyy-MM-dd"));
-            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(now.ToString("HH:mm:sszzz")); // Asume que IssueTime es un DateTime o TimeSpan
+            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(now.ToString("HH:mm:sszzz"));
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01");
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("Prueba Factura Electronica Datos de victor");
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
             xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue("1");
+
+            // Actualizar 'AdditionalAccountID'
+            xmlDoc.Descendants(cbc + "AdditionalAccountID").FirstOrDefault()?.SetValue("1");
+
+            // Actualizar 'PartyName'
+            var partyNameElement = xmlDoc.Descendants(cac + "Party")
+                                         .Descendants(cac + "PartyName")
+                                         .Descendants(cbc + "Name").FirstOrDefault();
+            if (partyNameElement != null)
+            {
+                partyNameElement.SetValue("RM SOFT CASA DE SOFTWARE S.A.S");
+            }
+
+            // Actualizar detalles de 'PhysicalLocation'
+            var physicalLocationElement = xmlDoc.Descendants(cac + "PhysicalLocation").FirstOrDefault();
+            if (physicalLocationElement != null)
+            {
+                physicalLocationElement.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("05380");
+                physicalLocationElement.Descendants(cbc + "CityName").FirstOrDefault()?.SetValue("LA ESTRELLA");
+                physicalLocationElement.Descendants(cbc + "PostalZone").FirstOrDefault()?.SetValue("055460");
+                physicalLocationElement.Descendants(cbc + "CountrySubentity").FirstOrDefault()?.SetValue("Antioquia");
+                physicalLocationElement.Descendants(cbc + "CountrySubentityCode").FirstOrDefault()?.SetValue("05");
+                physicalLocationElement.Descendants(cac + "AddressLine")
+                                       .Descendants(cbc + "Line").FirstOrDefault()?.SetValue("Cra. 50 #97a Sur-180 a 97a Sur-394");
+            }
         }
+
 
 
         public (string xmlContent, string base64Content) GenerateXMLAndBase64()
