@@ -62,6 +62,7 @@
         <TextBox HorizontalAlignment="Left" Margin="740,322,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="50" TextChanged="TextBox_TextChanged_5"/>
         <Label Content="Datos Resolución de Numeración" HorizontalAlignment="Left" Margin="28,22,0,0" VerticalAlignment="Top" Width="191"/>
         <Label Content="Número autorización" HorizontalAlignment="Left" Margin="3,47,0,0" VerticalAlignment="Top" Width="103" Height="23" FontSize="10"/>
+        <Label Content="Fecha" HorizontalAlignment="Left" Margin="7,72,0,0" VerticalAlignment="Top" Width="103" Height="23" FontSize="10"/>
 
     </Grid>
 </Window>
