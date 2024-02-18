@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -201,12 +202,24 @@ namespace GeneradorCufe.ViewModel
             // Define la ruta al archivo XML base
             string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string baseXmlFilePath = Path.Combine(basePath, "Plantilla", "XML.xml");
+            XDocument xmlDoc;
 
-            // Cargar el documento XML base
-            XDocument xmlDoc = XDocument.Load(baseXmlFilePath);
+            try
+            {
+                // Intenta cargar el documento XML base
+                xmlDoc = XDocument.Load(baseXmlFilePath);
 
-            // Actualizar el documento XML con los datos dinámicos
-            UpdateXmlWithViewModelData(xmlDoc);
+                // Actualizar el documento XML con los datos dinámicos
+                UpdateXmlWithViewModelData(xmlDoc);
+            }
+            catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
+            {
+                // Muestra un diálogo de error si la plantilla XML no se puede cargar
+                MessageBox.Show("Error: La plantilla para generar el XML es incorrecta o nula.", "Error de Plantilla XML", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                // Devuelve una tupla vacía o con valores predeterminados para evitar más errores
+                return (string.Empty, string.Empty);
+            }
 
             // Convertir el XML actualizado a string
             string xmlContent = xmlDoc.ToString();
@@ -217,6 +230,7 @@ namespace GeneradorCufe.ViewModel
 
             return (xmlContent, base64Encoded);
         }
+
 
     }
 

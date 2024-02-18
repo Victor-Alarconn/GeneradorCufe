@@ -160,6 +160,13 @@ namespace GeneradorCufe
                 // Generar el XML y la versión base64 sin pasar MyInvoice
                 (string xmlContent, string base64Content) = viewModel.GenerateXMLAndBase64();
 
+                // Verificar que el contenido XML no esté vacío antes de continuar
+                if (string.IsNullOrEmpty(xmlContent))
+                {
+                    MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return; // Detiene la ejecución adicional si no se generó el XML
+                }
+
                 // Directorio donde se guardarán los archivos
                 string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
 
@@ -181,6 +188,7 @@ namespace GeneradorCufe
                 MessageBox.Show("XML generado y guardado en: " + xmlFilePath + "\nArchivo base64 generado y guardado en: " + base64FilePath);
             }
         }
+
 
 
 
