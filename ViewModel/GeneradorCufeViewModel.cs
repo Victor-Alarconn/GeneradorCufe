@@ -123,9 +123,18 @@ namespace GeneradorCufe.ViewModel
         private string _setTestId;
         public string SetTestId
         {
-            get { return _setTestId;}
+            get { return _setTestId; }
             set { _setTestId = value; OnPropertyChanged(nameof(SetTestId)); }
         }
+
+        private string _txtautorizacion;
+        public string Autorizacion
+        {
+            get { return _txtautorizacion; }
+            set { _ = value; OnPropertyChanged(nameof(Autorizacion)); }
+        }
+
+
 
 
         private void UpdateXmlWithViewModelData(XDocument xmlDoc)

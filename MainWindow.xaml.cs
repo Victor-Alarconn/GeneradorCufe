@@ -45,6 +45,24 @@ namespace GeneradorCufe
             if (parts.Length > 11) _viewModel.CadenaCUFE = parts[11];
             if (parts.Length > 12) _viewModel.CUFE = parts[12];
             if (parts.Length > 13) _viewModel.SetTestId = parts[13];
+            if (parts.Length > 14) _viewModel.Autorizacion = parts[14];
+            if (parts.Length > 15 && !string.IsNullOrEmpty(parts[15])) _viewModel.FechaInicio = DateTime.ParseExact(parts[15], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if (parts.Length > 16 && !string.IsNullOrEmpty(parts[16])) _viewModel.FechaFin = DateTime.ParseExact(parts[16], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if (parts.Length > 17) _viewModel.TipoOperacion = parts[17];
+            if (parts.Length > 18) _viewModel.Prefijo = parts[18];
+            if (parts.Length > 19) _viewModel.RangoInicial = parts[19];
+            if (parts.Length > 20) _viewModel.RangoFinal = parts[20];
+            if (parts.Length > 21) _viewModel.Ambiente = parts[21];
+            if (parts.Length > 22) _viewModel.TipoFactura = parts[22];
+            if (parts.Length > 23) _viewModel.InfoAdicional = parts[23];
+            if (parts.Length > 24) _viewModel.Divisa = parts[24];
+            if (parts.Length > 25) _viewModel.Tipo_Organizacion = parts[25];
+            if (parts.Length > 26) _viewModel.NombreEmisor = parts[26];
+            if (parts.Length > 27) _viewModel.Codigo_municipio_emisor = parts[27];
+            if (parts.Length > 28) _viewModel.Nombre_ciudad_emisor = parts[28];
+            if (parts.Length > 29) _viewModel.Codigo_Postal_emisor = parts[29];
+            if (parts.Length > 30) _viewModel.Nombre_Departamento_emisor = parts[30];
+
 
             DataContext = _viewModel;
 
@@ -270,6 +288,41 @@ namespace GeneradorCufe
 
         }
         private void TextBox_TextChanged_5(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_6()
+        {
+
+        }
+
+        private void TextBox_TextChanged_7(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_8(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_9(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_10(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_11(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_12(object sender, TextChangedEventArgs e)
         {
 
         }

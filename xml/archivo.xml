@@ -4,15 +4,22 @@
       <ext:ExtensionContent>
         <sts:DianExtensions>
           <sts:InvoiceControl>
-            <sts:InvoiceAuthorization>1</sts:InvoiceAuthorization>
+            <sts:InvoiceAuthorization>18760000001</sts:InvoiceAuthorization>
+            <!--Numero del codigo de la resolucion otorgada para la numeracion -->
             <sts:AuthorizationPeriod>
-              <cbc:StartDate>0001-01-17</cbc:StartDate>
-              <cbc:EndDate>0001-01-17</cbc:EndDate>
+              <!-- Grupo de información relativas a la fecha de autorización de la numeración -->
+              <cbc:StartDate>2024-02-13</cbc:StartDate>
+              <!-- Fecha de inicio de la autorización de la numeración -->
+              <cbc:EndDate>2024-02-13</cbc:EndDate>
+              <!-- Fecha final de la autorización de la numeración -->
             </sts:AuthorizationPeriod>
             <sts:AuthorizedInvoices>
               <sts:Prefix>SETT</sts:Prefix>
+              <!-- Prefijo de la autorización de numeración de facturación-->
               <sts:From>1</sts:From>
+              <!-- Valor inicial del rango de numeración otorgado-->
               <sts:To>5000000</sts:To>
+              <!-- Valor final del rango de numeración otorgado-->
             </sts:AuthorizedInvoices>
           </sts:InvoiceControl>
         </sts:DianExtensions>
@@ -20,19 +27,19 @@
     </ext:UBLExtension>
   </ext:UBLExtensions>
   <cbc:CustomizationID>10</cbc:CustomizationID>
-  <!--Indicador del tipo de operación [1..1] tabla 6.1.5-->
+  <!--Indicador del tipo de operación [1..1] tabla 6.1.5.1 10 Estandar *-->
   <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
   <!-- Tipo de ambiente [1..1] Tabla 6.5.1.2 -->
-  <cbc:ID>1</cbc:ID>
+  <cbc:ID>18760000001</cbc:ID>
   <!--Número de factura o factura cambiaria. Incluye prefijo + consecutivo de factura autorizados por la DIAN  [1..1] -->
-  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">61f2e74a37c46bd36a50c77576bee1a32f148eddb69d542b80cdbe8359fd3591d226c7094f16a3e4ccdc715515e25aec</cbc:UUID>
+  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">bf70b23b6a622d835e308386bedb935eeca2dff4fee8053d77cec45ca5891f4277a4b9e1cbfd578facdaa8043622de14</cbc:UUID>
   <!-- Definido en el numeral 10.1 Rechazo: Si el valor UUID no está correctamente calculad [1..1] Tabla 6.5.1.2 -->
-  <cbc:IssueDate>2024-02-18</cbc:IssueDate>
+  <cbc:IssueDate>2024-03-11</cbc:IssueDate>
   <!-- Fecha de generación de la factura [1..1] formato aaaa-mm-dd-->
-  <cbc:IssueTime>16:30:08-05:00</cbc:IssueTime>
+  <cbc:IssueTime>09:05:46-05:00</cbc:IssueTime>
   <!--Hora de emisión [1..1] -->
   <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
-  <!--Tipo de Factura [1..1] Tabla 6.1.3 -->
+  <!--Tipo de Factura [1..1] Tabla 6.1.3 Factura electrónica de Venta-->
   <cbc:Note>Prueba Factura Electronica Datos de victor</cbc:Note>
   <!--Información adicional: Texto libre, relativo al documento [0..N] -->
   <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
@@ -42,19 +49,28 @@
   <cac:AccountingSupplierParty>
     <!--Grupo con información que definen el obligado a facturar: Emisor de la factura [1..1]-->
     <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+    <!-- Identificador de tipo de organización jurídica de la de persona -->
     <cac:Party>
+      <!--Grupo con información generales sobre el obligado a Facturar -->
       <cac:PartyName>
         <cbc:Name>RM SOFT CASA DE SOFTWARE S.A.S</cbc:Name>
+        <!-- Nombre comercial del emisor-->
       </cac:PartyName>
       <cac:PhysicalLocation>
+        <!--Grupo con información con respeto a la localización física del emisor-->
         <cac:Address>
           <cbc:ID>05380</cbc:ID>
+          <!-- Código del municipio -->
           <cbc:CityName>LA ESTRELLA</cbc:CityName>
+          <!--Nombre de la ciudad -->
           <cbc:PostalZone>055460</cbc:PostalZone>
           <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
+          <!-- Nombre del departamento-->
           <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
+          <!-- Codigo del departamento-->
           <cac:AddressLine>
             <cbc:Line>Cra. 50 #97a Sur-180 a 97a Sur-394</cbc:Line>
+            <!--informar la dirección, sin ciudad ni departamento -->
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
@@ -63,11 +79,14 @@
         </cac:Address>
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
+        <!-- Grupo de información tributarias del emiso-->
         <cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
+        <!--Nombre o Razón Social del emisor-->
         <cbc:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyTaxSchemeCompanyID}</cbc:CompanyID>
         <cbc:TaxLevelCode>{TaxLevelCode}</cbc:TaxLevelCode>
-        <!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] -->
+        <!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] Obligaciones o responasbilidades del contribuyente; incluye el régimen al que pertenece el emisor -->
         <cac:RegistrationAddress>
+          <!-- Grupo de información para informar dirección fiscal 0..1 -->
           <cbc:ID>{PartyTaxSchemeID}</cbc:ID>
           <cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName>
           <cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone>
@@ -82,45 +101,64 @@
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
+          <!--  Grupo de detalles tributarios del emisor -->
           <cbc:ID>{TaxSchemeID}</cbc:ID>
+          <!-- Identificador del tributo 6.2.2 (IVA)-->
           <cbc:Name>{TaxSchemeName}</cbc:Name>
+          <!-- Nombre del tributo-->
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
+        <!--  Grupo de información legales del emisor-->
         <cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
+        <!-- Nombre o Razón Social del emisor-->
         <cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyLegalEntityCompanyID}</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
+          <!-- Grupo de información de registro del emisor-->
           <cbc:ID>{CorporateRegistrationSchemeID}</cbc:ID>
+          <!--Prefijo de la facturación usada para el punto de venta (Debe ser igual al campo sts:prefix informado en el encabezado de la factura. )-->
           <cbc:Name>{CorporateRegistrationSchemeName}</cbc:Name>
+          <!--Número de matrícula mercantil (identificador de sucursal: punto de facturación) -->
         </cac:CorporateRegistrationScheme>
       </cac:PartyLegalEntity>
       <cac:Contact>
+        <!-- Grupo de detalles con información de contacto del emsior (nombre,telefono,email)-->
         <cbc:ElectronicMail>{ContactElectronicMail}</cbc:ElectronicMail>
       </cac:Contact>
     </cac:Party>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
-    <!--Grupo con información que definen el Adquiriente [1..1]-->
+    <!--Grupo con información que definen el Adquiriente [1..1] 6.2.3-->
     <cbc:AdditionalAccountID>{AdditionalAccountID}</cbc:AdditionalAccountID>
-    <!-- Grupo con información que definen el Adquiriente [1..1]-->
+    <!-- Identificador de tipo de persona [1..1]-->
 		   <cac:PartyIdentification><!-- Grupo para informar el documento del adquirente [0..1]-->
-            	<cbc:ID schemeName="{PartyIdentificationschemeName}">{PartyIdentificationID}</cbc:ID><!--Identificación del adquirente, @schemeName Ver lista de valores posibles en la columna “Código” del numeral 6.2.1. [1..1] -->
-    		</cac:PartyIdentification><cac:Party><cac:PartyName><cbc:Name>{AccountingCustomerPartyName}</cbc:Name></cac:PartyName><cac:PhysicalLocation><cac:Address><cbc:ID>{AccountingCustomerPartyID}</cbc:ID><cbc:CityName>{AccountingCustomerPartyCityName}</cbc:CityName><cbc:PostalZone>{AccountingCustomerPartyPostalZone}</cbc:PostalZone><cbc:CountrySubentity>{AccountingCustomerPartyCountrySubentity}</cbc:CountrySubentity><cbc:CountrySubentityCode>{AccountingCustomerPartyCountrySubentityCode}</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>{AccountingCustomerPartyLine}</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:Address></cac:PhysicalLocation><cac:PartyTaxScheme><cbc:RegistrationName>{PartyTaxScheme}</cbc:RegistrationName><cbc:CompanyID schemeID="PartyTaxSchemeDV" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyTaxSchemeCompanyID}</cbc:CompanyID><cbc:TaxLevelCode>{PartyTaxSchemeTaxLevelCode}</cbc:TaxLevelCode><!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] --><cac:RegistrationAddress><cbc:ID>{PartyTaxSchemeID}</cbc:ID><cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName><cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone><cbc:CountrySubentity>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentity><cbc:CountrySubentityCode>{PartyTaxSchemeCountrySubentityCode}</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>{PartyTaxSchemeLine}</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:RegistrationAddress><cac:TaxScheme><cbc:ID>{TaxSchemeID}</cbc:ID><cbc:Name>{TaxSchemeName}</cbc:Name></cac:TaxScheme></cac:PartyTaxScheme><cac:PartyLegalEntity><cbc:RegistrationName>{PartyLegalEntityRegistrationName}</cbc:RegistrationName><cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyLegalEntityCompanyID}</cbc:CompanyID><cac:CorporateRegistrationScheme><cbc:Name>{PartyLegalEntityName}</cbc:Name></cac:CorporateRegistrationScheme></cac:PartyLegalEntity><cac:Contact><cbc:ElectronicMail>{PartyLegalEntityElectronicMail}</cbc:ElectronicMail></cac:Contact></cac:Party></cac:AccountingCustomerParty>
+            	<cbc:ID schemeName="{PartyIdentificationschemeName}">{PartyIdentificationID}</cbc:ID><!--Identificación del adquirente, @schemeName Ver lista de valores posibles en la columna “Código” del numeral 6.2.1. [1..1] Nota: Para identificar al consumidor final, se utiliza el siguiente documento “222222222222” -->
+    		</cac:PartyIdentification><cac:Party><cac:PartyName><cbc:Name>{AccountingCustomerPartyName}</cbc:Name><!--Nombre comercial del adquirente --></cac:PartyName><cac:PhysicalLocation><cac:Address><cbc:ID>{AccountingCustomerPartyID}</cbc:ID><!--Código del municipio --><cbc:CityName>{AccountingCustomerPartyCityName}</cbc:CityName><!--Nombre de la ciudad --><cbc:PostalZone>{AccountingCustomerPartyPostalZone}</cbc:PostalZone><!-- Codigo postal--><cbc:CountrySubentity>{AccountingCustomerPartyCountrySubentity}</cbc:CountrySubentity><!-- Nombre del departamento--><cbc:CountrySubentityCode>{AccountingCustomerPartyCountrySubentityCode}</cbc:CountrySubentityCode><!-- Codigo del departamento --><cac:AddressLine><cbc:Line>{AccountingCustomerPartyLine}</cbc:Line><!--Direccion--></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:Address></cac:PhysicalLocation><cac:PartyTaxScheme><cbc:RegistrationName>{PartyTaxScheme}</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente --><cbc:CompanyID schemeID="PartyTaxSchemeDV" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyTaxSchemeCompanyID}</cbc:CompanyID><cbc:TaxLevelCode>{PartyTaxSchemeTaxLevelCode}</cbc:TaxLevelCode><!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] --><cac:RegistrationAddress><cbc:ID>{PartyTaxSchemeID}</cbc:ID><cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName><cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone><cbc:CountrySubentity>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentity><cbc:CountrySubentityCode>{PartyTaxSchemeCountrySubentityCode}</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>{PartyTaxSchemeLine}</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:RegistrationAddress><cac:TaxScheme><!-- Grupo de detalles tributarios del adquirente--><cbc:ID>{TaxSchemeID}</cbc:ID><!-- Identificador del tributo del adquirente--><cbc:Name>{TaxSchemeName}</cbc:Name><!--Nombre del tributo--></cac:TaxScheme></cac:PartyTaxScheme><cac:PartyLegalEntity><cbc:RegistrationName>{PartyLegalEntityRegistrationName}</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente--><cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyLegalEntityCompanyID}</cbc:CompanyID><cac:CorporateRegistrationScheme><!-- Grupo de información de registro del adquirente--><cbc:Name>{PartyLegalEntityName}</cbc:Name><!-- Número de matrícula mercantil --></cac:CorporateRegistrationScheme></cac:PartyLegalEntity><cac:Contact><cbc:ElectronicMail>{PartyLegalEntityElectronicMail}</cbc:ElectronicMail><!-- Correo electrónico de contacto --></cac:Contact></cac:Party></cac:AccountingCustomerParty>
   <cac:PaymentMeans>
     <!--Grupo de campos para información relacionadas con el pago de la factura. [1..N] -->
     <cbc:ID>{PaymentMeansID}</cbc:ID>
+    <!-- Método de pago-->
     <cbc:PaymentMeansCode>{PaymentMeansPaymentMeansCode}</cbc:PaymentMeansCode>
+    <!--Código correspondiente al medio de pago-->
     <cbc:PaymentID>{PaymentMeansPaymentID}</cbc:PaymentID>
+    <!--Identificador del pago-->
   </cac:PaymentMeans>
   <cac:TaxTotal>
     <!--Grupo de campos para información totales relacionadas con un tributo [0..N]-->
     <cbc:TaxAmount currencyID="COP">{TaxTotalaxAmount}</cbc:TaxAmount>
+    <!--Valor del tributo -->
     <cac:TaxSubtotal>
+      <!-- Grupo de información que definen los valores del tributo -->
       <cbc:TaxableAmount currencyID="COP">{TaxTotalTaxableAmount}</cbc:TaxableAmount>
+      <!--  Base Imponible sobre la que se calcula el valor del tributo-->
       <cbc:TaxAmount currencyID="COP">{TaxTotalTaxAmount}</cbc:TaxAmount>
+      <!-- Valor del tributo: producto del porcentaje aplicado sobre la base imponible-->
       <cac:TaxCategory>
+        <!-- Grupo de información sobre el tributo -->
         <cbc:Percent>{TaxTotalPercent}</cbc:Percent>
+        <!-- Tarifa del tributo-->
         <cac:TaxScheme>
+          <!-- Grupo de información específicas sobre el tributo-->
           <cbc:ID>01</cbc:ID>
           <cbc:Name>IVA</cbc:Name>
         </cac:TaxScheme>
@@ -130,38 +168,62 @@
   <cac:LegalMonetaryTotal>
     <!--Grupo de campos para información relacionadas con los valores totales aplicables a la factura [1..1]-->
     <cbc:LineExtensionAmount currencyID="COP">{LegalMonetaryTotalLineExtensionAmount}</cbc:LineExtensionAmount>
+    <!-- Total Valor Bruto antes de tributos: Total valor bruto, suma de los valores brutos de las líneas de la factura.-->
     <cbc:TaxExclusiveAmount currencyID="COP">{LegalMonetaryTotalTaxExclusiveAmount}</cbc:TaxExclusiveAmount>
+    <!--Total Valor Base Imponible : Base imponible para el cálculo de los tributos  -->
     <cbc:TaxInclusiveAmount currencyID="COP">{LegalMonetaryTotalTaxInclusiveAmount}</cbc:TaxInclusiveAmount>
+    <!-- Total de Valor Bruto más tributos-->
     <cbc:PayableAmount currencyID="COP">{LegalMonetaryTotalPayableAmount}</cbc:PayableAmount>
+    <!--Valor a Pagar de Factura: Valor total de ítems (incluyendo cargos y descuentos a nivel de ítems)+valor tributos + valor cargos – valor descuentos – valor anticipos-->
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
     <!--Grupo de campos para información relacionadas con una línea de factura [1..N] -->
     <cbc:ID>{InvoiceLineID}</cbc:ID>
+    <!-- Número de Línea-->
     <cbc:InvoicedQuantity>{InvoiceLineInvoicedQuantity}</cbc:InvoicedQuantity>
+    <!-- Cantidad del producto o servicio-->
     <cbc:LineExtensionAmount currencyID="COP">{InvoiceLineLineExtensionAmount}</cbc:LineExtensionAmount>
+    <!-- Valor total de la línea. Cantidad x Precio Unidad menos descuentos más recargos que apliquen para la línea-->
     <cac:TaxTotal>
+      <!-- Grupo de campos para información relacionadas con un tributo aplicable a esta línea de la factura-->
       <cbc:TaxAmount currencyID="COP">{InvoiceLineTaxAmount}</cbc:TaxAmount>
+      <!-- Valor del tributo -->
       <cac:TaxSubtotal>
+        <!-- Grupo de información que definen los valores del tributo-->
         <cbc:TaxableAmount currencyID="COP">{InvoiceLineTaxableAmount}</cbc:TaxableAmount>
+        <!-- Base Imponible sobre la que se calcula el valor del tributo-->
         <cbc:TaxAmount currencyID="COP">{InvoiceLineTaxAmount}</cbc:TaxAmount>
+        <!-- Valor del tributo: producto del porcentaje aplicado sobre la base imponible-->
         <cac:TaxCategory>
+          <!--Grupo de información sobre el tributo-->
           <cbc:Percent>{InvoiceLinePercent}</cbc:Percent>
+          <!-- Tarifa del tributo-->
           <cac:TaxScheme>
+            <!-- Grupo de información específicas sobre el tributo -->
             <cbc:ID>{TaxSchemeID}</cbc:ID>
+            <!-- Identificador del tributo-->
             <cbc:Name>TaxSchemeName</cbc:Name>
+            <!-- Nombre del tributo -->
           </cac:TaxScheme>
         </cac:TaxCategory>
       </cac:TaxSubtotal>
     </cac:TaxTotal>
     <cac:Item>
+      <!-- Grupo de información que describen las características del artículo o servicio -->
       <cbc:Description>{ItemDescription}</cbc:Description>
+      <!-- Descripción: Descripción del artículo o servicio a que se refiere esta línea de la factura-->
       <cac:StandardItemIdentification>
+        <!-- Grupo de datos de identificación del artículo o servicio de acuerdo con un estándar-->
         <cbc:ID schemeID="999">{ItemID}</cbc:ID>
+        <!-- Código del estándar -->
       </cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
+      <!-- Grupo de información que describen los precios del artículo o servicio-->
       <cbc:PriceAmount currencyID="{PriceCurrencyID}">{PricePriceAmount}</cbc:PriceAmount>
+      <!--  Valor del artículo o servicio -->
       <cbc:BaseQuantity unitCode="{PriceBaseUnitCode}">{PriceBaseQuantity}</cbc:BaseQuantity>
+      <!--La cantidad real sobre la cual el precio aplica -->
     </cac:Price>
   </cac:InvoiceLine>
   <DATA>
