@@ -24,31 +24,31 @@
         <Label Content="Generador de la Factura" HorizontalAlignment="Left" Height="26" Margin="430,8,0,0" VerticalAlignment="Top" Width="146" />
 
         <Label Content="Número autorización" HorizontalAlignment="Left" Margin="3,47,0,0" VerticalAlignment="Top" Width="103" Height="23" FontSize="10"/>
-        <TextBox x:Name="txtautorizacion" HorizontalAlignment="Left" Height="16" Margin="137,48,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
+        <TextBox x:Name="txtautorizacion" Text="{Binding Autorizacion, Mode=TwoWay}" HorizontalAlignment="Left" Height="16" Margin="137,48,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
 
         <Label Content="Fecha de inicio de la autorización" HorizontalAlignment="Left" Margin="1,67,0,0" VerticalAlignment="Top" Width="131" Height="23" FontSize="8"/>
-        <DatePicker x:Name="PikerFecha_inicio" SelectedDate="{Binding Fe, Mode=TwoWay}" HorizontalAlignment="Left" Height="22" Margin="136,67,0,0" VerticalAlignment="Top" Width="122"/>
+        <DatePicker x:Name="PikerFecha_inicio" SelectedDate="{Binding FechaInicio, Mode=TwoWay}" HorizontalAlignment="Left" Height="22" Margin="136,67,0,0" VerticalAlignment="Top" Width="122"/>
 
         <Label Content="Fecha final de la autorización" HorizontalAlignment="Left" Margin="1,86,0,0" VerticalAlignment="Top" Width="131" Height="23" FontSize="8"/>
-        <DatePicker x:Name="PikerFecha_final" SelectedDate="{Binding Fu, Mode=TwoWay}" HorizontalAlignment="Left" Height="22" Margin="137,93,0,0" VerticalAlignment="Top" Width="122"/>
+        <DatePicker x:Name="PikerFecha_final" SelectedDate="{Binding FechaFin, Mode=TwoWay}" HorizontalAlignment="Left" Height="22" Margin="137,93,0,0" VerticalAlignment="Top" Width="122"/>
 
         <Label Content="Tipo de Operación" HorizontalAlignment="Left" Margin="4,121,0,0" VerticalAlignment="Top" Width="96" Height="23" FontSize="10"/>
-        <TextBox x:Name="Tipo_operacion" HorizontalAlignment="Left" Height="16" Margin="138,124,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
+        <TextBox x:Name="Tipo_operacion" Text="{Binding TipoOperacion, Mode=TwoWay}" HorizontalAlignment="Left" Height="16" Margin="138,124,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
 
         <Label Content="Prefijo" HorizontalAlignment="Left" Height="22" Margin="285,43,0,0" VerticalAlignment="Top" Width="39" FontSize="10"/>
-        <TextBox x:Name="prefijo" HorizontalAlignment="Left" Height="16" Margin="347,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
+        <TextBox x:Name="prefijo" Text="{Binding Prefijo, Mode=TwoWay}" HorizontalAlignment="Left" Height="16" Margin="347,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
 
         <Label Content="Valor inicial" HorizontalAlignment="Left" Height="22" Margin="285,63,0,0" VerticalAlignment="Top" Width="64" FontSize="10"/>
-        <TextBox x:Name="inicial"  HorizontalAlignment="Left" Height="16" Margin="346,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
+        <TextBox x:Name="inicial" Text="{Binding RangoInicial, Mode=TwoWay}" HorizontalAlignment="Left" Height="16" Margin="346,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
 
         <Label Content="Valor final" HorizontalAlignment="Left" Height="22" Margin="288,88,0,0" VerticalAlignment="Top" Width="56" FontSize="10"/>
-        <TextBox x:Name="final" HorizontalAlignment="Left" Height="16" Margin="347,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
+        <TextBox x:Name="final" Text="{Binding RangoFinal, Mode=TwoWay}" HorizontalAlignment="Left" Height="16" Margin="347,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
 
         <Label Content="Numero de la factura" HorizontalAlignment="Left" Height="24" Margin="7,150,0,0" VerticalAlignment="Top" Width="125"/>
         <TextBox x:Name="TxtFactura" Text="{Binding NumeroFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="19" Margin="129,158,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="146" TextChanged="TextBox_TextChanged_1"/>
 
         <Label Content="Ambiente" HorizontalAlignment="Left" Margin="278,117,0,0" VerticalAlignment="Top" Width="57" Height="27" FontSize="10"/>
-        <TextBox x:Name="ambiente" HorizontalAlignment="Left" Height="16" Margin="348,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
+        <TextBox x:Name="ambiente" Text="{Binding Ambiente, Mode=TwoWay}" HorizontalAlignment="Left" Height="16" Margin="348,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" TextChanged="TextBox_TextChanged_8" FontSize="10"  />
 
         <Label Content="Hora de generación" HorizontalAlignment="Left" Height="25" Margin="326,148,0,0" VerticalAlignment="Top" Width="118"/>
         <TextBox x:Name="TextHora" Text="{Binding HoraGeneracion, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="322,180,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="122" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextChanged="MiTextBoxHora_TextChanged"/>
@@ -57,64 +57,64 @@
         <DatePicker x:Name="PikerFecha" SelectedDate="{Binding FechaFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="9,213,0,0" VerticalAlignment="Top" Width="172"/>
 
         <Label Content="Tipo de factura" HorizontalAlignment="Left" Height="27" Margin="243,209,0,0" VerticalAlignment="Top" Width="92"/>
-        <ComboBox x:Name="Tipo_factura"  HorizontalAlignment="Left" Height="21" Margin="340,213,0,0" VerticalAlignment="Top" Width="108"/>
+        <ComboBox x:Name="Tipo_factura" Text="{Binding TipoFactura, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="340,213,0,0" VerticalAlignment="Top" Width="108"/>
 
         <Label Content="Información adicional" HorizontalAlignment="Left" Height="32" Margin="13,255,0,0" VerticalAlignment="Top" Width="132"/>
-        <TextBox x:Name="Info_adicional"  HorizontalAlignment="Left" Height="26" Margin="155,252,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280"/>
+        <TextBox x:Name="Info_adicional" Text="{Binding InfoAdicional, Mode=TwoWay}" HorizontalAlignment="Left" Height="26" Margin="155,252,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280"/>
 
         <Label Content="Divisa de la Factura" HorizontalAlignment="Left" Height="26" Margin="13,291,0,0" VerticalAlignment="Top" Width="121"/>
-        <ComboBox x:Name="Divisa"  HorizontalAlignment="Left" Height="21" Margin="151,290,0,0" VerticalAlignment="Top" Width="108"/>
+        <ComboBox x:Name="Divisa" Text="{Binding Divisa, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="151,290,0,0" VerticalAlignment="Top" Width="108"/>
 
         <Label Content="Identificador de tipo de organización" HorizontalAlignment="Left" Height="29" Margin="4,316,0,0" VerticalAlignment="Top" Width="207"/>
-        <ComboBox x:Name="tipo_organizacion" HorizontalAlignment="Left" Height="21" Margin="229,317,0,0" VerticalAlignment="Top" Width="108"/>
+        <ComboBox x:Name="tipo_organizacion" Text="{Binding Tipo_Organizacion, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="229,317,0,0" VerticalAlignment="Top" Width="108"/>
 
         <Label Content="Nombre comercial del emisor" HorizontalAlignment="Left" Height="30" Margin="12,342,0,0" VerticalAlignment="Top" Width="169"/>
-        <TextBox x:Name="Nombre_emisor" HorizontalAlignment="Left" Height="18" Margin="200,347,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
+        <TextBox x:Name="Nombre_emisor" Text="{Binding NombreEmisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="200,347,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
 
         <Label Content="Código del municipio" HorizontalAlignment="Left" Height="26" Margin="1,367,0,0" VerticalAlignment="Top" Width="130"/>
-        <TextBox x:Name="Codigo_municipio_emisor" HorizontalAlignment="Left" Height="18" Margin="130,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
+        <TextBox x:Name="Codigo_municipio_emisor" Text="{Binding Codigo_municipio_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="130,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
 
         <Label Content="Nombre de la ciudad" HorizontalAlignment="Left" Height="24" Margin="270,369,0,0" VerticalAlignment="Top" Width="125"/>
-        <TextBox x:Name="Nombre_ciudad_emisor"  HorizontalAlignment="Left" Margin="395,372,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
+        <TextBox x:Name="Nombre_ciudad_emisor" Text="{Binding Nombre_ciudad_emisor , Mode=TwoWay}" HorizontalAlignment="Left" Margin="395,372,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
 
         <Label Content="Codigo Postal" HorizontalAlignment="Left" Height="28" Margin="4,391,0,0" VerticalAlignment="Top" Width="85"/>
-        <TextBox x:Name="codigo_postal_emisor" HorizontalAlignment="Left" Height="19" Margin="97,395,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="113"/>
+        <TextBox x:Name="codigo_postal_emisor" Text="{Binding Codigo_Postal_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="19" Margin="97,395,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="113"/>
 
         <Label Content="Nombre del Departamento " HorizontalAlignment="Left" Height="28" Margin="239,397,0,0" VerticalAlignment="Top" Width="153"/>
-        <TextBox x:Name="nombre_departamento_emisor" HorizontalAlignment="Left" Margin="395,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
+        <TextBox x:Name="nombre_departamento_emisor" Text="{Binding Codigo_Postal_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Margin="395,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
 
         <Label Content="Código del Departamento" HorizontalAlignment="Left" Height="26" Margin="2,420,0,0" VerticalAlignment="Top" Width="148"/>
-        <TextBox x:Name="codigo_departamento_emisor" HorizontalAlignment="Left" Height="18" Margin="158,423,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
+        <TextBox x:Name="codigo_departamento_emisor" Text="{Binding Codigo_departamento_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="158,423,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
 
         <Label Content="información de la dirección" HorizontalAlignment="Left" Height="25" Margin="6,444,0,0" VerticalAlignment="Top" Width="154"/>
-        <TextBox x:Name="direccion_emisor" HorizontalAlignment="Left" Height="18" Margin="164,447,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
+        <TextBox x:Name="direccion_emisor" Text="{Binding Direccion_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="164,447,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
 
         <Label Content="Nombre o Razón Social del emisor" HorizontalAlignment="Left" Height="24" Margin="4,469,0,0" VerticalAlignment="Top" Width="195"/>
-        <TextBox x:Name="razonsocial_emisor" HorizontalAlignment="Left" Height="18" Margin="198,473,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
+        <TextBox x:Name="razonsocial_emisor" Text="{Binding Razon_social_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="198,473,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
 
         <Label Content="DV" HorizontalAlignment="Left" Height="23" Margin="7,492,0,0" VerticalAlignment="Top" Width="40"/>
-        <TextBox x:Name="dv_emisor" HorizontalAlignment="Left" Height="17" Margin="47,496,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
+        <TextBox x:Name="dv_emisor" Text="{Binding Dv_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="17" Margin="47,496,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
         
         <Label Content="NIT" HorizontalAlignment="Left" Height="23" Margin="138,494,0,0" VerticalAlignment="Top" Width="34"/>
         <TextBox x:Name="NITFacturador" Text="{Binding NITFacturadorElectronico, Mode=TwoWay}" HorizontalAlignment="Left" Height="20" Margin="175,497,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
 
         <Label Content="Régimen Fiscal" HorizontalAlignment="Left" Height="25" Margin="10,522,0,0" VerticalAlignment="Top" Width="90"/>
-        <TextBox x:Name="regimen_emisor" HorizontalAlignment="Left" Height="22" Margin="120,525,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="142"/>
+        <TextBox x:Name="regimen_emisor" Text="{Binding Regimen_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="22" Margin="120,525,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="142"/>
 
         <Label Content="Identificador del tributo" HorizontalAlignment="Left" Height="27" Margin="5,559,0,0" VerticalAlignment="Top" Width="141"/>
-        <TextBox x:Name="atributo_emisor" HorizontalAlignment="Left" Height="21" Margin="149,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
+        <TextBox x:Name="atributo_emisor" Text="{Binding Atributo_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="149,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
 
         <Label Content="Nombre del tributo" HorizontalAlignment="Left" Height="27" Margin="275,559,0,0" VerticalAlignment="Top" Width="141"/>
-        <TextBox x:Name="nombre_atributo" HorizontalAlignment="Left" Height="21" Margin="392,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
+        <TextBox x:Name="nombre_atributo" Text="{Binding Nombre_atributo_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="392,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
 
         <Label Content="Prefijo de la facturación" HorizontalAlignment="Left" Height="26" Margin="7,600,0,0" VerticalAlignment="Top" Width="137"/>
-        <TextBox x:Name="prefijo_facturacion" HorizontalAlignment="Left" Height="22" Margin="152,601,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" TextChanged="TextBox_TextChanged_11"/>
+        <TextBox x:Name="prefijo_facturacion" Text="{Binding Prefijo_facturacion, Mode=TwoWay}" HorizontalAlignment="Left" Height="22" Margin="152,601,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" TextChanged="TextBox_TextChanged_11"/>
 
         <Label Content="Número de matrícula mercantil" HorizontalAlignment="Left" Height="26" Margin="9,632,0,0" VerticalAlignment="Top" Width="173"/>
-        <TextBox x:Name="matricula_mercantil" HorizontalAlignment="Left" Height="22" Margin="191,634,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" TextChanged="TextBox_TextChanged_11"/>
+        <TextBox x:Name="matricula_mercantil" Text="{Binding Matricula_mercantil, Mode=TwoWay}" HorizontalAlignment="Left" Height="22" Margin="191,634,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" TextChanged="TextBox_TextChanged_11"/>
 
         <Label Content="Contacto del emsior" HorizontalAlignment="Left" Height="23" Margin="9,665,0,0" VerticalAlignment="Top" Width="123"/>
-        <TextBox x:Name="correo_emisor" HorizontalAlignment="Left" Height="19" Margin="130,668,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184"/>
+        <TextBox x:Name="correo_emisor" Text="{Binding Correo_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="19" Margin="130,668,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184"/>
 
         <Label Content="SetTestID" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,696,0,0" />
         <TextBox x:Name="TxtSetTestId" Text="{Binding SetTestId, Mode=TwoWay}"  HorizontalAlignment="Left" Height="61" Margin="15,720,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="328" />
@@ -125,55 +125,55 @@
         <Label Content="Grupo con información que definen el Adquiriente" HorizontalAlignment="Left" Height="28" Margin="692,8,0,0" VerticalAlignment="Top" Width="278"/>
        
         <Label Content="Identificador de tipo de persona" HorizontalAlignment="Left" Height="28" Margin="564,39,0,0" VerticalAlignment="Top" Width="185"/>
-        <ComboBox x:Name="tipo_persona" HorizontalAlignment="Left" Height="21" Margin="755,44,0,0" VerticalAlignment="Top" Width="108"/>
+        <ComboBox x:Name="tipo_persona" Text="{Binding Tipo_persona, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="755,44,0,0" VerticalAlignment="Top" Width="108"/>
 
         <Label Content="documento del adquirente" HorizontalAlignment="Left" Margin="556,69,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.374,0.543"/>
-        <ComboBox x:Name="documneto_adquiriente" HorizontalAlignment="Left" Height="21" Margin="715,72,0,0" VerticalAlignment="Top" Width="108"/>
+        <ComboBox x:Name="documneto_adquiriente" Text="{Binding Documento_cliente, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="715,72,0,0" VerticalAlignment="Top" Width="108"/>
         
         <Label Content="Numero" HorizontalAlignment="Left" Margin="840,71,0,0" VerticalAlignment="Top" Width="80"/>
-        <TextBox x:Name="numero_adquiriente" HorizontalAlignment="Left" Height="23" Margin="911,73,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" TextChanged="TextBox_TextChanged_12"/>
+        <TextBox x:Name="numero_adquiriente" Text="{Binding Documento_Adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="911,73,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" TextChanged="TextBox_TextChanged_12"/>
 
         <Label Content="Nombre comercial del adquirente" HorizontalAlignment="Left" Margin="551,105,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.588,-0.573"/>
-        <TextBox x:Name="nombre_comercial_adquiriente" HorizontalAlignment="Left" Height="20" Margin="756,105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="213"/>
+        <TextBox x:Name="nombre_comercial_adquiriente" Text="{Binding Nombre_cliente, Mode=TwoWay}" HorizontalAlignment="Left" Height="20" Margin="756,105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="213"/>
         
         <Label Content="Código del municipio" HorizontalAlignment="Left" Height="26" Margin="532,145,0,0" VerticalAlignment="Top" Width="130"/>
-        <TextBox x:Name="codigo_municipio_adquiriente" HorizontalAlignment="Left" Height="18" Margin="661,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
+        <TextBox x:Name="codigo_municipio_adquiriente" Text="{Binding Codigo_municipio_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="661,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
         
         <Label Content="Nombre de la ciudad" HorizontalAlignment="Left" Height="24" Margin="801,147,0,0" VerticalAlignment="Top" Width="125"/>
-        <TextBox x:Name="nombre_ciudad_adquiriente" HorizontalAlignment="Left" Margin="926,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
+        <TextBox x:Name="nombre_ciudad_adquiriente" Text="{Binding Nombre_ciudad_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Margin="926,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
 
         <Label Content="Codigo Postal" HorizontalAlignment="Left" Height="28" Margin="535,169,0,0" VerticalAlignment="Top" Width="85"/>
-        <TextBox x:Name="Codigo_postal_adquiriente" HorizontalAlignment="Left" Height="19" Margin="628,173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="113"/>
+        <TextBox x:Name="Codigo_postal_adquiriente" Text="{Binding Codigo_Postal_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="19" Margin="628,173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="113"/>
         
         <Label Content="Nombre del Departamento " HorizontalAlignment="Left" Height="28" Margin="770,175,0,0" VerticalAlignment="Top" Width="153"/>
-        <TextBox x:Name="Nombre_departamento_adquiriente" HorizontalAlignment="Left" Margin="926,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
+        <TextBox x:Name="Nombre_departamento_adquiriente" Text="{Binding Nombre_Departamento_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Margin="926,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
 
         <Label Content="Código del Departamento" HorizontalAlignment="Left" Height="26" Margin="533,198,0,0" VerticalAlignment="Top" Width="148"/>
-        <TextBox x:Name="codigo_departamento_adquiriente" HorizontalAlignment="Left" Height="18" Margin="689,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
+        <TextBox x:Name="codigo_departamento_adquiriente" Text="{Binding Codigo_departamento_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="689,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
         
         <Label Content="información de la dirección" HorizontalAlignment="Left" Height="25" Margin="537,222,0,0" VerticalAlignment="Top" Width="154"/>
-        <TextBox x:Name="direccion_adquiriente" HorizontalAlignment="Left" Height="18" Margin="695,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
+        <TextBox x:Name="direccion_adquiriente" Text="{Binding Direccion_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="695,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
 
         <Label Content="Nombre o Razón Social del adquiriente" HorizontalAlignment="Left" Height="24" Margin="523,249,0,0" VerticalAlignment="Top" Width="220"/>
-        <TextBox x:Name="rason_social_adquiriente" HorizontalAlignment="Left" Height="18" Margin="762,254,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
+        <TextBox x:Name="rason_social_adquiriente" Text="{Binding Razon_social_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="762,254,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
         
         <Label Content="DV" HorizontalAlignment="Left" Height="23" Margin="542,275,0,0" VerticalAlignment="Top" Width="40"/>
-        <TextBox x:Name="dv_adquieriente" HorizontalAlignment="Left" Height="17" Margin="585,279,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
+        <TextBox x:Name="dv_adquieriente" Text="{Binding Dv_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="17" Margin="585,279,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
         
         <Label Content="NIT" HorizontalAlignment="Left" Height="23" Margin="701,276,0,0" VerticalAlignment="Top" Width="34"/>
         <TextBox x:Name="NumeroIdentificacion" Text="{Binding NumeroIdentificacionCliente, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="738,279,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
 
         <Label Content="Régimen Fiscal" HorizontalAlignment="Left" Height="25" Margin="578,311,0,0" VerticalAlignment="Top" Width="90"/>
-        <TextBox x:Name="regimen_adquiriente" HorizontalAlignment="Left" Height="22" Margin="688,314,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="142"/>
+        <TextBox x:Name="regimen_adquiriente" Text="{Binding Regimen_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="22" Margin="688,314,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="142"/>
         
         <Label Content="Identificador del tributo" HorizontalAlignment="Left" Height="27" Margin="539,354,0,0" VerticalAlignment="Top" Width="141"/>
-        <TextBox x:Name="iden_atributo" HorizontalAlignment="Left" Height="21" Margin="688,357,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
+        <TextBox x:Name="iden_atributo" Text="{Binding Atributo_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="688,357,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
         
         <Label Content="Nombre del tributo" HorizontalAlignment="Left" Height="27" Margin="812,354,0,0" VerticalAlignment="Top" Width="115"/>
-        <TextBox x:Name="nombre_atributo_adquiriente" HorizontalAlignment="Left" Height="21" Margin="935,357,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
+        <TextBox x:Name="nombre_atributo_adquiriente" Text="{Binding Nombre_atributo_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="935,357,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
 
         <Label Content="Contacto del emsior" HorizontalAlignment="Left" Height="23" Margin="569,392,0,0" VerticalAlignment="Top" Width="123"/>
-        <TextBox x:Name="correo_adquieriente" HorizontalAlignment="Left" Height="19" Margin="690,395,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184"/>
+        <TextBox x:Name="correo_adquieriente" Text="{Binding Correo_adquiriente, Mode=TwoWay}" HorizontalAlignment="Left" Height="19" Margin="690,395,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184"/>
 
         <Label Content="Valor IVA" HorizontalAlignment="Center" Height="25" VerticalAlignment="Center" Width="68"/>
         <TextBox x:Name="Iva" Text="{Binding ValorIVA, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="588,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="126"/>
@@ -191,10 +191,10 @@
         <TextBox x:Name="Total" Text="{Binding TotalPagar, Mode=TwoWay}" HorizontalAlignment="Left" Height="24" Margin="653,492,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="362"/>
 
         <Label Content="Metodo de pago" HorizontalAlignment="Left" Height="27" Margin="560,528,0,0" VerticalAlignment="Top" Width="106"/>
-        <ComboBox x:Name="metodo_pgo" HorizontalAlignment="Left" Height="21" Margin="665,532,0,0" VerticalAlignment="Top" Width="108"/>
+        <ComboBox x:Name="metodo_pago" Text="{Binding Metodo_pago, Mode=TwoWay}" HorizontalAlignment="Left" Height="21" Margin="665,532,0,0" VerticalAlignment="Top" Width="108"/>
         
         <Label Content="Codigo" HorizontalAlignment="Left" Height="27" Margin="802,528,0,0" VerticalAlignment="Top" Width="58"/>
-        <TextBox x:Name="codigo_metodo" HorizontalAlignment="Left" Height="20" Margin="867,529,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="132"/>
+        <TextBox x:Name="codigo_metodo" Text="{Binding Codigo_metodo, Mode=TwoWay}" HorizontalAlignment="Left" Height="20" Margin="867,529,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="132"/>
 
         <Label Content="Tipo de documento del Cliente" HorizontalAlignment="Left" Margin="520,612,0,0" VerticalAlignment="Top" Width="179" Height="27"/>
         <ListBox HorizontalAlignment="Left" Height="27" Margin="724,612,0,0" VerticalAlignment="Top" Width="151" Cursor="AppStarting" SelectionChanged="ListBox_SelectionChanged">

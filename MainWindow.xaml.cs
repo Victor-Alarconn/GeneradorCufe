@@ -63,6 +63,38 @@ namespace GeneradorCufe
             if (parts.Length > 29) _viewModel.Codigo_Postal_emisor = parts[29];
             if (parts.Length > 30) _viewModel.Nombre_Departamento_emisor = parts[30];
             if (parts.Length > 31) _viewModel.Codigo_departamento_emisor = parts[31];   
+            if (parts.Length > 32) _viewModel.Direccion_emisor = parts[32];
+            if (parts.Length > 33) _viewModel.Razon_social_emisor = parts[33];
+            if (parts.Length > 34) _viewModel.Dv_emisor = parts[34];
+            if (parts.Length > 35) _viewModel.Nit_identificacion_emisor = parts[35]; // creo que no es necesario
+            if (parts.Length > 36) _viewModel.Regimen_emisor = parts[36];
+            if (parts.Length > 37) _viewModel.Atributo_emisor = parts[37];
+            if (parts.Length > 38) _viewModel.Nombre_atributo_emisor = parts[38];
+            if (parts.Length > 39) _viewModel.Prefijo_facturacion = parts[39];
+            if (parts.Length > 40) _viewModel.Matricula_mercantil = parts[40];
+            if (parts.Length > 41) _viewModel.Correo_emisor = parts[41];
+            if (parts.Length > 42) _viewModel.Tipo_persona = parts[42];
+            if (parts.Length > 43) _viewModel.Documento_cliente = parts[43];
+            if (parts.Length > 44) _viewModel.Documento_Adquiriente = parts[44];
+            if (parts.Length > 45) _viewModel.Numero_documento = parts[45];
+            if (parts.Length > 46) _viewModel.Nombre_cliente = parts[46];
+            if (parts.Length > 47) _viewModel.Codigo_municipio_adquiriente = parts[47];
+            if (parts.Length > 48) _viewModel.Nombre_ciudad_adquiriente = parts[48];
+            if (parts.Length > 49) _viewModel.Codigo_Postal_adquiriente = parts[49];
+            if (parts.Length > 50) _viewModel.Nombre_Departamento_adquiriente = parts[50];
+            if (parts.Length > 51) _viewModel.Codigo_departamento_adquiriente = parts[51];
+            if (parts.Length > 52) _viewModel.Direccion_adquiriente = parts[52];
+            if (parts.Length > 53) _viewModel.Razon_social_adquiriente = parts[53];
+            if (parts.Length > 54) _viewModel.Dv_adquiriente = parts[54];
+            if (parts.Length > 55) _viewModel.Nit_identificacion_adquiriente = parts[55]; // creo que no es necesario
+            if (parts.Length > 56) _viewModel.Regimen_adquiriente = parts[56];
+            if (parts.Length > 57) _viewModel.Atributo_adquiriente = parts[57];
+            if (parts.Length > 58) _viewModel.Nombre_atributo_adquiriente = parts[58];
+            if (parts.Length > 59) _viewModel.Correo_adquiriente = parts[59];
+            if (parts.Length > 60) _viewModel.Metodo_pago = parts[60];
+            if (parts.Length > 61) _viewModel.Codigo_metodo = parts[61];
+            if (parts.Length > 62) _viewModel.Tipo_documento = parts[62]; // no sea a utilizado
+
 
 
 
@@ -76,6 +108,12 @@ namespace GeneradorCufe
         {
             // Añade _viewModel.CadenaCUFE y _viewModel.CUFE al final
             string dataToSave = $"{_viewModel.NumeroFactura},{_viewModel.FechaFactura.ToString("yyyy-MM-dd")},{_viewModel.ValorSubtotal},{_viewModel.HoraGeneracion},{_viewModel.ValorIVA},{_viewModel.ValorImpuesto2},{_viewModel.ValorImpuesto3},{_viewModel.TotalPagar},{_viewModel.NITFacturadorElectronico},{_viewModel.NumeroIdentificacionCliente},{_viewModel.ClaveTecnicaControl},{_viewModel.CadenaCUFE},{_viewModel.CUFE},{_viewModel.SetTestId}";
+
+            // Propiedades adicionales
+            dataToSave += $"{_viewModel.Autorizacion},{_viewModel.FechaInicio.ToString("yyyy-MM-dd")},{_viewModel.FechaInicio.ToString("yyyy-MM-dd")},{_viewModel.TipoOperacion},{_viewModel.Prefijo},{_viewModel.RangoInicial},{_viewModel.RangoFinal},{_viewModel.Ambiente},{_viewModel.TipoFactura},{_viewModel.InfoAdicional},{_viewModel.Divisa},{_viewModel.Tipo_Organizacion},{_viewModel.NombreEmisor},{_viewModel.Codigo_municipio_emisor},{_viewModel.Nombre_ciudad_emisor},{_viewModel.Codigo_Postal_emisor},{_viewModel.Nombre_Departamento_emisor},{_viewModel.Codigo_departamento_emisor},{_viewModel.Direccion_emisor},{_viewModel.Razon_social_emisor}";
+
+            dataToSave += $"{_viewModel.Dv_emisor},{_viewModel.Nit_identificacion_emisor},{_viewModel.Regimen_emisor},{_viewModel.Atributo_emisor},{_viewModel.Nombre_atributo_emisor},{_viewModel.Prefijo_facturacion},{_viewModel.Matricula_mercantil},{_viewModel.Correo_emisor},{_viewModel.Tipo_persona},{_viewModel.Documento_cliente},{_viewModel.Documento_Adquiriente},{_viewModel.Numero_documento},{_viewModel.Nombre_cliente},{_viewModel.Codigo_municipio_adquiriente},{_viewModel.Nombre_ciudad_adquiriente},{_viewModel.Codigo_Postal_adquiriente},{_viewModel.Nombre_Departamento_adquiriente},{_viewModel.Codigo_departamento_adquiriente},{_viewModel.Direccion_adquiriente},{_viewModel.Razon_social_adquiriente}";
+            dataToSave += $"{_viewModel.Dv_adquiriente},{_viewModel.Nit_identificacion_adquiriente},{_viewModel.Regimen_adquiriente},{_viewModel.Atributo_adquiriente},{_viewModel.Nombre_atributo_adquiriente},{_viewModel.Correo_adquiriente},{_viewModel.Metodo_pago},{_viewModel.Codigo_metodo},{_viewModel.Tipo_documento}";
 
             DataSerializer.SaveData(dataToSave);
         }

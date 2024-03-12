@@ -32,11 +32,11 @@
   <!-- Tipo de ambiente [1..1] Tabla 6.5.1.2 -->
   <cbc:ID>18760000001</cbc:ID>
   <!--Número de factura o factura cambiaria. Incluye prefijo + consecutivo de factura autorizados por la DIAN  [1..1] -->
-  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">bf70b23b6a622d835e308386bedb935eeca2dff4fee8053d77cec45ca5891f4277a4b9e1cbfd578facdaa8043622de14</cbc:UUID>
+  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">3fe78f1c75ea893cdc09419b4de67ae9790abcac24f177244556a77e1592ce3cebda446830f50ab7383e423ebecba391</cbc:UUID>
   <!-- Definido en el numeral 10.1 Rechazo: Si el valor UUID no está correctamente calculad [1..1] Tabla 6.5.1.2 -->
-  <cbc:IssueDate>2024-03-11</cbc:IssueDate>
+  <cbc:IssueDate>2024-03-12</cbc:IssueDate>
   <!-- Fecha de generación de la factura [1..1] formato aaaa-mm-dd-->
-  <cbc:IssueTime>09:05:46-05:00</cbc:IssueTime>
+  <cbc:IssueTime>14:07:45-05:00</cbc:IssueTime>
   <!--Hora de emisión [1..1] -->
   <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
   <!--Tipo de Factura [1..1] Tabla 6.1.3 Factura electrónica de Venta-->
