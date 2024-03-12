@@ -81,7 +81,7 @@
         <TextBox x:Name="codigo_postal_emisor" Text="{Binding Codigo_Postal_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="19" Margin="97,395,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="113"/>
 
         <Label Content="Nombre del Departamento " HorizontalAlignment="Left" Height="28" Margin="239,397,0,0" VerticalAlignment="Top" Width="153"/>
-        <TextBox x:Name="nombre_departamento_emisor" Text="{Binding Codigo_Postal_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Margin="395,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
+        <TextBox x:Name="nombre_departamento_emisor" Text="{Binding Nombre_Departamento_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Margin="395,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged_10"/>
 
         <Label Content="Código del Departamento" HorizontalAlignment="Left" Height="26" Margin="2,420,0,0" VerticalAlignment="Top" Width="148"/>
         <TextBox x:Name="codigo_departamento_emisor" Text="{Binding Codigo_departamento_emisor, Mode=TwoWay}" HorizontalAlignment="Left" Height="18" Margin="158,423,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>

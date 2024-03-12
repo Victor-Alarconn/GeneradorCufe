@@ -46,8 +46,17 @@ namespace GeneradorCufe
             if (parts.Length > 12) _viewModel.CUFE = parts[12];
             if (parts.Length > 13) _viewModel.SetTestId = parts[13];
             if (parts.Length > 14) _viewModel.Autorizacion = parts[14];
-            if (parts.Length > 15 && !string.IsNullOrEmpty(parts[15])) _viewModel.FechaInicio = DateTime.ParseExact(parts[15], "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            if (parts.Length > 16 && !string.IsNullOrEmpty(parts[16])) _viewModel.FechaFin = DateTime.ParseExact(parts[16], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if (parts.Length > 15 && !string.IsNullOrEmpty(parts[15]) && DateTime.TryParseExact(parts[15], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fechaInicio))
+            {
+                _viewModel.FechaInicio = fechaInicio;
+            }
+
+            if (parts.Length > 16 && !string.IsNullOrEmpty(parts[16]) && DateTime.TryParseExact(parts[16], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fechaFin))
+            {
+                _viewModel.FechaFin = fechaFin;
+            }
+
+
             if (parts.Length > 17) _viewModel.TipoOperacion = parts[17];
             if (parts.Length > 18) _viewModel.Prefijo = parts[18];
             if (parts.Length > 19) _viewModel.RangoInicial = parts[19];
@@ -107,12 +116,12 @@ namespace GeneradorCufe
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             // Añade _viewModel.CadenaCUFE y _viewModel.CUFE al final
-            string dataToSave = $"{_viewModel.NumeroFactura},{_viewModel.FechaFactura.ToString("yyyy-MM-dd")},{_viewModel.ValorSubtotal},{_viewModel.HoraGeneracion},{_viewModel.ValorIVA},{_viewModel.ValorImpuesto2},{_viewModel.ValorImpuesto3},{_viewModel.TotalPagar},{_viewModel.NITFacturadorElectronico},{_viewModel.NumeroIdentificacionCliente},{_viewModel.ClaveTecnicaControl},{_viewModel.CadenaCUFE},{_viewModel.CUFE},{_viewModel.SetTestId}";
+            string dataToSave = $"{_viewModel.NumeroFactura},{_viewModel.FechaFactura.ToString("yyyy-MM-dd")},{_viewModel.ValorSubtotal},{_viewModel.HoraGeneracion},{_viewModel.ValorIVA},{_viewModel.ValorImpuesto2},{_viewModel.ValorImpuesto3},{_viewModel.TotalPagar},{_viewModel.NITFacturadorElectronico},{_viewModel.NumeroIdentificacionCliente},{_viewModel.ClaveTecnicaControl},{_viewModel.CadenaCUFE},{_viewModel.CUFE},{_viewModel.SetTestId},";
 
             // Propiedades adicionales
-            dataToSave += $"{_viewModel.Autorizacion},{_viewModel.FechaInicio.ToString("yyyy-MM-dd")},{_viewModel.FechaInicio.ToString("yyyy-MM-dd")},{_viewModel.TipoOperacion},{_viewModel.Prefijo},{_viewModel.RangoInicial},{_viewModel.RangoFinal},{_viewModel.Ambiente},{_viewModel.TipoFactura},{_viewModel.InfoAdicional},{_viewModel.Divisa},{_viewModel.Tipo_Organizacion},{_viewModel.NombreEmisor},{_viewModel.Codigo_municipio_emisor},{_viewModel.Nombre_ciudad_emisor},{_viewModel.Codigo_Postal_emisor},{_viewModel.Nombre_Departamento_emisor},{_viewModel.Codigo_departamento_emisor},{_viewModel.Direccion_emisor},{_viewModel.Razon_social_emisor}";
+            dataToSave += $"{_viewModel.Autorizacion},{_viewModel.FechaInicio.ToString("yyyy-MM-dd")},{_viewModel.FechaFin.ToString("yyyy-MM-dd")},{_viewModel.TipoOperacion},{_viewModel.Prefijo},{_viewModel.RangoInicial},{_viewModel.RangoFinal},{_viewModel.Ambiente},{_viewModel.TipoFactura},{_viewModel.InfoAdicional},{_viewModel.Divisa},{_viewModel.Tipo_Organizacion},{_viewModel.NombreEmisor},{_viewModel.Codigo_municipio_emisor},{_viewModel.Nombre_ciudad_emisor},{_viewModel.Codigo_Postal_emisor},{_viewModel.Nombre_Departamento_emisor},{_viewModel.Codigo_departamento_emisor},{_viewModel.Direccion_emisor},{_viewModel.Razon_social_emisor},";
 
-            dataToSave += $"{_viewModel.Dv_emisor},{_viewModel.Nit_identificacion_emisor},{_viewModel.Regimen_emisor},{_viewModel.Atributo_emisor},{_viewModel.Nombre_atributo_emisor},{_viewModel.Prefijo_facturacion},{_viewModel.Matricula_mercantil},{_viewModel.Correo_emisor},{_viewModel.Tipo_persona},{_viewModel.Documento_cliente},{_viewModel.Documento_Adquiriente},{_viewModel.Numero_documento},{_viewModel.Nombre_cliente},{_viewModel.Codigo_municipio_adquiriente},{_viewModel.Nombre_ciudad_adquiriente},{_viewModel.Codigo_Postal_adquiriente},{_viewModel.Nombre_Departamento_adquiriente},{_viewModel.Codigo_departamento_adquiriente},{_viewModel.Direccion_adquiriente},{_viewModel.Razon_social_adquiriente}";
+            dataToSave += $"{_viewModel.Dv_emisor},{_viewModel.Nit_identificacion_emisor},{_viewModel.Regimen_emisor},{_viewModel.Atributo_emisor},{_viewModel.Nombre_atributo_emisor},{_viewModel.Prefijo_facturacion},{_viewModel.Matricula_mercantil},{_viewModel.Correo_emisor},{_viewModel.Tipo_persona},{_viewModel.Documento_cliente},{_viewModel.Documento_Adquiriente},{_viewModel.Numero_documento},{_viewModel.Nombre_cliente},{_viewModel.Codigo_municipio_adquiriente},{_viewModel.Nombre_ciudad_adquiriente},{_viewModel.Codigo_Postal_adquiriente},{_viewModel.Nombre_Departamento_adquiriente},{_viewModel.Codigo_departamento_adquiriente},{_viewModel.Direccion_adquiriente},{_viewModel.Razon_social_adquiriente},";
             dataToSave += $"{_viewModel.Dv_adquiriente},{_viewModel.Nit_identificacion_adquiriente},{_viewModel.Regimen_adquiriente},{_viewModel.Atributo_adquiriente},{_viewModel.Nombre_atributo_adquiriente},{_viewModel.Correo_adquiriente},{_viewModel.Metodo_pago},{_viewModel.Codigo_metodo},{_viewModel.Tipo_documento}";
 
             DataSerializer.SaveData(dataToSave);
