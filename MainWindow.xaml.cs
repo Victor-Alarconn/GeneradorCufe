@@ -62,6 +62,8 @@ namespace GeneradorCufe
             if (parts.Length > 28) _viewModel.Nombre_ciudad_emisor = parts[28];
             if (parts.Length > 29) _viewModel.Codigo_Postal_emisor = parts[29];
             if (parts.Length > 30) _viewModel.Nombre_Departamento_emisor = parts[30];
+            if (parts.Length > 31) _viewModel.Codigo_departamento_emisor = parts[31];   
+
 
 
             DataContext = _viewModel;
