@@ -46,12 +46,12 @@ namespace GeneradorCufe
             if (parts.Length > 12) _viewModel.CUFE = parts[12];
             if (parts.Length > 13) _viewModel.SetTestId = parts[13];
             if (parts.Length > 14) _viewModel.Autorizacion = parts[14];
-            if (parts.Length > 15 && !string.IsNullOrEmpty(parts[15]) && DateTime.TryParseExact(parts[15], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fechaInicio))
+            if (parts.Length > 15 && !string.IsNullOrEmpty(parts[15]) && DateTime.TryParseExact(parts[15], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fechaInicio)) // no se si es necesario
             {
                 _viewModel.FechaInicio = fechaInicio;
             }
 
-            if (parts.Length > 16 && !string.IsNullOrEmpty(parts[16]) && DateTime.TryParseExact(parts[16], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fechaFin))
+            if (parts.Length > 16 && !string.IsNullOrEmpty(parts[16]) && DateTime.TryParseExact(parts[16], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fechaFin)) // no se si es necesario
             {
                 _viewModel.FechaFin = fechaFin;
             }
