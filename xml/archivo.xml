@@ -34,9 +34,9 @@
   <!--Número de factura o factura cambiaria. Incluye prefijo + consecutivo de factura autorizados por la DIAN  [1..1] -->
   <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">bf70b23b6a622d835e308386bedb935eeca2dff4fee8053d77cec45ca5891f4277a4b9e1cbfd578facdaa8043622de14</cbc:UUID>
   <!-- Definido en el numeral 10.1 Rechazo: Si el valor UUID no está correctamente calculad [1..1] Tabla 6.5.1.2 -->
-  <cbc:IssueDate>2024-03-13</cbc:IssueDate>
+  <cbc:IssueDate>2024-03-14</cbc:IssueDate>
   <!-- Fecha de generación de la factura [1..1] formato aaaa-mm-dd-->
-  <cbc:IssueTime>17:16:36-05:00</cbc:IssueTime>
+  <cbc:IssueTime>09:34:57-05:00</cbc:IssueTime>
   <!--Hora de emisión [1..1] -->
   <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
   <!--Tipo de Factura [1..1] Tabla 6.1.3 Factura electrónica de Venta-->
@@ -80,60 +80,60 @@
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
         <!-- Grupo de información tributarias del emiso-->
-        <cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
+        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE S.A.S</cbc:RegistrationName>
         <!--Nombre o Razón Social del emisor-->
-        <cbc:CompanyID schemeID="0" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyTaxSchemeCompanyID}</cbc:CompanyID>
-        <cbc:TaxLevelCode>{TaxLevelCode}</cbc:TaxLevelCode>
+        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
+        <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
         <!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] Obligaciones o responasbilidades del contribuyente; incluye el régimen al que pertenece el emisor -->
         <cac:RegistrationAddress>
           <!-- Grupo de información para informar dirección fiscal 0..1 -->
-          <cbc:ID>{PartyTaxSchemeID}</cbc:ID>
-          <cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName>
-          <cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone>
-          <cbc:CountrySubentity>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentity>
-          <cbc:CountrySubentityCode>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentityCode>
+          <cbc:ID>05380</cbc:ID>
+          <cbc:CityName>LA ESTRELLA</cbc:CityName>
+          <cbc:PostalZone>055460</cbc:PostalZone>
+          <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
           <cac:AddressLine>
-            <cbc:Line>{PartyTaxSchemeLine}</cbc:Line>
+            <cbc:Line>Crarera</cbc:Line>
           </cac:AddressLine>
           <cac:Country>
-            <cbc:IdentificationCode>{CountryIdentificationCode}</cbc:IdentificationCode>
-            <cbc:Name languageID="es">{CountryName}</cbc:Name>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
           </cac:Country>
         </cac:RegistrationAddress>
         <cac:TaxScheme>
           <!--  Grupo de detalles tributarios del emisor -->
-          <cbc:ID>{TaxSchemeID}</cbc:ID>
+          <cbc:ID>01</cbc:ID>
           <!-- Identificador del tributo 6.2.2 (IVA)-->
-          <cbc:Name>{TaxSchemeName}</cbc:Name>
+          <cbc:Name>IVA</cbc:Name>
           <!-- Nombre del tributo-->
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
         <!--  Grupo de información legales del emisor-->
-        <cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
+        <cbc:RegistrationName>RM SOFT CASA DE</cbc:RegistrationName>
         <!-- Nombre o Razón Social del emisor-->
-        <cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyLegalEntityCompanyID}</cbc:CompanyID>
+        <cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
           <!-- Grupo de información de registro del emisor-->
-          <cbc:ID>{CorporateRegistrationSchemeID}</cbc:ID>
+          <cbc:ID>SETT</cbc:ID>
           <!--Prefijo de la facturación usada para el punto de venta (Debe ser igual al campo sts:prefix informado en el encabezado de la factura. )-->
-          <cbc:Name>{CorporateRegistrationSchemeName}</cbc:Name>
+          <cbc:Name>1485596</cbc:Name>
           <!--Número de matrícula mercantil (identificador de sucursal: punto de facturación) -->
         </cac:CorporateRegistrationScheme>
       </cac:PartyLegalEntity>
       <cac:Contact>
         <!-- Grupo de detalles con información de contacto del emsior (nombre,telefono,email)-->
-        <cbc:ElectronicMail>{ContactElectronicMail}</cbc:ElectronicMail>
+        <cbc:ElectronicMail>xxxxx@xxxxx.com.correo</cbc:ElectronicMail>
       </cac:Contact>
     </cac:Party>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
     <!--Grupo con información que definen el Adquiriente [1..1] 6.2.3-->
-    <cbc:AdditionalAccountID>{AdditionalAccountID}</cbc:AdditionalAccountID>
+    <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
     <!-- Identificador de tipo de persona [1..1]-->
 		   <cac:PartyIdentification><!-- Grupo para informar el documento del adquirente [0..1]-->
-            	<cbc:ID schemeName="{PartyIdentificationschemeName}">{PartyIdentificationID}</cbc:ID><!--Identificación del adquirente, @schemeName Ver lista de valores posibles en la columna “Código” del numeral 6.2.1. [1..1] Nota: Para identificar al consumidor final, se utiliza el siguiente documento “222222222222” -->
-    		</cac:PartyIdentification><cac:Party><cac:PartyName><cbc:Name>{AccountingCustomerPartyName}</cbc:Name><!--Nombre comercial del adquirente --></cac:PartyName><cac:PhysicalLocation><cac:Address><cbc:ID>{AccountingCustomerPartyID}</cbc:ID><!--Código del municipio --><cbc:CityName>{AccountingCustomerPartyCityName}</cbc:CityName><!--Nombre de la ciudad --><cbc:PostalZone>{AccountingCustomerPartyPostalZone}</cbc:PostalZone><!-- Codigo postal--><cbc:CountrySubentity>{AccountingCustomerPartyCountrySubentity}</cbc:CountrySubentity><!-- Nombre del departamento--><cbc:CountrySubentityCode>{AccountingCustomerPartyCountrySubentityCode}</cbc:CountrySubentityCode><!-- Codigo del departamento --><cac:AddressLine><cbc:Line>{AccountingCustomerPartyLine}</cbc:Line><!--Direccion--></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:Address></cac:PhysicalLocation><cac:PartyTaxScheme><cbc:RegistrationName>{PartyTaxScheme}</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente --><cbc:CompanyID schemeID="PartyTaxSchemeDV" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyTaxSchemeCompanyID}</cbc:CompanyID><cbc:TaxLevelCode>{PartyTaxSchemeTaxLevelCode}</cbc:TaxLevelCode><!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] --><cac:RegistrationAddress><cbc:ID>{PartyTaxSchemeID}</cbc:ID><cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName><cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone><cbc:CountrySubentity>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentity><cbc:CountrySubentityCode>{PartyTaxSchemeCountrySubentityCode}</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>{PartyTaxSchemeLine}</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:RegistrationAddress><cac:TaxScheme><!-- Grupo de detalles tributarios del adquirente--><cbc:ID>{TaxSchemeID}</cbc:ID><!-- Identificador del tributo del adquirente--><cbc:Name>{TaxSchemeName}</cbc:Name><!--Nombre del tributo--></cac:TaxScheme></cac:PartyTaxScheme><cac:PartyLegalEntity><cbc:RegistrationName>{PartyLegalEntityRegistrationName}</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente--><cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{PartyLegalEntityCompanyID}</cbc:CompanyID><cac:CorporateRegistrationScheme><!-- Grupo de información de registro del adquirente--><cbc:Name>{PartyLegalEntityName}</cbc:Name><!-- Número de matrícula mercantil --></cac:CorporateRegistrationScheme></cac:PartyLegalEntity><cac:Contact><cbc:ElectronicMail>{PartyLegalEntityElectronicMail}</cbc:ElectronicMail><!-- Correo electrónico de contacto --></cac:Contact></cac:Party></cac:AccountingCustomerParty>
+            	<cbc:ID schemeName="13">1017173008</cbc:ID><!--Identificación del adquirente, @schemeName Ver lista de valores posibles en la columna “Código” del numeral 6.2.1. [1..1] Nota: Para identificar al consumidor final, se utiliza el siguiente documento “222222222222” -->
+    		</cac:PartyIdentification><cac:Party><cac:PartyName><cbc:Name>ADQUIRIENTE DE EJEMPLO</cbc:Name><!--Nombre comercial del adquirente --></cac:PartyName><cac:PhysicalLocation><cac:Address><cbc:ID>66001</cbc:ID><!--Código del municipio --><cbc:CityName>PEREIRA</cbc:CityName><!--Nombre de la ciudad --><cbc:PostalZone>54321</cbc:PostalZone><!-- Codigo postal--><cbc:CountrySubentity>Risaralda</cbc:CountrySubentity><!-- Nombre del departamento--><cbc:CountrySubentityCode>66</cbc:CountrySubentityCode><!-- Codigo del departamento --><cac:AddressLine><cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line><!--Direccion--></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:Address></cac:PhysicalLocation><cac:PartyTaxScheme><cbc:RegistrationName>ADQUIRIENTE DE VICTOR</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente --><cbc:CompanyID schemeID="PartyTaxSchemeDV" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID><cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode><!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] --><cac:RegistrationAddress><cbc:ID>66001</cbc:ID><cbc:CityName>PEREIRA</cbc:CityName><cbc:PostalZone>54321</cbc:PostalZone><cbc:CountrySubentity>Risaralda</cbc:CountrySubentity><cbc:CountrySubentityCode>66</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>Riosucio, Caldas</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:RegistrationAddress><cac:TaxScheme><!-- Grupo de detalles tributarios del adquirente--><cbc:ID>01</cbc:ID><!-- Identificador del tributo del adquirente--><cbc:Name>IVA</cbc:Name><!--Nombre del tributo--></cac:TaxScheme></cac:PartyTaxScheme><cac:PartyLegalEntity><cbc:RegistrationName>ADQUIRIENTE DE ANGEE</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente--><cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID><cac:CorporateRegistrationScheme><!-- Grupo de información de registro del adquirente--><cbc:Name>1485596</cbc:Name><!-- Número de matrícula mercantil --></cac:CorporateRegistrationScheme></cac:PartyLegalEntity><cac:Contact><cbc:ElectronicMail>xxxx@xxxx.comutp</cbc:ElectronicMail><!-- Correo electrónico de contacto --></cac:Contact></cac:Party></cac:AccountingCustomerParty>
   <cac:PaymentMeans>
     <!--Grupo de campos para información relacionadas con el pago de la factura. [1..N] -->
     <cbc:ID>{PaymentMeansID}</cbc:ID>

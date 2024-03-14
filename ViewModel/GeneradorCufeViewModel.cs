@@ -732,9 +732,174 @@ namespace GeneradorCufe.ViewModel
                 physicalLocationElement.Descendants(cac + "AddressLine")
                                        .Descendants(cbc + "Line").FirstOrDefault()?.SetValue("Cra. 50 #97a Sur-180 a 97a Sur-394");
             }
+
+            // Actualizaciones para 'PartyTaxScheme'
+            var partyTaxSchemeElement = xmlDoc.Descendants(cac + "PartyTaxScheme").FirstOrDefault();
+            if (partyTaxSchemeElement != null)
+            {
+                partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue("RM SOFT CASA DE SOFTWARE S.A.S");
+
+                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue("900770401");
+                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeID", "8");
+                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeName", "31");
+                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyID", "195");
+                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
+
+                partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("R-99-PN");
+
+                var registrationAddressElement = partyTaxSchemeElement.Element(cac + "RegistrationAddress");
+                if (registrationAddressElement != null)
+                {
+                    registrationAddressElement.Element(cbc + "ID")?.SetValue("05380");
+                    registrationAddressElement.Element(cbc + "CityName")?.SetValue("LA ESTRELLA");
+                    registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("055460");
+                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue("Antioquia");
+                    registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue("05");
+                    registrationAddressElement.Element(cac + "AddressLine").Element(cbc + "Line")?.SetValue("Crarera");
+
+                    var countryElement = registrationAddressElement.Element(cac + "Country");
+                    if (countryElement != null)
+                    {
+                        countryElement.Element(cbc + "IdentificationCode")?.SetValue("CO");
+                        var nameElement = countryElement.Element(cbc + "Name");
+                        if (nameElement != null)
+                        {
+                            nameElement.SetValue("Colombia");
+                            nameElement.SetAttributeValue("languageID", "es");
+                        }
+                    }
+
+                }
+
+                var taxSchemeElement = partyTaxSchemeElement.Element(cac + "TaxScheme");
+                if (taxSchemeElement != null)
+                {
+                    taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
+                    taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                }
+            }
+
+            // Mapeo para PartyLegalEntity
+            var partyLegalEntityElement = xmlDoc.Descendants(cac + "PartyLegalEntity").FirstOrDefault();
+            if (partyLegalEntityElement != null)
+            {
+                partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue("RM SOFT CASA DE");
+                partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue("900770401");
+
+                var corporateRegistrationSchemeElement = partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme");
+                if (corporateRegistrationSchemeElement != null)
+                {
+                    corporateRegistrationSchemeElement.Element(cbc + "ID")?.SetValue("SETT");
+                    corporateRegistrationSchemeElement.Element(cbc + "Name")?.SetValue("1485596");
+                }
+            }
+
+            // Mapeo para Contact
+            var contactElement = xmlDoc.Descendants(cac + "Contact").FirstOrDefault();
+            if (contactElement != null)
+            {
+                contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com.correo");
+            }
+
+            MapAccountingCustomerParty(xmlDoc);
+
+
         }
 
+        private void MapAccountingCustomerParty(XDocument xmlDoc)
+        {
+            // Namespace específico para los elementos bajo 'sts'
+            XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
+            // Namespace para elementos 'cbc'
+            XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+            // Namespace para elementos 'cac'
+            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
+            // Información del adquiriente
+            var accountingCustomerPartyElement = xmlDoc.Descendants(cac + "AccountingCustomerParty").FirstOrDefault();
+            if (accountingCustomerPartyElement != null)
+            {
+                accountingCustomerPartyElement.Element(cbc + "AdditionalAccountID")?.SetValue("2");
+
+                // Información de identificación del adquiriente
+                var partyIdentificationElement = accountingCustomerPartyElement.Element(cac + "PartyIdentification");
+                if (partyIdentificationElement != null)
+                {
+                    partyIdentificationElement.Element(cbc + "ID")?.SetValue("1017173008");
+                    // Asegúrate de ajustar el valor de schemeName según corresponda
+                    partyIdentificationElement.Element(cbc + "ID").SetAttributeValue("schemeName", "13");
+                }
+
+                // Información del adquiriente
+                var partyElement = accountingCustomerPartyElement.Element(cac + "Party");
+                if (partyElement != null)
+                {
+                    partyElement.Element(cac + "PartyName")?.Element(cbc + "Name")?.SetValue("ADQUIRIENTE DE EJEMPLO");
+
+                    // Información de ubicación física del adquiriente
+                    var physicalLocationElement = partyElement.Element(cac + "PhysicalLocation");
+                    if (physicalLocationElement != null)
+                    {
+                        physicalLocationElement.Element(cac + "Address")?.Element(cbc + "ID")?.SetValue("66001");
+                        physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CityName")?.SetValue("PEREIRA");
+                        physicalLocationElement.Element(cac + "Address")?.Element(cbc + "PostalZone")?.SetValue("54321");
+                        physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentity")?.SetValue("Risaralda");
+                        physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentityCode")?.SetValue("66");
+                        physicalLocationElement.Element(cac + "Address")?.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
+                        physicalLocationElement.Element(cac + "Address")?.Element(cac + "Country")?.Element(cbc + "Name")?.SetValue("Colombia");
+                        physicalLocationElement.Element(cac + "Address")?.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue("CR 9 A N0 99 - 07 OF 802");
+                    }
+
+                    // Información tributaria del adquiriente
+                    var partyTaxSchemeElement = partyElement.Element(cac + "PartyTaxScheme");
+                    if (partyTaxSchemeElement != null)
+                    {
+                        partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue("ADQUIRIENTE DE VICTOR");
+                        partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue("1017173008");
+                        partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("R-99-PN");
+
+                        // Información de ubicación de registro tributario del adquiriente
+                        var registrationAddressElement = partyTaxSchemeElement.Element(cac + "RegistrationAddress");
+                        if (registrationAddressElement != null)
+                        {
+                            registrationAddressElement.Element(cbc + "ID")?.SetValue("66001");
+                            registrationAddressElement.Element(cbc + "CityName")?.SetValue("PEREIRA");
+                            registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("54321");
+                            registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue("Risaralda");
+                            registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue("66");
+                            registrationAddressElement.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
+                            registrationAddressElement.Element(cac + "Country")?.Element(cbc + "Name")?.SetValue("Colombia");
+                            registrationAddressElement.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue("Riosucio, Caldas");
+                        }
+
+                        // Información del esquema tributario del adquiriente
+                        var taxSchemeElement = partyTaxSchemeElement.Element(cac + "TaxScheme");
+                        if (taxSchemeElement != null)
+                        {
+                            taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
+                            taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                        }
+                    }
+
+                    // Información legal del adquiriente
+                    var partyLegalEntityElement = partyElement.Element(cac + "PartyLegalEntity");
+                    if (partyLegalEntityElement != null)
+                    {
+                        partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue("ADQUIRIENTE DE ANGEE");
+                        partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue("1017173008");
+                        partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme")?.Element(cbc + "Name")?.SetValue("1485596");
+                    }
+
+                    // Información de contacto del adquiriente
+                    var contactElement = partyElement.Element(cac + "Contact");
+                    if (contactElement != null)
+                    {
+                        contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxx@xxxx.comutp");
+                    }
+                }
+            }
+
+        }
 
         public (string xmlContent, string base64Content) GenerateXMLAndBase64()
         {
