@@ -1,9 +1,11 @@
-﻿using System;
+﻿using GeneradorCufe.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -117,7 +119,7 @@ namespace GeneradorCufe.ViewModel
         {
             get { return _cufe; }
             set { _cufe = value; OnPropertyChanged(nameof(CUFE)); }
-            
+
         }
 
         private string _setTestId;
@@ -801,7 +803,144 @@ namespace GeneradorCufe.ViewModel
                 contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com.correo");
             }
 
-            MapAccountingCustomerParty(xmlDoc);
+            MapAccountingCustomerParty(xmlDoc); // informacion del adquiriente
+
+            // Información del medio de pago
+            var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
+            if (paymentMeansElement != null)
+            {
+                paymentMeansElement.Element(cbc + "ID")?.SetValue("1");
+                paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
+                paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
+            }
+
+            // Información total de impuestos
+            var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
+            if (taxTotalElement != null)
+            {
+                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00");
+
+                // Información del subtotal del impuesto
+                var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
+                if (taxSubtotalElement != null)
+                {
+                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("100000.00"); // Base imponible
+                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00"); // Valor del impuesto
+
+                    // Información de la categoría del impuesto
+                    var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
+                    if (taxCategoryElement != null)
+                    {
+                        taxCategoryElement.Element(cbc + "Percent")?.SetValue("19.00");
+
+                        // Información del esquema del impuesto
+                        var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
+                        if (taxSchemeElement != null)
+                        {
+                            taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
+                            taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                        }
+                    }
+                }
+            }
+
+            var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
+            if (legalMonetaryTotalElement != null)
+            {
+                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue("100000.00"); // Total Valor Bruto antes de tributos
+                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue("100000.00"); // Total Valor Base Imponible
+                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue("119000.00"); // Total Valor Bruto más tributos
+                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue("119000.00"); // Total Valor a Pagar
+            }
+
+            // Llamada a la función para mapear la información de InvoiceLine
+            MapInvoiceLine(xmlDoc);
+
+
+        }
+
+        private void MapInvoiceLine(XDocument xmlDoc)
+        {
+            // Namespace específico para los elementos bajo 'sts'
+            XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
+            // Namespace para elementos 'cbc'
+            XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+            // Namespace para elementos 'cac'
+            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+
+            var invoiceLineElement = xmlDoc.Descendants(cac + "InvoiceLine").FirstOrDefault();
+            if (invoiceLineElement != null)
+            {
+                invoiceLineElement.Element(cbc + "ID")?.SetValue("1.00");
+                invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue("100000.00");
+                invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue("19000.00");
+
+                var taxTotalElement = invoiceLineElement.Element(cac + "TaxTotal");
+                if (taxTotalElement != null)
+                {
+                    taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("100000.00");
+
+                    var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
+                    if (taxSubtotalElement != null)
+                    {
+                        taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("1");
+                        taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00");
+
+                        var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
+                        if (taxCategoryElement != null)
+                        {
+                            taxCategoryElement.Element(cbc + "Percent")?.SetValue("19.00");
+
+                            var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
+                            if (taxSchemeElement != null)
+                            {
+                                taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
+                                taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                            }
+                        }
+                    }
+                }
+
+                var itemElement = invoiceLineElement.Element(cac + "Item");
+                if (itemElement != null)
+                {
+                    itemElement.Element(cbc + "Description")?.SetValue("Frambuesas");
+
+                    var standardItemIdentificationElement = itemElement.Element(cac + "StandardItemIdentification");
+                    if (standardItemIdentificationElement != null)
+                    {
+                        standardItemIdentificationElement.Element(cbc + "ID")?.SetValue("M123445");
+                    }
+                }
+
+                var priceElement = invoiceLineElement.Element(cac + "Price");
+                if (priceElement != null)
+                {
+                    priceElement.Element(cbc + "PriceAmount")?.SetValue("100000.00");
+                    priceElement.Element(cbc + "BaseQuantity")?.SetValue("1.00");
+                }
+            }
+            // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
+            XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
+            var dataElement = xmlDoc.Descendants(invoiceNs + "DATA").FirstOrDefault();
+
+            // Verificar si se encontró el elemento <DATA>
+            if (dataElement != null)
+            {
+                // Modificar los elementos dentro de <DATA>
+                dataElement.Element(invoiceNs + "UBL21")?.SetValue("true");
+
+                // Buscar el elemento <Partnership> dentro de <DATA> con el espacio de nombres completo
+                var partnershipElement = dataElement.Descendants(invoiceNs + "Partnership").FirstOrDefault();
+                if (partnershipElement != null)
+                {
+                    partnershipElement.Element(invoiceNs + "ID")?.SetValue("11111111");
+                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
+                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("esf162");
+                }
+            }
+
+
 
 
         }
@@ -960,6 +1099,8 @@ namespace GeneradorCufe.ViewModel
             return File.ReadAllText(FilePath);
         }
     }
+
+   
 
 
 }

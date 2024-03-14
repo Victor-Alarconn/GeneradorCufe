@@ -1,8 +1,10 @@
 ﻿using GeneradorCufe.ViewModel;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
@@ -253,8 +255,67 @@ namespace GeneradorCufe
 
                 // Mostrar mensaje de confirmación
                 MessageBox.Show("XML generado y guardado en: " + xmlFilePath + "\nArchivo base64 generado y guardado en: " + base64FilePath);
+
+                // Realizar la solicitud POST
+                string url = "https://apivp.efacturacadena.com/staging/vp-hab/documentos/proceso/alianzas";
+                string response = SendPostRequest(url, base64Content);
+
             }
         }
+
+        private string SendPostRequest(string url, string base64Content)
+        {
+            try
+            {
+                // Crear una instancia de WebClient
+                using (WebClient client = new WebClient())
+                {
+                    // Establecer los encabezados de la solicitud
+                    client.Headers[HttpRequestHeader.ContentType] = "text/plain";
+                    client.Headers["efacturaAuthorizationToken"] = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
+
+                    // Convertir el contenido base64 en bytes
+                    byte[] bytes = Encoding.UTF8.GetBytes(base64Content);
+
+                    // Realizar la solicitud POST y obtener la respuesta
+                    byte[] responseBytes = client.UploadData(url, "POST", bytes);
+
+                    // Convertir la respuesta a string
+                    string response = Encoding.UTF8.GetString(responseBytes);
+
+                    return response;
+                }
+            }
+            catch (WebException webEx)
+            {
+                // Capturar la respuesta detallada del servidor si está disponible
+                if (webEx.Response != null)
+                {
+                    HttpStatusCode statusCode = ((HttpWebResponse)webEx.Response).StatusCode;
+                    using (var stream = webEx.Response.GetResponseStream())
+                    {
+                        using (var reader = new StreamReader(stream))
+                        {
+                            string errorResponse = reader.ReadToEnd();
+                            dynamic errorData = JsonConvert.DeserializeObject(errorResponse); // Deserializar la respuesta JSON
+                            string errorMessage = errorData.errorMessage; // Obtener el mensaje de error específico
+                            MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorMessage}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    // Manejar cualquier otro error de la solicitud POST
+                    MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
+            }
+        }
+
+
+
+
 
 
 
