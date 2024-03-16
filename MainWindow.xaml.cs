@@ -281,6 +281,9 @@ namespace GeneradorCufe
                     // Convertir la respuesta a string
                     string response = Encoding.UTF8.GetString(responseBytes);
 
+                    // Mostrar un mensaje de éxito
+                    MessageBox.Show("Solicitud POST exitosa", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     return response;
                 }
             }
@@ -299,17 +302,15 @@ namespace GeneradorCufe
                         }
                     }
                 }
-            
-
-
                 else
-            {
+                {
                     // Manejar cualquier otro error de la solicitud POST
                     MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
             }
         }
+
 
 
 

@@ -705,9 +705,9 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2");
 
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("SETT9");
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("7e753e4cdf866e9f0c341bb430bf354eec75440f7f469c591a91c937c87bb2a5993bb20072fae3f10f71184ac619eb2c");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("f619b2768f87cce8d11507e76c220fe5ece8a0287ebcb7f087aaa42c13e5b503e4ebb3da4ef8e30eddc6e8fe9f3e3e5e");
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(now.ToString("yyyy-MM-dd"));
-            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(now.ToString("HH:mm:sszzz"));
+            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("00:00:00-05:00");
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01");
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("Prueba Factura Electronica Datos de victor");
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
