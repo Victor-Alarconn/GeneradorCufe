@@ -678,13 +678,16 @@ namespace GeneradorCufe.ViewModel
             // Namespace para elementos 'cac'
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
+            FacturaElectronica facturaElectronica = new FacturaElectronica(); // Crear una instancia de la clase FacturaElectronica
+            List<InvoiceLineData> listaProductos = facturaElectronica.ObtenerProductos();
+
 
             // Actualizar el elemento 'InvoiceAuthorization'
-            xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue(this.NumeroFactura);
+            xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue("18760000001");
 
             // Actualizar los elementos 'StartDate' y 'EndDate'
-            xmlDoc.Descendants(cbc + "StartDate").FirstOrDefault()?.SetValue(this.FechaFactura.ToString("yyyy-MM-dd"));
-            xmlDoc.Descendants(cbc + "EndDate").FirstOrDefault()?.SetValue(this.FechaFactura.ToString("yyyy-MM-dd"));
+            xmlDoc.Descendants(cbc + "StartDate").FirstOrDefault()?.SetValue(this.FechaInicio.ToString("yyyy-MM-dd"));
+            xmlDoc.Descendants(cbc + "EndDate").FirstOrDefault()?.SetValue(this.FechaFin.ToString("yyyy-MM-dd"));
 
             // Actualizaciones para 'AuthorizedInvoices'
             var authorizedInvoicesElement = xmlDoc.Descendants(sts + "AuthorizedInvoices").FirstOrDefault();
@@ -701,14 +704,14 @@ namespace GeneradorCufe.ViewModel
             // Actualizar 'ProfileExecutionID'
             xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2");
 
-            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(this.NumeroFactura);
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(this.CUFE);
+            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("SETT9");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("7e753e4cdf866e9f0c341bb430bf354eec75440f7f469c591a91c937c87bb2a5993bb20072fae3f10f71184ac619eb2c");
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(now.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(now.ToString("HH:mm:sszzz"));
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01");
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("Prueba Factura Electronica Datos de victor");
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
-            xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue("1");
+            xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
 
             // Actualizar 'AdditionalAccountID'
             xmlDoc.Descendants(cbc + "AdditionalAccountID").FirstOrDefault()?.SetValue("1");
@@ -785,7 +788,7 @@ namespace GeneradorCufe.ViewModel
             var partyLegalEntityElement = xmlDoc.Descendants(cac + "PartyLegalEntity").FirstOrDefault();
             if (partyLegalEntityElement != null)
             {
-                partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue("RM SOFT CASA DE");
+                partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue("RM SOFT CASA DE SOFTWARE S.A.S");
                 partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue("900770401");
 
                 var corporateRegistrationSchemeElement = partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme");
@@ -818,14 +821,14 @@ namespace GeneradorCufe.ViewModel
             var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
             if (taxTotalElement != null)
             {
-                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00");
+                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("55362.56");
 
                 // Información del subtotal del impuesto
                 var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
                 if (taxSubtotalElement != null)
                 {
-                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("100000.00"); // Base imponible
-                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00"); // Valor del impuesto
+                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("474587.45"); // Base imponible
+                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("55362.56"); // Valor del impuesto
 
                     // Información de la categoría del impuesto
                     var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
@@ -847,10 +850,10 @@ namespace GeneradorCufe.ViewModel
             var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
             if (legalMonetaryTotalElement != null)
             {
-                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue("100000.00"); // Total Valor Bruto antes de tributos
-                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue("100000.00"); // Total Valor Base Imponible
-                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue("119000.00"); // Total Valor Bruto más tributos
-                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue("119000.00"); // Total Valor a Pagar
+                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue("474587.45"); // Total Valor Bruto antes de tributos
+                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue("474587.45"); // Total Valor Base Imponible
+                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue("529950.00"); // Total Valor Bruto más tributos
+                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue("529950.00"); // Total Valor a Pagar
             }
 
             // Llamada a la función para mapear la información de InvoiceLine
@@ -868,58 +871,87 @@ namespace GeneradorCufe.ViewModel
             // Namespace para elementos 'cac'
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
-            var invoiceLineElement = xmlDoc.Descendants(cac + "InvoiceLine").FirstOrDefault();
-            if (invoiceLineElement != null)
+            FacturaElectronica facturaElectronica = new FacturaElectronica(); // Crear una instancia de la clase FacturaElectronica
+            List<InvoiceLineData> listaProductos = facturaElectronica.ObtenerProductos();
+
+            // Obtener el elemento 'cac:InvoiceLine' para utilizarlo como plantilla para agregar nuevos productos
+            var invoiceLineTemplate = xmlDoc.Descendants(cac + "InvoiceLine").FirstOrDefault();
+
+            // Verificar si la plantilla existe
+            if (invoiceLineTemplate != null)
             {
-                invoiceLineElement.Element(cbc + "ID")?.SetValue("1.00");
-                invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue("100000.00");
-                invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue("19000.00");
 
-                var taxTotalElement = invoiceLineElement.Element(cac + "TaxTotal");
-                if (taxTotalElement != null)
+
+                // Iterar sobre cada producto en la lista y agregarlos al XML
+                foreach (var producto in listaProductos)
                 {
-                    taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("100000.00");
+                    // Crear un nuevo elemento 'cac:InvoiceLine' basado en la plantilla
+                    var invoiceLineElement = new XElement(invoiceLineTemplate);
 
-                    var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
-                    if (taxSubtotalElement != null)
+                    // Establecer los valores del producto en el nuevo elemento
+                    invoiceLineElement.Element(cbc + "ID")?.SetValue(producto.InvoiceLineID);
+                    invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(producto.InvoiceLineInvoicedQuantity);
+                    invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.InvoiceLineLineExtensionAmount);
+
+                    // Establecer los valores del impuesto
+                    var taxTotalElement = invoiceLineElement.Element(cac + "TaxTotal");
+                    if (taxTotalElement != null)
                     {
-                        taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("1");
-                        taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00");
+                        taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.InvoiceLineTaxAmount);
 
-                        var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
-                        if (taxCategoryElement != null)
+                        var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
+                        if (taxSubtotalElement != null)
                         {
-                            taxCategoryElement.Element(cbc + "Percent")?.SetValue("19.00");
+                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(producto.InvoiceLineTaxableAmount);
+                            taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.InvoiceLineTaxAmount);
 
-                            var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
-                            if (taxSchemeElement != null)
+                            var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
+                            if (taxCategoryElement != null)
                             {
-                                taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
-                                taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                                taxCategoryElement.Element(cbc + "Percent")?.SetValue(producto.InvoiceLinePercent);
+
+                                // Agregar la parte faltante para TaxScheme dentro de TaxCategory
+                                var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
+                                if (taxSchemeElement == null)
+                                {
+                                    // Si no existe el elemento TaxScheme, lo creamos
+                                    taxSchemeElement = new XElement(cac + "TaxScheme");
+                                    taxCategoryElement.Add(taxSchemeElement);
+                                }
+
+                                // Establecer los valores de ID y Name dentro de TaxScheme
+                                taxSchemeElement.Element(cbc + "ID")?.SetValue(producto.TaxSchemeID);
+                                taxSchemeElement.Element(cbc + "Name")?.SetValue(producto.TaxSchemeName);
                             }
                         }
                     }
-                }
 
-                var itemElement = invoiceLineElement.Element(cac + "Item");
-                if (itemElement != null)
-                {
-                    itemElement.Element(cbc + "Description")?.SetValue("Frambuesas");
-
-                    var standardItemIdentificationElement = itemElement.Element(cac + "StandardItemIdentification");
-                    if (standardItemIdentificationElement != null)
+                    // Establecer los valores del ítem
+                    var itemElement = invoiceLineElement.Element(cac + "Item");
+                    if (itemElement != null)
                     {
-                        standardItemIdentificationElement.Element(cbc + "ID")?.SetValue("M123445");
-                    }
-                }
+                        itemElement.Element(cbc + "Description")?.SetValue(producto.ItemDescription);
 
-                var priceElement = invoiceLineElement.Element(cac + "Price");
-                if (priceElement != null)
-                {
-                    priceElement.Element(cbc + "PriceAmount")?.SetValue("100000.00");
-                    priceElement.Element(cbc + "BaseQuantity")?.SetValue("1.00");
+                        var standardItemIdentificationElement = itemElement.Element(cac + "StandardItemIdentification");
+                        if (standardItemIdentificationElement != null)
+                        {
+                            standardItemIdentificationElement.Element(cbc + "ID")?.SetValue(producto.ItemID);
+                        }
+                    }
+
+                    var priceElement = invoiceLineElement.Element(cac + "Price");
+                    if (priceElement != null)
+                    {
+                        priceElement.Element(cbc + "PriceAmount")?.SetValue(producto.PricePriceAmount);
+                        priceElement.Element(cbc + "BaseQuantity")?.SetValue(producto.PriceBaseQuantity);
+                    }
+
+                    // Agregar el nuevo elemento 'cac:InvoiceLine' al XML
+                    xmlDoc.Descendants(cac + "InvoiceLine").LastOrDefault()?.AddAfterSelf(invoiceLineElement);
                 }
+                invoiceLineTemplate.Remove();
             }
+
             // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
             XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
             var dataElement = xmlDoc.Descendants(invoiceNs + "DATA").FirstOrDefault();
@@ -934,9 +966,9 @@ namespace GeneradorCufe.ViewModel
                 var partnershipElement = dataElement.Descendants(invoiceNs + "Partnership").FirstOrDefault();
                 if (partnershipElement != null)
                 {
-                    partnershipElement.Element(invoiceNs + "ID")?.SetValue("11111111");
+                    partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
                     partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
-                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("esf162");
+                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("19ffdd41-decc-4c97-b0c8-e54d0ee4f636");
                 }
             }
 

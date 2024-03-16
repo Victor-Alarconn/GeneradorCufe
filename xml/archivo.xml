@@ -4,13 +4,13 @@
       <ext:ExtensionContent>
         <sts:DianExtensions>
           <sts:InvoiceControl>
-            <sts:InvoiceAuthorization>SETT1</sts:InvoiceAuthorization>
+            <sts:InvoiceAuthorization>18760000001</sts:InvoiceAuthorization>
             <!--Numero del codigo de la resolucion otorgada para la numeracion -->
             <sts:AuthorizationPeriod>
               <!-- Grupo de información relativas a la fecha de autorización de la numeración -->
-              <cbc:StartDate>2024-02-13</cbc:StartDate>
+              <cbc:StartDate>2019-01-19</cbc:StartDate>
               <!-- Fecha de inicio de la autorización de la numeración -->
-              <cbc:EndDate>2024-02-13</cbc:EndDate>
+              <cbc:EndDate>2030-01-19</cbc:EndDate>
               <!-- Fecha final de la autorización de la numeración -->
             </sts:AuthorizationPeriod>
             <sts:AuthorizedInvoices>
@@ -30,13 +30,13 @@
   <!--Indicador del tipo de operación [1..1] tabla 6.1.5.1 10 Estandar *-->
   <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
   <!-- Tipo de ambiente [1..1] Tabla 6.5.1.2 -->
-  <cbc:ID>SETT1</cbc:ID>
+  <cbc:ID>SETT9</cbc:ID>
   <!--Número de factura o factura cambiaria. Incluye prefijo + consecutivo de factura autorizados por la DIAN  [1..1] -->
-  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">bf70b23b6a622d835e308386bedb935eeca2dff4fee8053d77cec45ca5891f4277a4b9e1cbfd578facdaa8043622de14</cbc:UUID>
+  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">7e753e4cdf866e9f0c341bb430bf354eec75440f7f469c591a91c937c87bb2a5993bb20072fae3f10f71184ac619eb2c</cbc:UUID>
   <!-- Definido en el numeral 10.1 Rechazo: Si el valor UUID no está correctamente calculad [1..1] Tabla 6.5.1.2 -->
-  <cbc:IssueDate>2024-03-14</cbc:IssueDate>
+  <cbc:IssueDate>2024-03-15</cbc:IssueDate>
   <!-- Fecha de generación de la factura [1..1] formato aaaa-mm-dd-->
-  <cbc:IssueTime>17:28:49-05:00</cbc:IssueTime>
+  <cbc:IssueTime>16:59:22-05:00</cbc:IssueTime>
   <!--Hora de emisión [1..1] -->
   <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
   <!--Tipo de Factura [1..1] Tabla 6.1.3 Factura electrónica de Venta-->
@@ -44,7 +44,7 @@
   <!--Información adicional: Texto libre, relativo al documento [0..N] -->
   <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
   <!--Divisa de la Factura: Divisa aplicable a toda la factura [1..1] Tabla 6.3.3  -->
-  <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
   <!--Número o cantidad de elementos InvoiceLine de la factura [1..1]-->
   <cac:AccountingSupplierParty>
     <!--Grupo con información que definen el obligado a facturar: Emisor de la factura [1..1]-->
@@ -110,9 +110,9 @@
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
         <!--  Grupo de información legales del emisor-->
-        <cbc:RegistrationName>RM SOFT CASA DE</cbc:RegistrationName>
+        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE S.A.S</cbc:RegistrationName>
         <!-- Nombre o Razón Social del emisor-->
-        <cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
+        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
           <!-- Grupo de información de registro del emisor-->
           <cbc:ID>SETT</cbc:ID>
@@ -133,7 +133,7 @@
     <!-- Identificador de tipo de persona [1..1]-->
 		   <cac:PartyIdentification><!-- Grupo para informar el documento del adquirente [0..1]-->
             	<cbc:ID schemeName="13">1017173008</cbc:ID><!--Identificación del adquirente, @schemeName Ver lista de valores posibles en la columna “Código” del numeral 6.2.1. [1..1] Nota: Para identificar al consumidor final, se utiliza el siguiente documento “222222222222” -->
-    		</cac:PartyIdentification><cac:Party><cac:PartyName><cbc:Name>ADQUIRIENTE DE EJEMPLO</cbc:Name><!--Nombre comercial del adquirente --></cac:PartyName><cac:PhysicalLocation><cac:Address><cbc:ID>66001</cbc:ID><!--Código del municipio --><cbc:CityName>PEREIRA</cbc:CityName><!--Nombre de la ciudad --><cbc:PostalZone>54321</cbc:PostalZone><!-- Codigo postal--><cbc:CountrySubentity>Risaralda</cbc:CountrySubentity><!-- Nombre del departamento--><cbc:CountrySubentityCode>66</cbc:CountrySubentityCode><!-- Codigo del departamento --><cac:AddressLine><cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line><!--Direccion--></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:Address></cac:PhysicalLocation><cac:PartyTaxScheme><cbc:RegistrationName>ADQUIRIENTE DE VICTOR</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente --><cbc:CompanyID schemeID="PartyTaxSchemeDV" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID><cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode><!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] --><cac:RegistrationAddress><cbc:ID>66001</cbc:ID><cbc:CityName>PEREIRA</cbc:CityName><cbc:PostalZone>54321</cbc:PostalZone><cbc:CountrySubentity>Risaralda</cbc:CountrySubentity><cbc:CountrySubentityCode>66</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>Riosucio, Caldas</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:RegistrationAddress><cac:TaxScheme><!-- Grupo de detalles tributarios del adquirente--><cbc:ID>01</cbc:ID><!-- Identificador del tributo del adquirente--><cbc:Name>IVA</cbc:Name><!--Nombre del tributo--></cac:TaxScheme></cac:PartyTaxScheme><cac:PartyLegalEntity><cbc:RegistrationName>ADQUIRIENTE DE ANGEE</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente--><cbc:CompanyID schemeID="{PartyLegalEntityDV}" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID><cac:CorporateRegistrationScheme><!-- Grupo de información de registro del adquirente--><cbc:Name>1485596</cbc:Name><!-- Número de matrícula mercantil --></cac:CorporateRegistrationScheme></cac:PartyLegalEntity><cac:Contact><cbc:ElectronicMail>xxxx@xxxx.comutp</cbc:ElectronicMail><!-- Correo electrónico de contacto --></cac:Contact></cac:Party></cac:AccountingCustomerParty>
+    		</cac:PartyIdentification><cac:Party><cac:PartyName><cbc:Name>ADQUIRIENTE DE EJEMPLO</cbc:Name><!--Nombre comercial del adquirente --></cac:PartyName><cac:PhysicalLocation><cac:Address><cbc:ID>66001</cbc:ID><!--Código del municipio --><cbc:CityName>PEREIRA</cbc:CityName><!--Nombre de la ciudad --><cbc:PostalZone>54321</cbc:PostalZone><!-- Codigo postal--><cbc:CountrySubentity>Risaralda</cbc:CountrySubentity><!-- Nombre del departamento--><cbc:CountrySubentityCode>66</cbc:CountrySubentityCode><!-- Codigo del departamento --><cac:AddressLine><cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line><!--Direccion--></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:Address></cac:PhysicalLocation><cac:PartyTaxScheme><cbc:RegistrationName>ADQUIRIENTE DE VICTOR</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente --><cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID><cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode><!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] --><cac:RegistrationAddress><cbc:ID>66001</cbc:ID><cbc:CityName>PEREIRA</cbc:CityName><cbc:PostalZone>54321</cbc:PostalZone><cbc:CountrySubentity>Risaralda</cbc:CountrySubentity><cbc:CountrySubentityCode>66</cbc:CountrySubentityCode><cac:AddressLine><cbc:Line>Riosucio, Caldas</cbc:Line></cac:AddressLine><cac:Country><cbc:IdentificationCode>CO</cbc:IdentificationCode><cbc:Name languageID="es">Colombia</cbc:Name></cac:Country></cac:RegistrationAddress><cac:TaxScheme><!-- Grupo de detalles tributarios del adquirente--><cbc:ID>01</cbc:ID><!-- Identificador del tributo del adquirente--><cbc:Name>IVA</cbc:Name><!--Nombre del tributo--></cac:TaxScheme></cac:PartyTaxScheme><cac:PartyLegalEntity><cbc:RegistrationName>ADQUIRIENTE DE ANGEE</cbc:RegistrationName><!-- Nombre o Razón Social del adquirente--><cbc:CompanyID schemeID="3" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1017173008</cbc:CompanyID><cac:CorporateRegistrationScheme><!-- Grupo de información de registro del adquirente--><cbc:Name>1485596</cbc:Name><!-- Número de matrícula mercantil --></cac:CorporateRegistrationScheme></cac:PartyLegalEntity><cac:Contact><cbc:ElectronicMail>xxxx@xxxx.comutp</cbc:ElectronicMail><!-- Correo electrónico de contacto --></cac:Contact></cac:Party></cac:AccountingCustomerParty>
   <cac:PaymentMeans>
     <!--Grupo de campos para información relacionadas con el pago de la factura. [1..N] -->
     <cbc:ID>1</cbc:ID>
@@ -145,13 +145,13 @@
   </cac:PaymentMeans>
   <cac:TaxTotal>
     <!--Grupo de campos para información totales relacionadas con un tributo [0..N]-->
-    <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="COP">55362.56</cbc:TaxAmount>
     <!--Valor del tributo -->
     <cac:TaxSubtotal>
       <!-- Grupo de información que definen los valores del tributo -->
-      <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
+      <cbc:TaxableAmount currencyID="COP">474587.45</cbc:TaxableAmount>
       <!--  Base Imponible sobre la que se calcula el valor del tributo-->
-      <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+      <cbc:TaxAmount currencyID="COP">55362.56</cbc:TaxAmount>
       <!-- Valor del tributo: producto del porcentaje aplicado sobre la base imponible-->
       <cac:TaxCategory>
         <!-- Grupo de información sobre el tributo -->
@@ -167,30 +167,30 @@
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
     <!--Grupo de campos para información relacionadas con los valores totales aplicables a la factura [1..1]-->
-    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
+    <cbc:LineExtensionAmount currencyID="COP">474587.45</cbc:LineExtensionAmount>
     <!-- Total Valor Bruto antes de tributos: Total valor bruto, suma de los valores brutos de las líneas de la factura.-->
-    <cbc:TaxExclusiveAmount currencyID="COP">100000.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxExclusiveAmount currencyID="COP">474587.45</cbc:TaxExclusiveAmount>
     <!--Total Valor Base Imponible : Base imponible para el cálculo de los tributos  -->
-    <cbc:TaxInclusiveAmount currencyID="COP">119000.00</cbc:TaxInclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="COP">529950.00</cbc:TaxInclusiveAmount>
     <!-- Total de Valor Bruto más tributos-->
-    <cbc:PayableAmount currencyID="COP">119000.00</cbc:PayableAmount>
+    <cbc:PayableAmount currencyID="COP">529950.00</cbc:PayableAmount>
     <!--Valor a Pagar de Factura: Valor total de ítems (incluyendo cargos y descuentos a nivel de ítems)+valor tributos + valor cargos – valor descuentos – valor anticipos-->
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
     <!--Grupo de campos para información relacionadas con una línea de factura [1..N] -->
-    <cbc:ID>1.00</cbc:ID>
+    <cbc:ID>1</cbc:ID>
     <!-- Número de Línea-->
-    <cbc:InvoicedQuantity>100000.00</cbc:InvoicedQuantity>
+    <cbc:InvoicedQuantity>1.00</cbc:InvoicedQuantity>
     <!-- Cantidad del producto o servicio-->
-    <cbc:LineExtensionAmount currencyID="COP">19000.00</cbc:LineExtensionAmount>
+    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
     <!-- Valor total de la línea. Cantidad x Precio Unidad menos descuentos más recargos que apliquen para la línea-->
     <cac:TaxTotal>
       <!-- Grupo de campos para información relacionadas con un tributo aplicable a esta línea de la factura-->
-      <cbc:TaxAmount currencyID="COP">100000.00</cbc:TaxAmount>
+      <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
       <!-- Valor del tributo -->
       <cac:TaxSubtotal>
         <!-- Grupo de información que definen los valores del tributo-->
-        <cbc:TaxableAmount currencyID="COP">1</cbc:TaxableAmount>
+        <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
         <!-- Base Imponible sobre la que se calcula el valor del tributo-->
         <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
         <!-- Valor del tributo: producto del porcentaje aplicado sobre la base imponible-->
@@ -214,26 +214,126 @@
       <!-- Descripción: Descripción del artículo o servicio a que se refiere esta línea de la factura-->
       <cac:StandardItemIdentification>
         <!-- Grupo de datos de identificación del artículo o servicio de acuerdo con un estándar-->
-        <cbc:ID schemeID="999">M123445</cbc:ID>
+        <cbc:ID schemeID="999">900770401-8</cbc:ID>
         <!-- Código del estándar -->
       </cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
       <!-- Grupo de información que describen los precios del artículo o servicio-->
-      <cbc:PriceAmount currencyID="{PriceCurrencyID}">100000.00</cbc:PriceAmount>
+      <cbc:PriceAmount currencyID="COP">100000.00</cbc:PriceAmount>
       <!--  Valor del artículo o servicio -->
-      <cbc:BaseQuantity unitCode="{PriceBaseUnitCode}">1.00</cbc:BaseQuantity>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+      <!--La cantidad real sobre la cual el precio aplica -->
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <!--Grupo de campos para información relacionadas con una línea de factura [1..N] -->
+    <cbc:ID>2</cbc:ID>
+    <!-- Número de Línea-->
+    <cbc:InvoicedQuantity>1.00</cbc:InvoicedQuantity>
+    <!-- Cantidad del producto o servicio-->
+    <cbc:LineExtensionAmount currencyID="COP">214285.72</cbc:LineExtensionAmount>
+    <!-- Valor total de la línea. Cantidad x Precio Unidad menos descuentos más recargos que apliquen para la línea-->
+    <cac:TaxTotal>
+      <!-- Grupo de campos para información relacionadas con un tributo aplicable a esta línea de la factura-->
+      <cbc:TaxAmount currencyID="COP">10714.28</cbc:TaxAmount>
+      <!-- Valor del tributo -->
+      <cac:TaxSubtotal>
+        <!-- Grupo de información que definen los valores del tributo-->
+        <cbc:TaxableAmount currencyID="COP">214285.72</cbc:TaxableAmount>
+        <!-- Base Imponible sobre la que se calcula el valor del tributo-->
+        <cbc:TaxAmount currencyID="COP">10714.28</cbc:TaxAmount>
+        <!-- Valor del tributo: producto del porcentaje aplicado sobre la base imponible-->
+        <cac:TaxCategory>
+          <!--Grupo de información sobre el tributo-->
+          <cbc:Percent>5.00</cbc:Percent>
+          <!-- Tarifa del tributo-->
+          <cac:TaxScheme>
+            <!-- Grupo de información específicas sobre el tributo -->
+            <cbc:ID>01</cbc:ID>
+            <!-- Identificador del tributo-->
+            <cbc:Name>IVA</cbc:Name>
+            <!-- Nombre del tributo -->
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <!-- Grupo de información que describen las características del artículo o servicio -->
+      <cbc:Description>manzanas</cbc:Description>
+      <!-- Descripción: Descripción del artículo o servicio a que se refiere esta línea de la factura-->
+      <cac:StandardItemIdentification>
+        <!-- Grupo de datos de identificación del artículo o servicio de acuerdo con un estándar-->
+        <cbc:ID schemeID="999">900770401-8</cbc:ID>
+        <!-- Código del estándar -->
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <!-- Grupo de información que describen los precios del artículo o servicio-->
+      <cbc:PriceAmount currencyID="COP">214285.72</cbc:PriceAmount>
+      <!--  Valor del artículo o servicio -->
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+      <!--La cantidad real sobre la cual el precio aplica -->
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <!--Grupo de campos para información relacionadas con una línea de factura [1..N] -->
+    <cbc:ID>3</cbc:ID>
+    <!-- Número de Línea-->
+    <cbc:InvoicedQuantity>1.00</cbc:InvoicedQuantity>
+    <!-- Cantidad del producto o servicio-->
+    <cbc:LineExtensionAmount currencyID="COP">160301.72</cbc:LineExtensionAmount>
+    <!-- Valor total de la línea. Cantidad x Precio Unidad menos descuentos más recargos que apliquen para la línea-->
+    <cac:TaxTotal>
+      <!-- Grupo de campos para información relacionadas con un tributo aplicable a esta línea de la factura-->
+      <cbc:TaxAmount currencyID="COP">25648.28</cbc:TaxAmount>
+      <!-- Valor del tributo -->
+      <cac:TaxSubtotal>
+        <!-- Grupo de información que definen los valores del tributo-->
+        <cbc:TaxableAmount currencyID="COP">160301.72</cbc:TaxableAmount>
+        <!-- Base Imponible sobre la que se calcula el valor del tributo-->
+        <cbc:TaxAmount currencyID="COP">25648.28</cbc:TaxAmount>
+        <!-- Valor del tributo: producto del porcentaje aplicado sobre la base imponible-->
+        <cac:TaxCategory>
+          <!--Grupo de información sobre el tributo-->
+          <cbc:Percent>16.00</cbc:Percent>
+          <!-- Tarifa del tributo-->
+          <cac:TaxScheme>
+            <!-- Grupo de información específicas sobre el tributo -->
+            <cbc:ID>01</cbc:ID>
+            <!-- Identificador del tributo-->
+            <cbc:Name>IVA</cbc:Name>
+            <!-- Nombre del tributo -->
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <!-- Grupo de información que describen las características del artículo o servicio -->
+      <cbc:Description>peras</cbc:Description>
+      <!-- Descripción: Descripción del artículo o servicio a que se refiere esta línea de la factura-->
+      <cac:StandardItemIdentification>
+        <!-- Grupo de datos de identificación del artículo o servicio de acuerdo con un estándar-->
+        <cbc:ID schemeID="999">900770401-8</cbc:ID>
+        <!-- Código del estándar -->
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <!-- Grupo de información que describen los precios del artículo o servicio-->
+      <cbc:PriceAmount currencyID="COP">160301.72</cbc:PriceAmount>
+      <!--  Valor del artículo o servicio -->
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
       <!--La cantidad real sobre la cual el precio aplica -->
     </cac:Price>
   </cac:InvoiceLine>
   <DATA>
     <UBL21>true</UBL21>
     <Partnership>
-      <ID>11111111</ID>
+      <ID>900770401</ID>
       <!--Identificación de la Alianza "A" [1..1] -->
       <TechKey>fc8eac422eba16e22ffd8c6f94b3f40a6e38162c</TechKey>
       <!--Clave Técnica [1..1]-->
-      <SetTestID>esf162</SetTestID>
+      <SetTestID>19ffdd41-decc-4c97-b0c8-e54d0ee4f636</SetTestID>
       <!-- TestID Sólo Aplica para pruebas [1..1] -->
     </Partnership>
   </DATA>
