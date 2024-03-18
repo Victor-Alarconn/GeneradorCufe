@@ -14,7 +14,7 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using static GeneradorCufe.Model.GeneradorCufeModel;
+
 
 namespace GeneradorCufe.ViewModel
 {
@@ -680,7 +680,6 @@ namespace GeneradorCufe.ViewModel
 
             FacturaElectronica facturaElectronica = new FacturaElectronica(); // Crear una instancia de la clase FacturaElectronica
             List<InvoiceLineData> listaProductos = facturaElectronica.ObtenerProductos();
-
 
             // Actualizar el elemento 'InvoiceAuthorization'
             xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue("18760000001");

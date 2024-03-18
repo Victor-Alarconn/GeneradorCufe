@@ -34,7 +34,7 @@
   <!--Número de factura o factura cambiaria. Incluye prefijo + consecutivo de factura autorizados por la DIAN  [1..1] -->
   <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">f619b2768f87cce8d11507e76c220fe5ece8a0287ebcb7f087aaa42c13e5b503e4ebb3da4ef8e30eddc6e8fe9f3e3e5e</cbc:UUID>
   <!-- Definido en el numeral 10.1 Rechazo: Si el valor UUID no está correctamente calculad [1..1] Tabla 6.5.1.2 -->
-  <cbc:IssueDate>2024-03-16</cbc:IssueDate>
+  <cbc:IssueDate>2024-03-18</cbc:IssueDate>
   <!-- Fecha de generación de la factura [1..1] formato aaaa-mm-dd-->
   <cbc:IssueTime>00:00:00-05:00</cbc:IssueTime>
   <!--Hora de emisión [1..1] -->
