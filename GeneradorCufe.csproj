@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Conexion\" />
     <Folder Include="Servicios\" />
     <Folder Include="Vista\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.3.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
