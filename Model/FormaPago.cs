@@ -14,5 +14,5 @@ namespace GeneradorCufe.Model
         public DateTime Fecha_pago { get; set; }
         public string? Factura_pago { get; set; }
         public int Terceros_pago { get; set; }
-}
+    }
 }

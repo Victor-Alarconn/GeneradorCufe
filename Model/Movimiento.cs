@@ -25,5 +25,5 @@ namespace GeneradorCufe.Model
         public decimal Valor_dsto { get; set; }
         public DateTime Fecha_factura { get; set; }
         public string? Hora_factura { get; set; }
-}
+    }
 }

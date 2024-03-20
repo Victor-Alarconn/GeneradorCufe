@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -245,23 +246,37 @@ namespace GeneradorCufe
                     Directory.CreateDirectory(xmlDirectory);
                 }
 
-                // Rutas para guardar los archivos XML y base64
-                string xmlFilePath = System.IO.Path.Combine(xmlDirectory, "archivo.xml");
-                string base64FilePath = System.IO.Path.Combine(xmlDirectory, "base64.txt");
+                // Generar el nombre del archivo ZIP usando la fecha y hora actual
+                string zipFileName = $"Archivos_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
+                string zipFilePath = System.IO.Path.Combine(xmlDirectory, zipFileName);
 
-                // Guardar el XML y la versión base64 en las ubicaciones finales
-                File.WriteAllText(xmlFilePath, xmlContent);
-                File.WriteAllText(base64FilePath, base64Content);
+                // Crear un archivo ZIP y agregar los archivos XML y base64
+                using (var zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
+                {
+                    // Agregar el archivo XML
+                    var xmlEntry = zipArchive.CreateEntry("archivo.xml");
+                    using (var writer = new StreamWriter(xmlEntry.Open()))
+                    {
+                        writer.Write(xmlContent);
+                    }
+
+                    // Agregar el archivo base64
+                    var base64Entry = zipArchive.CreateEntry("base64.txt");
+                    using (var writer = new StreamWriter(base64Entry.Open()))
+                    {
+                        writer.Write(base64Content);
+                    }
+                }
 
                 // Mostrar mensaje de confirmación
-                MessageBox.Show("XML generado y guardado en: " + xmlFilePath + "\nArchivo base64 generado y guardado en: " + base64FilePath);
+                MessageBox.Show($"Archivos generados y guardados en: {zipFilePath}");
 
                 // Realizar la solicitud POST
                 string url = "https://apivp.efacturacadena.com/staging/vp-hab/documentos/proceso/alianzas";
                 string response = SendPostRequest(url, base64Content);
-
             }
         }
+
 
         private string SendPostRequest(string url, string base64Content)
         {
