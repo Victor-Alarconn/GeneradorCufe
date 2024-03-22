@@ -35,7 +35,7 @@ namespace GeneradorCufe.Model
             listaProductos.Add(new InvoiceLineData
             {
                 InvoiceLineID = "1",
-                InvoiceLineInvoicedQuantity = "1.00",
+                InvoiceLineInvoicedQuantity = "2.00",
                 InvoiceLineLineExtensionAmount = "100000.00",
                 InvoiceLineTaxAmount = "19000.00",
                 InvoiceLineTaxableAmount = "100000.00",
@@ -43,48 +43,13 @@ namespace GeneradorCufe.Model
                 TaxSchemeID = "01",
                 TaxSchemeName ="IVA",
                 ItemDescription = "Frambuesas",
-                ItemID = "900770401-8",
+                ItemID = "1788999",
                 PriceCurrencyID = "COP",
                 PricePriceAmount = "100000.00",
                 PriceBaseUnitCode = "EA",
                 PriceBaseQuantity = "1.00"
             });
 
-            listaProductos.Add(new InvoiceLineData
-            {
-                InvoiceLineID = "2",
-                InvoiceLineInvoicedQuantity = "1.00",
-                InvoiceLineLineExtensionAmount = "214285.72",
-                InvoiceLineTaxAmount = "10714.28",
-                InvoiceLineTaxableAmount = "214285.72",
-                InvoiceLinePercent = "5.00",
-                TaxSchemeID = "01",
-                TaxSchemeName = "IVA",
-                ItemDescription = "manzanas",
-                ItemID = "900770401-8",
-                PriceCurrencyID = "COP",
-                PricePriceAmount = "214285.72",
-                PriceBaseUnitCode = "EA",
-                PriceBaseQuantity = "1.00"
-            });
-
-            listaProductos.Add(new InvoiceLineData
-            {
-                InvoiceLineID = "3",
-                InvoiceLineInvoicedQuantity = "1.00",
-                InvoiceLineLineExtensionAmount = "160301.72",
-                InvoiceLineTaxAmount = "25648.28",
-                InvoiceLineTaxableAmount = "160301.72",
-                InvoiceLinePercent = "16.00",
-                TaxSchemeID = "01",
-                TaxSchemeName = "IVA",
-                ItemDescription = "peras",
-                ItemID = "900770401-8",
-                PriceCurrencyID = "COP",
-                PricePriceAmount = "160301.72",
-                PriceBaseUnitCode = "EA",
-                PriceBaseQuantity = "1.00"
-            });
 
             return listaProductos;
         }

@@ -704,8 +704,8 @@ namespace GeneradorCufe.ViewModel
             // Actualizar 'ProfileExecutionID'
             xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2");
 
-            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("SETT9");
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("f619b2768f87cce8d11507e76c220fe5ece8a0287ebcb7f087aaa42c13e5b503e4ebb3da4ef8e30eddc6e8fe9f3e3e5e");
+            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("SETT74");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("04f450bc11eaea9181f71e30fb81db4eacf9828455cdffae168b333eb00a65d9b8ab66053fbccfa07c61dfc0914c3ff0");
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(now.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("00:00:00-05:00");
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01");
@@ -789,7 +789,16 @@ namespace GeneradorCufe.ViewModel
             if (partyLegalEntityElement != null)
             {
                 partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue("RM SOFT CASA DE SOFTWARE S.A.S");
-                partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue("900770401");
+                // Establecer el valor de CompanyID y sus atributos si existe
+                var companyIDElement = partyLegalEntityElement.Element(cbc + "CompanyID");
+                if (companyIDElement != null)
+                {
+                    companyIDElement.SetValue("900770401");
+                    companyIDElement.SetAttributeValue("schemeID", "8");
+                    companyIDElement.SetAttributeValue("schemeName", "31");
+                    companyIDElement.SetAttributeValue("schemeAgencyID", "195");
+                    companyIDElement.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
+                }
 
                 var corporateRegistrationSchemeElement = partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme");
                 if (corporateRegistrationSchemeElement != null)
@@ -821,14 +830,15 @@ namespace GeneradorCufe.ViewModel
             var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
             if (taxTotalElement != null)
             {
-                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("55362.56");
+                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00");
+                taxTotalElement.Element(cbc + "RoundingAmount")?.SetValue("0.000");
 
                 // Información del subtotal del impuesto
                 var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
                 if (taxSubtotalElement != null)
                 {
-                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("474587.45"); // Base imponible
-                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("55362.56"); // Valor del impuesto
+                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("100000.00"); // Base imponible
+                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00"); // Valor del impuesto
 
                     // Información de la categoría del impuesto
                     var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
@@ -850,10 +860,10 @@ namespace GeneradorCufe.ViewModel
             var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
             if (legalMonetaryTotalElement != null)
             {
-                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue("474587.45"); // Total Valor Bruto antes de tributos
-                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue("474587.45"); // Total Valor Base Imponible
-                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue("529950.00"); // Total Valor Bruto más tributos
-                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue("529950.00"); // Total Valor a Pagar
+                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue("100000.00"); // Total Valor Bruto antes de tributos
+                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue("100000.00"); // Total Valor Base Imponible
+                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue("119000.00"); // Total Valor Bruto más tributos
+                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue("119000.00"); // Total Valor a Pagar
             }
 
             // Llamada a la función para mapear la información de InvoiceLine
@@ -968,7 +978,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
                     partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
-                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("19ffdd41-decc-4c97-b0c8-e54d0ee4f636");
+                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("af771a36-bdac-4fd4-97c7-14d225b3b948");
                 }
             }
 

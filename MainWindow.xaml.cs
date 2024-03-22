@@ -272,7 +272,7 @@ namespace GeneradorCufe
                 MessageBox.Show($"Archivos generados y guardados en: {zipFilePath}");
 
                 // Realizar la solicitud POST
-                string url = "https://apivp.efacturacadena.com/staging/vp-hab/documentos/proceso/alianzas";
+                string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
                 string response = SendPostRequest(url, base64Content);
             }
         }
