@@ -17,11 +17,11 @@ namespace GeneradorCufe.Conexion
             // Aquí defines las cadenas de conexión directamente en la clase
             if (nombreBaseDatos == "MySqlConnectionString")
             {
-                _connectionString = "Database=z003; Data Source=192.190.42.191; User Id=root; Password=qwerty; ConvertZeroDateTime=True;";
+                _connectionString = "Database=facturas; Data Source=192.190.42.191; User Id=root; Password=**qwerty**; ConvertZeroDateTime=True;";
             }
             else if (nombreBaseDatos == "ArticulosConnectionString")
             {
-                _connectionString = "Database=a001; Data Source=192.190.42.191; User Id=root; Password=qwerty; ConvertZeroDateTime=True;";
+                _connectionString = "Database=a001; Data Source=192.190.42.191; User Id=root; Password=**qwerty**; ConvertZeroDateTime=True;";
             }
             else
             {

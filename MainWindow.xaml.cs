@@ -1,4 +1,5 @@
-﻿using GeneradorCufe.ViewModel;
+﻿using GeneradorCufe.Consultas;
+using GeneradorCufe.ViewModel;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.ComponentModel;
@@ -24,10 +25,13 @@ namespace GeneradorCufe
     public partial class MainWindow : Window
     {
         private InvoiceViewModel _viewModel;
+        private Factura_Consulta _facturaConsulta; // Declarar una instancia de Factura_Consulta
 
         public MainWindow()
         {
             InitializeComponent();
+            // Crear una instancia de Factura_Consulta y comenzar a ejecutar la consulta
+            _facturaConsulta = new Factura_Consulta();
             string loadedData = DataSerializer.LoadData();
             string[] parts = loadedData.Split(',');
 
@@ -325,12 +329,6 @@ namespace GeneradorCufe
                 }
             }
         }
-
-
-
-
-
-
 
 
 
