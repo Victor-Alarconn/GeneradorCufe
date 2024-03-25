@@ -65,17 +65,23 @@ namespace GeneradorCufe.Consultas
                                     Terminal = row["terminal"]?.ToString() ?? "",
                                     Ip_base = row["ip_base"]?.ToString() ?? ""
                                 };
-
+                                // Crear una instancia de la clase Emisor_Consulta
+                                Emisor_Consulta emisorConsulta = new Emisor_Consulta();
                                 // Verifica la IP base y ejecuta la acción correspondiente
                                 if (factura.Ip_base == "200.118.190.213")
                                 {
                                     // Realiza la acción específica para la primera IP
-                                    Emisor_Consulta.EjecutarAccionParaIP(factura.Empresa, factura.Ip_base, "RmSoft20X", "**LiLo89**");
+                                    emisorConsulta.EjecutarAccionParaIP(factura.Empresa, factura.Ip_base, "RmSoft20X", "**LiLo89**");
                                 }
                                 else if (factura.Ip_base == "200.118.190.167")
                                 {
                                     // Realiza la acción específica para la segunda IP
-                                    Emisor_Consulta.EjecutarAccionParaIP(factura.Empresa, factura.Ip_base, "RmSoft20X", "**LiLo89**");
+                                    emisorConsulta.EjecutarAccionParaIP(factura.Empresa, factura.Ip_base, "RmSoft20X", "**LiLo89**");
+                                }
+                                else if (factura.Ip_base == "192.190.42.191")
+                                {
+                                    // Realiza la acción específica para la segunda IP
+                                    emisorConsulta.EjecutarAccionParaIP(factura.Empresa, factura.Ip_base, "root", "**qwerty**");
                                 }
 
                             }
