@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -20,118 +22,112 @@ using System.Xml.Serialization;
 namespace GeneradorCufe.ViewModel
 {
 
-    public class InvoiceViewModel : INotifyPropertyChanged
+    public class InvoiceViewModel 
     {
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public static void EjecutarGeneracionXML(Emisor emisor, Factura factura)
+        { 
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            // Generar el XML y la versión base64 sin pasar MyInvoice
+            (string xmlContent, string base64Content) = GenerateXMLAndBase64(emisor, factura);
+
+            // Verificar que el contenido XML no esté vacío antes de continuar
+            if (string.IsNullOrEmpty(xmlContent))
+                {
+                    MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return; // Detiene la ejecución adicional si no se generó el XML
+                }
+
+                // Directorio donde se guardarán los archivos
+                string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
+
+                // Asegurarte de que el directorio 'xml' existe
+                if (!Directory.Exists(xmlDirectory))
+                {
+                    Directory.CreateDirectory(xmlDirectory);
+                }
+
+                // Generar el nombre del archivo ZIP usando la fecha y hora actual
+                string zipFileName = $"Archivos_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
+                string zipFilePath = System.IO.Path.Combine(xmlDirectory, zipFileName);
+
+                // Crear un archivo ZIP y agregar los archivos XML y base64
+                using (var zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
+                {
+                    // Agregar el archivo XML
+                    var xmlEntry = zipArchive.CreateEntry("archivo.xml");
+                    using (var writer = new StreamWriter(xmlEntry.Open()))
+                    {
+                        writer.Write(xmlContent);
+                    }
+
+                    // Agregar el archivo base64
+                    var base64Entry = zipArchive.CreateEntry("base64.txt");
+                    using (var writer = new StreamWriter(base64Entry.Open()))
+                    {
+                        writer.Write(base64Content);
+                    }
+                }
+
+                // Mostrar mensaje de confirmación
+                MessageBox.Show($"Archivos generados y guardados en: {zipFilePath}");
+
+                // Realizar la solicitud POST
+                string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
+                string response = SendPostRequest(url, base64Content);
         }
 
-        private string _numeroFactura;
-        public string NumeroFactura
+        private static string SendPostRequest(string url, string base64Content)
         {
-            get { return _numeroFactura; }
-            set { _numeroFactura = value; OnPropertyChanged(); }
-        }
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    // Establecer el encabezado efacturaAuthorizationToken
+                    client.Headers["efacturaAuthorizationToken"] = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
 
-        private DateTime _fechaFactura;
-        public DateTime FechaFactura
-        {
-            get { return _fechaFactura; }
-            set { _fechaFactura = value; OnPropertyChanged(); }
-        }
+                    // Convertir el contenido base64 en bytes
+                    byte[] bytes = Encoding.UTF8.GetBytes(base64Content);
 
-        // Nuevas propiedades
-        private string _valorSubtotal;
-        public string ValorSubtotal
-        {
-            get { return _valorSubtotal; }
-            set { _valorSubtotal = value; OnPropertyChanged(); }
-        }
+                    // Realizar la solicitud POST y obtener la respuesta
+                    byte[] responseBytes = client.UploadData(url, "POST", bytes);
 
-        private string _horaGeneracion;
-        public string HoraGeneracion
-        {
-            get { return _horaGeneracion; }
-            set { _horaGeneracion = value; OnPropertyChanged(); }
-        }
+                    // Convertir la respuesta a string
+                    string response = Encoding.UTF8.GetString(responseBytes);
 
-        private string _valorIVA;
-        public string ValorIVA
-        {
-            get { return _valorIVA; }
-            set { _valorIVA = value; OnPropertyChanged(); }
-        }
+                    // Mostrar un mensaje de éxito
+                    MessageBox.Show("Solicitud POST exitosa", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
-        private string _valorImpuesto2;
-        public string ValorImpuesto2
-        {
-            get { return _valorImpuesto2; }
-            set { _valorImpuesto2 = value; OnPropertyChanged(); }
-        }
-
-        private string _valorImpuesto3;
-        public string ValorImpuesto3
-        {
-            get { return _valorImpuesto3; }
-            set { _valorImpuesto3 = value; OnPropertyChanged(); }
-        }
-
-        private string _totalPagar;
-        public string TotalPagar
-        {
-            get { return _totalPagar; }
-            set { _totalPagar = value; OnPropertyChanged(); }
-        }
-
-        private string _nitFacturadorElectronico;
-        public string NITFacturadorElectronico
-        {
-            get { return _nitFacturadorElectronico; }
-            set { _nitFacturadorElectronico = value; OnPropertyChanged(); }
-        }
-
-        private string _numeroIdentificacionCliente;
-        public string NumeroIdentificacionCliente
-        {
-            get { return _numeroIdentificacionCliente; }
-            set { _numeroIdentificacionCliente = value; OnPropertyChanged(); }
-        }
-
-        private string _claveTecnicaControl;
-        public string ClaveTecnicaControl
-        {
-            get { return _claveTecnicaControl; }
-            set { _claveTecnicaControl = value; OnPropertyChanged(); }
-        }
-
-        private string _cadenaCUFE;
-        public string CadenaCUFE
-        {
-            get { return _cadenaCUFE; }
-            set { _cadenaCUFE = value; OnPropertyChanged(nameof(CadenaCUFE)); }
-        }
-
-        private string _cufe;
-        public string CUFE
-        {
-            get { return _cufe; }
-            set { _cufe = value; OnPropertyChanged(nameof(CUFE)); }
-
-        }
-
-        private string _setTestId;
-        public string SetTestId
-        {
-            get { return _setTestId; }
-            set { _setTestId = value; OnPropertyChanged(nameof(SetTestId)); }
+                    return response;
+                }
+            }
+            catch (WebException webEx)
+            {
+                if (webEx.Response != null)
+                {
+                    HttpStatusCode statusCode = ((HttpWebResponse)webEx.Response).StatusCode;
+                    using (var stream = webEx.Response.GetResponseStream())
+                    {
+                        using (var reader = new StreamReader(stream))
+                        {
+                            string errorResponse = reader.ReadToEnd();
+                            MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    // Manejar cualquier otro error de la solicitud POST
+                    MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
+            }
         }
 
 
-        private void UpdateXmlWithViewModelData(XDocument xmlDoc)
+
+        public static void UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -142,6 +138,18 @@ namespace GeneradorCufe.ViewModel
 
             FacturaElectronica facturaElectronica = new FacturaElectronica(); // Crear una instancia de la clase FacturaElectronica
             List<InvoiceLineData> listaProductos = facturaElectronica.ObtenerProductos();
+
+            string nitCompleto = emisor.Nit_emisor;
+            string[] partesNit = nitCompleto.Split('-');
+            string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
+            string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
+
+            string ciudadCompleta = emisor.Nombre_municipio_emisor; // Suponiendo que 'emisor.Nombre_municipio_emisor' contiene el valor "Pereira, Risaralda"
+            string[] partesCiudad = ciudadCompleta.Split(',');
+            string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
+            string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
+
+
 
             // Actualizar el elemento 'InvoiceAuthorization'
             xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue("18760000001");
@@ -184,7 +192,7 @@ namespace GeneradorCufe.ViewModel
                                          .Descendants(cbc + "Name").FirstOrDefault();
             if (partyNameElement != null)
             {
-                partyNameElement.SetValue("RM SOFT CASA DE SOFTWARE S.A.S");
+                partyNameElement.SetValue(emisor.Nombre_emisor);
             }
 
             // Actualizar detalles de 'PhysicalLocation'
@@ -192,22 +200,22 @@ namespace GeneradorCufe.ViewModel
             if (physicalLocationElement != null)
             {
                 physicalLocationElement.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("05380");
-                physicalLocationElement.Descendants(cbc + "CityName").FirstOrDefault()?.SetValue("LA ESTRELLA");
+                physicalLocationElement.Descendants(cbc + "CityName").FirstOrDefault()?.SetValue(Municipio);
                 physicalLocationElement.Descendants(cbc + "PostalZone").FirstOrDefault()?.SetValue("055460");
-                physicalLocationElement.Descendants(cbc + "CountrySubentity").FirstOrDefault()?.SetValue("Antioquia");
+                physicalLocationElement.Descendants(cbc + "CountrySubentity").FirstOrDefault()?.SetValue(Departamento);
                 physicalLocationElement.Descendants(cbc + "CountrySubentityCode").FirstOrDefault()?.SetValue("05");
                 physicalLocationElement.Descendants(cac + "AddressLine")
-                                       .Descendants(cbc + "Line").FirstOrDefault()?.SetValue("Cra. 50 #97a Sur-180 a 97a Sur-394");
+                                       .Descendants(cbc + "Line").FirstOrDefault()?.SetValue(emisor.Direccion_emisor);
             }
 
             // Actualizaciones para 'PartyTaxScheme'
             var partyTaxSchemeElement = xmlDoc.Descendants(cac + "PartyTaxScheme").FirstOrDefault();
             if (partyTaxSchemeElement != null)
             {
-                partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue("RM SOFT CASA DE SOFTWARE S.A.S");
+                partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue(emisor.Nombre_emisor);
 
-                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue("900770401");
-                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeID", "8");
+                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue(Nit);
+                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeID", Dv);
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeName", "31");
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyID", "195");
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
@@ -218,11 +226,11 @@ namespace GeneradorCufe.ViewModel
                 if (registrationAddressElement != null)
                 {
                     registrationAddressElement.Element(cbc + "ID")?.SetValue("05380");
-                    registrationAddressElement.Element(cbc + "CityName")?.SetValue("LA ESTRELLA");
+                    registrationAddressElement.Element(cbc + "CityName")?.SetValue(Municipio);
                     registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("055460");
-                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue("Antioquia");
+                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(Departamento);
                     registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue("05");
-                    registrationAddressElement.Element(cac + "AddressLine").Element(cbc + "Line")?.SetValue("Crarera");
+                    registrationAddressElement.Element(cac + "AddressLine").Element(cbc + "Line")?.SetValue(emisor.Direccion_emisor);
 
                     var countryElement = registrationAddressElement.Element(cac + "Country");
                     if (countryElement != null)
@@ -250,13 +258,13 @@ namespace GeneradorCufe.ViewModel
             var partyLegalEntityElement = xmlDoc.Descendants(cac + "PartyLegalEntity").FirstOrDefault();
             if (partyLegalEntityElement != null)
             {
-                partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue("RM SOFT CASA DE SOFTWARE S.A.S");
+                partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue(emisor.Nombre_emisor);
                 // Establecer el valor de CompanyID y sus atributos si existe
                 var companyIDElement = partyLegalEntityElement.Element(cbc + "CompanyID");
                 if (companyIDElement != null)
                 {
-                    companyIDElement.SetValue("900770401");
-                    companyIDElement.SetAttributeValue("schemeID", "8");
+                    companyIDElement.SetValue(Nit);
+                    companyIDElement.SetAttributeValue("schemeID", Dv);
                     companyIDElement.SetAttributeValue("schemeName", "31");
                     companyIDElement.SetAttributeValue("schemeAgencyID", "195");
                     companyIDElement.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
@@ -334,7 +342,7 @@ namespace GeneradorCufe.ViewModel
 
         }
 
-        private void MapInvoiceLine(XDocument xmlDoc) // Informacion de los productor o servicios
+        private static void MapInvoiceLine(XDocument xmlDoc) // Informacion de los productor o servicios
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -449,7 +457,7 @@ namespace GeneradorCufe.ViewModel
 
         }
 
-        private void MapAccountingCustomerParty(XDocument xmlDoc) // Información del adquiriente 
+        private static void MapAccountingCustomerParty(XDocument xmlDoc) // Información del adquiriente 
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -556,7 +564,7 @@ namespace GeneradorCufe.ViewModel
             }
         }
 
-        public (string xmlContent, string base64Content) GenerateXMLAndBase64()
+        public static (string xmlContent, string base64Content) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
             // Define la ruta al archivo XML base
             string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -569,7 +577,7 @@ namespace GeneradorCufe.ViewModel
                 xmlDoc = XDocument.Load(baseXmlFilePath);
 
                 // Actualizar el documento XML con los datos dinámicos
-                UpdateXmlWithViewModelData(xmlDoc);
+                UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
             }
             catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
             {

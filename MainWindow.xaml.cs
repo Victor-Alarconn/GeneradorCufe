@@ -38,20 +38,20 @@ namespace GeneradorCufe
             // Inicializa el ViewModel sin importar el número de partes.
             _viewModel = new InvoiceViewModel();
 
-            if (parts.Length > 0) _viewModel.NumeroFactura = parts[0];
-            if (parts.Length > 1 && !string.IsNullOrEmpty(parts[1])) _viewModel.FechaFactura = DateTime.ParseExact(parts[1], "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            if (parts.Length > 2) _viewModel.ValorSubtotal = parts[2];
-            if (parts.Length > 3) _viewModel.HoraGeneracion = parts[3];
-            if (parts.Length > 4) _viewModel.ValorIVA = parts[4];
-            if (parts.Length > 5) _viewModel.ValorImpuesto2 = parts[5];
-            if (parts.Length > 6) _viewModel.ValorImpuesto3 = parts[6];
-            if (parts.Length > 7) _viewModel.TotalPagar = parts[7];
-            if (parts.Length > 8) _viewModel.NITFacturadorElectronico = parts[8];
-            if (parts.Length > 9) _viewModel.NumeroIdentificacionCliente = parts[9];
-            if (parts.Length > 10) _viewModel.ClaveTecnicaControl = parts[10];
-            if (parts.Length > 11) _viewModel.CadenaCUFE = parts[11];
-            if (parts.Length > 12) _viewModel.CUFE = parts[12];
-            if (parts.Length > 13) _viewModel.SetTestId = parts[13];
+            //if (parts.Length > 0) _viewModel.NumeroFactura = parts[0];
+            //if (parts.Length > 1 && !string.IsNullOrEmpty(parts[1])) _viewModel.FechaFactura = DateTime.ParseExact(parts[1], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            //if (parts.Length > 2) _viewModel.ValorSubtotal = parts[2];
+            //if (parts.Length > 3) _viewModel.HoraGeneracion = parts[3];
+            //if (parts.Length > 4) _viewModel.ValorIVA = parts[4];
+            //if (parts.Length > 5) _viewModel.ValorImpuesto2 = parts[5];
+            //if (parts.Length > 6) _viewModel.ValorImpuesto3 = parts[6];
+            //if (parts.Length > 7) _viewModel.TotalPagar = parts[7];
+            //if (parts.Length > 8) _viewModel.NITFacturadorElectronico = parts[8];
+            //if (parts.Length > 9) _viewModel.NumeroIdentificacionCliente = parts[9];
+            //if (parts.Length > 10) _viewModel.ClaveTecnicaControl = parts[10];
+            //if (parts.Length > 11) _viewModel.CadenaCUFE = parts[11];
+            //if (parts.Length > 12) _viewModel.CUFE = parts[12];
+            //if (parts.Length > 13) _viewModel.SetTestId = parts[13];
 
             DataContext = _viewModel;
 
@@ -62,8 +62,8 @@ namespace GeneradorCufe
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             // Añade _viewModel.CadenaCUFE y _viewModel.CUFE al final
-            string dataToSave = $"{_viewModel.NumeroFactura},{_viewModel.FechaFactura.ToString("yyyy-MM-dd")},{_viewModel.ValorSubtotal},{_viewModel.HoraGeneracion},{_viewModel.ValorIVA},{_viewModel.ValorImpuesto2},{_viewModel.ValorImpuesto3},{_viewModel.TotalPagar},{_viewModel.NITFacturadorElectronico},{_viewModel.NumeroIdentificacionCliente},{_viewModel.ClaveTecnicaControl},{_viewModel.CadenaCUFE},{_viewModel.CUFE},{_viewModel.SetTestId}";
-            DataSerializer.SaveData(dataToSave);
+        //    string dataToSave = $"{_viewModel.NumeroFactura},{_viewModel.FechaFactura.ToString("yyyy-MM-dd")},{_viewModel.ValorSubtotal},{_viewModel.HoraGeneracion},{_viewModel.ValorIVA},{_viewModel.ValorImpuesto2},{_viewModel.ValorImpuesto3},{_viewModel.TotalPagar},{_viewModel.NITFacturadorElectronico},{_viewModel.NumeroIdentificacionCliente},{_viewModel.ClaveTecnicaControl},{_viewModel.CadenaCUFE},{_viewModel.CUFE},{_viewModel.SetTestId}";
+          //  DataSerializer.SaveData(dataToSave);
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -100,18 +100,18 @@ namespace GeneradorCufe
 
         private void BtnCufe_Click_1(object sender, RoutedEventArgs e)
         {
-            if (ValidarDatos())
-            {
-                // Construir la cadena CUFE y generar el CUFE
-                _viewModel.CadenaCUFE = ConstruirCadenaCUFE();
-                _viewModel.CUFE = GenerarCUFE(_viewModel.CadenaCUFE);
+            //if (ValidarDatos())
+            //{
+            //    // Construir la cadena CUFE y generar el CUFE
+            //    _viewModel.CadenaCUFE = ConstruirCadenaCUFE();
+            //    _viewModel.CUFE = GenerarCUFE(_viewModel.CadenaCUFE);
 
-                // Mostrar la cadena y el CUFE en los TextBoxes (opcional)
-                TxtCadenaCUFE.Text = _viewModel.CadenaCUFE;
-                TxtCadenaCUFE.Visibility = Visibility.Visible;
-                TxtCUFE.Text = "CUFE generado: " + _viewModel.CUFE;
-                TxtCUFE.Visibility = Visibility.Visible;
-            }
+            //    // Mostrar la cadena y el CUFE en los TextBoxes (opcional)
+            //    TxtCadenaCUFE.Text = _viewModel.CadenaCUFE;
+            //    TxtCadenaCUFE.Visibility = Visibility.Visible;
+            //    TxtCUFE.Text = "CUFE generado: " + _viewModel.CUFE;
+            //    TxtCUFE.Visibility = Visibility.Visible;
+            //}
 
         }
 
@@ -158,108 +158,8 @@ namespace GeneradorCufe
 
         private void BtnCufe_Click_2(object sender, RoutedEventArgs e)
         {
-            var viewModel = DataContext as InvoiceViewModel;
-            if (viewModel != null)
-            {
-                // Generar el XML y la versión base64 sin pasar MyInvoice
-                (string xmlContent, string base64Content) = viewModel.GenerateXMLAndBase64();
-
-                // Verificar que el contenido XML no esté vacío antes de continuar
-                if (string.IsNullOrEmpty(xmlContent))
-                {
-                    MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return; // Detiene la ejecución adicional si no se generó el XML
-                }
-
-                // Directorio donde se guardarán los archivos
-                string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
-
-                // Asegurarte de que el directorio 'xml' existe
-                if (!Directory.Exists(xmlDirectory))
-                {
-                    Directory.CreateDirectory(xmlDirectory);
-                }
-
-                // Generar el nombre del archivo ZIP usando la fecha y hora actual
-                string zipFileName = $"Archivos_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
-                string zipFilePath = System.IO.Path.Combine(xmlDirectory, zipFileName);
-
-                // Crear un archivo ZIP y agregar los archivos XML y base64
-                using (var zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
-                {
-                    // Agregar el archivo XML
-                    var xmlEntry = zipArchive.CreateEntry("archivo.xml");
-                    using (var writer = new StreamWriter(xmlEntry.Open()))
-                    {
-                        writer.Write(xmlContent);
-                    }
-
-                    // Agregar el archivo base64
-                    var base64Entry = zipArchive.CreateEntry("base64.txt");
-                    using (var writer = new StreamWriter(base64Entry.Open()))
-                    {
-                        writer.Write(base64Content);
-                    }
-                }
-
-                // Mostrar mensaje de confirmación
-                MessageBox.Show($"Archivos generados y guardados en: {zipFilePath}");
-
-                // Realizar la solicitud POST
-                string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
-                string response = SendPostRequest(url, base64Content);
-            }
+            //EjecutarGeneracionXML();
         }
-
-
-        private string SendPostRequest(string url, string base64Content)
-        {
-            try
-            {
-                using (WebClient client = new WebClient())
-                {
-                    // Establecer el encabezado efacturaAuthorizationToken
-                    client.Headers["efacturaAuthorizationToken"] = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
-
-                    // Convertir el contenido base64 en bytes
-                    byte[] bytes = Encoding.UTF8.GetBytes(base64Content);
-
-                    // Realizar la solicitud POST y obtener la respuesta
-                    byte[] responseBytes = client.UploadData(url, "POST", bytes);
-
-                    // Convertir la respuesta a string
-                    string response = Encoding.UTF8.GetString(responseBytes);
-
-                    // Mostrar un mensaje de éxito
-                    MessageBox.Show("Solicitud POST exitosa", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    return response;
-                }
-            }
-            catch (WebException webEx)
-            {
-                if (webEx.Response != null)
-                {
-                    HttpStatusCode statusCode = ((HttpWebResponse)webEx.Response).StatusCode;
-                    using (var stream = webEx.Response.GetResponseStream())
-                    {
-                        using (var reader = new StreamReader(stream))
-                        {
-                            string errorResponse = reader.ReadToEnd();
-                            MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return null;
-                        }
-                    }
-                }
-                else
-                {
-                    // Manejar cualquier otro error de la solicitud POST
-                    MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return null;
-                }
-            }
-        }
-
 
 
         private void ConvertirXML_Click(object sender, RoutedEventArgs e)

@@ -20,7 +20,7 @@ namespace GeneradorCufe.Consultas
         {
             _data = new Data(); 
             _timer = new System.Timers.Timer();
-            _timer.Interval = 15000; // Intervalo en milisegundos (15 segundos)
+            _timer.Interval = 120000; // Intervalo en milisegundos (15 segundos)
             _timer.Elapsed += TimerElapsed; // Método que se ejecutará cuando el temporizador expire
             _timer.Start(); // Iniciar el temporizador
         }
@@ -71,18 +71,19 @@ namespace GeneradorCufe.Consultas
                                 if (factura.Ip_base == "200.118.190.213")
                                 {
                                     // Realiza la acción específica para la primera IP
-                                    emisorConsulta.EjecutarAccionParaIP(factura.Empresa, factura.Ip_base, "RmSoft20X", "**LiLo89**");
+                                    emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "**LiLo89**");
                                 }
                                 else if (factura.Ip_base == "200.118.190.167")
                                 {
                                     // Realiza la acción específica para la segunda IP
-                                    emisorConsulta.EjecutarAccionParaIP(factura.Empresa, factura.Ip_base, "RmSoft20X", "**LiLo89**");
+                                    emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "**LiLo89**");
                                 }
                                 else if (factura.Ip_base == "192.190.42.191")
                                 {
-                                    // Realiza la acción específica para la segunda IP
-                                    emisorConsulta.EjecutarAccionParaIP(factura.Empresa, factura.Ip_base, "root", "**qwerty**");
+                                    // Realiza la acción específica para la tercera IP
+                                    emisorConsulta.EjecutarAccionParaIP(factura, "root", "**qwerty**");
                                 }
+
 
                             }
 

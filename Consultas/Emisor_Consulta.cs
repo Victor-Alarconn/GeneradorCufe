@@ -1,4 +1,5 @@
 ﻿using GeneradorCufe.Model;
+using GeneradorCufe.ViewModel;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -12,18 +13,20 @@ namespace GeneradorCufe.Consultas
     public class Emisor_Consulta
     {
         private readonly Conexion.Data _data;
+        private readonly InvoiceViewModel _invoiceViewModel;
 
         public Emisor_Consulta()
         {
             _data = new Conexion.Data("MySqlConnectionString");
+          
+            InvoiceViewModel invoiceViewModel = new InvoiceViewModel();
         }
-
-        public void EjecutarAccionParaIP(string empresa, string ipBase, string usuario, string contraseña)
+        public void EjecutarAccionParaIP(Factura factura, string usuario, string contraseña)
         {
             try
             {
                 // Construir la cadena de conexión utilizando la IP, usuario y contraseña proporcionados
-                string connectionString = $"Database={empresa}; Data Source={ipBase}; User Id={usuario}; Password={contraseña}; ConvertZeroDateTime=True;";
+                string connectionString = $"Database=empresas; Data Source={factura.Ip_base}; User Id={usuario}; Password={contraseña}; ConvertZeroDateTime=True;";
 
                 // Crear una nueva conexión a la base de datos utilizando la cadena de conexión construida
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -38,7 +41,7 @@ namespace GeneradorCufe.Consultas
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         // Agregar el parámetro 'empresa' a la consulta SQL para evitar la inyección de SQL
-                        command.Parameters.AddWithValue("@empresa", empresa);
+                        command.Parameters.AddWithValue("@empresa", factura.Empresa);
 
                         // Crear un adaptador de datos y un DataTable para almacenar los resultados de la consulta
                         using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
@@ -46,25 +49,23 @@ namespace GeneradorCufe.Consultas
                             DataTable dataTable = new DataTable();
                             adapter.Fill(dataTable);
 
-                            // Procesar los resultados de la consulta
                             foreach (DataRow row in dataTable.Rows)
                             {
-                                // Obtener los valores de cada columna y hacer lo que necesites con ellos
-                                string emprnombr = row["emprnombr"].ToString()??"";
-                                string emprnit = row["emprnit"].ToString() ?? "";
-                                string emprtipo = row["emprtipo"].ToString() ?? "";
-                                string emprdirec = row["emprdirec"].ToString() ?? "";
-                                string emprciuda = row["emprciuda"].ToString() ?? "";
-                                string empregim_x = row["empregim_x"].ToString() ?? "";
+                                Emisor emisor = new Emisor
+                                {
+                                    Nombre_emisor = row["emprnombr"].ToString() ?? "",
+                                    Nit_emisor = row["emprnit"].ToString() ?? "",
+                                    Codigo_departamento_emisor = row["emprtipo"].ToString() ?? "",
+                                    Direccion_emisor = row["emprdirec"].ToString() ?? "",
+                                    Nombre_municipio_emisor = row["emprciuda"].ToString() ?? "",
+                                    Responsable_emisor = row["empregim_x"].ToString() ?? ""
+                                };
 
-                                // Hacer lo que necesites con los valores obtenidos
-                                Console.WriteLine($"Nombre de Empresa: {emprnombr}, NIT: {emprnit}, Tipo: {emprtipo}, Dirección: {emprdirec}, Ciudad: {emprciuda}, Régimen: {empregim_x}");
+                                // Llamada al método desde dentro del bucle
+                                InvoiceViewModel.EjecutarGeneracionXML(emisor, factura);
                             }
                         }
                     }
-
-                    // Cierra la conexión
-                    connection.Close();
                 }
             }
             catch (Exception ex)
@@ -73,6 +74,7 @@ namespace GeneradorCufe.Consultas
                 Console.WriteLine("Error al ejecutar la acción para la IP: " + ex.Message);
             }
         }
+
 
 
 
