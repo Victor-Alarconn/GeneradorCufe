@@ -112,7 +112,7 @@ namespace GeneradorCufe.ViewModel
                         {
                             string errorResponse = reader.ReadToEnd();
                             MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return null;
+                            return "";
                         }
                     }
                 }
@@ -120,7 +120,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     // Manejar cualquier otro error de la solicitud POST
                     MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return null;
+                    return "";
                 }
             }
         }
@@ -139,12 +139,12 @@ namespace GeneradorCufe.ViewModel
             FacturaElectronica facturaElectronica = new FacturaElectronica(); // Crear una instancia de la clase FacturaElectronica
             List<InvoiceLineData> listaProductos = facturaElectronica.ObtenerProductos();
 
-            string nitCompleto = emisor.Nit_emisor;
+            string nitCompleto = emisor.Nit_emisor ?? "";
             string[] partesNit = nitCompleto.Split('-');
             string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
             string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
 
-            string ciudadCompleta = emisor.Nombre_municipio_emisor; // Suponiendo que 'emisor.Nombre_municipio_emisor' contiene el valor "Pereira, Risaralda"
+            string ciudadCompleta = emisor.Nombre_municipio_emisor ?? "";
             string[] partesCiudad = ciudadCompleta.Split(',');
             string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
             string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
