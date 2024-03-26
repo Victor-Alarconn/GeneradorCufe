@@ -136,8 +136,11 @@ namespace GeneradorCufe.ViewModel
             // Namespace para elementos 'cac'
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
-            FacturaElectronica facturaElectronica = new FacturaElectronica(); // Crear una instancia de la clase FacturaElectronica
-            List<InvoiceLineData> listaProductos = facturaElectronica.ObtenerProductos();
+            // Crear una instancia de la clase Productos_Consulta
+            Productos_Consulta productosConsulta = new Productos_Consulta();
+
+            // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
+            List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura.Facturas);
 
             string nitCompleto = emisor.Nit_emisor ?? "";
             string[] partesNit = nitCompleto.Split('-');
@@ -285,7 +288,7 @@ namespace GeneradorCufe.ViewModel
                 contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com.correo");
             }
 
-            MapAccountingCustomerParty(xmlDoc); // informacion del adquiriente
+            MapAccountingCustomerParty(xmlDoc, listaProductos[2].Nit);   // informacion del adquiriente
 
             // Información del medio de pago
             var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
@@ -337,22 +340,19 @@ namespace GeneradorCufe.ViewModel
             }
 
             // Llamada a la función para mapear la información de InvoiceLine
-            MapInvoiceLine(xmlDoc);
+            MapInvoiceLine(xmlDoc, listaProductos);
 
 
         }
 
-        private static void MapInvoiceLine(XDocument xmlDoc) // Informacion de los productor o servicios
-        {
+       private static void MapInvoiceLine(XDocument xmlDoc, List<Productos> listaProductos)
+       {  
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
             // Namespace para elementos 'cbc'
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             // Namespace para elementos 'cac'
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
-
-            FacturaElectronica facturaElectronica = new FacturaElectronica(); // Crear una instancia de la clase FacturaElectronica
-            List<InvoiceLineData> listaProductos = facturaElectronica.ObtenerProductos();
 
             // Obtener el elemento 'cac:InvoiceLine' para utilizarlo como plantilla para agregar nuevos productos
             var invoiceLineTemplate = xmlDoc.Descendants(cac + "InvoiceLine").FirstOrDefault();
@@ -363,32 +363,33 @@ namespace GeneradorCufe.ViewModel
 
 
                 // Iterar sobre cada producto en la lista y agregarlos al XML
-                foreach (var producto in listaProductos)
+                for (int i = 0; i < listaProductos.Count; i++)
                 {
+                    var producto = listaProductos[i];
                     // Crear un nuevo elemento 'cac:InvoiceLine' basado en la plantilla
                     var invoiceLineElement = new XElement(invoiceLineTemplate);
 
                     // Establecer los valores del producto en el nuevo elemento
-                    invoiceLineElement.Element(cbc + "ID")?.SetValue(producto.InvoiceLineID);
-                    invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(producto.InvoiceLineInvoicedQuantity);
-                    invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.InvoiceLineLineExtensionAmount);
+                    invoiceLineElement.Element(cbc + "ID")?.SetValue((i + 1).ToString());
+                    invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(producto.Cantidad);
+                    invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.Neto);
 
                     // Establecer los valores del impuesto
                     var taxTotalElement = invoiceLineElement.Element(cac + "TaxTotal");
                     if (taxTotalElement != null)
                     {
-                        taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.InvoiceLineTaxAmount);
+                        taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal);
 
                         var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
                         if (taxSubtotalElement != null)
                         {
-                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(producto.InvoiceLineTaxableAmount);
-                            taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.InvoiceLineTaxAmount);
+                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(producto.Neto);
+                            taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal);
 
                             var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
                             if (taxCategoryElement != null)
                             {
-                                taxCategoryElement.Element(cbc + "Percent")?.SetValue(producto.InvoiceLinePercent);
+                                taxCategoryElement.Element(cbc + "Percent")?.SetValue(producto.Iva);
 
                                 // Agregar la parte faltante para TaxScheme dentro de TaxCategory
                                 var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
@@ -410,12 +411,12 @@ namespace GeneradorCufe.ViewModel
                     var itemElement = invoiceLineElement.Element(cac + "Item");
                     if (itemElement != null)
                     {
-                        itemElement.Element(cbc + "Description")?.SetValue(producto.ItemDescription);
+                        itemElement.Element(cbc + "Description")?.SetValue(producto.Detalle);
 
                         var standardItemIdentificationElement = itemElement.Element(cac + "StandardItemIdentification");
                         if (standardItemIdentificationElement != null)
                         {
-                            standardItemIdentificationElement.Element(cbc + "ID")?.SetValue(producto.ItemID);
+                            standardItemIdentificationElement.Element(cbc + "ID")?.SetValue(producto.Codigo);
                         }
                     }
 
@@ -457,7 +458,7 @@ namespace GeneradorCufe.ViewModel
 
         }
 
-        private static void MapAccountingCustomerParty(XDocument xmlDoc) // Información del adquiriente 
+        private static void MapAccountingCustomerParty(XDocument xmlDoc, int Nit) // Información del adquiriente 
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";

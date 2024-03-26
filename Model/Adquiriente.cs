@@ -9,6 +9,9 @@ namespace GeneradorCufe.Model
     public class Adquiriente
     {
         public string? Nombre_adqu { get; set; }
+        public string? Nombre2 { get; set; }
+        public string? Apellido { get; set; }
+        public string? Apellido2 { get; set; }
         public string? Codigo_municipio_adqui { get; set; }
         public string? Nombre_municipio_adqui { get; set; }
         public string? Codigo_departamento_adqui { get; set; }
@@ -18,8 +21,6 @@ namespace GeneradorCufe.Model
         public string? Nit_adqui { get; set; }
         public string? Responsable { get; set; }
         public string? Correo_adqui { get; set; }
-
-
 
     }
 }

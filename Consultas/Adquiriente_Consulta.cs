@@ -17,26 +17,41 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public Adquiriente ConsultarAdquiriente() // Consulta para obtener los datos del adquiriente
+        public Adquiriente ConsultarAdquiriente(int nit)
         {
             Adquiriente adquiriente = new Adquiriente();
 
-            string query = "SELECT tronombre, tronit, trociudad, trodirec FROM tabla_adquiriente LIMIT 1"; 
+            string query = "SELECT tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen FROM xxxx3ros WHERE tronit = @Nit LIMIT 1";
 
             using (MySqlConnection connection = _data.CreateConnection())
             {
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
+                    command.Parameters.AddWithValue("@Nit", nit);
+
                     connection.Open();
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            adquiriente.Nombre_adqu = reader["tronombre"].ToString();
-                            adquiriente.Nit_adqui = reader["tronit"].ToString();
-                            adquiriente.Nombre_municipio_adqui = reader["trociudad"].ToString();
+                            // Concatenar los nombres y apellidos para formar el NombreCompleto
+                            string nombreCompleto = $"{reader["tronombre"]} {reader["tronomb_2"]} {reader["troapel_1"]} {reader["troapel_2"]}".Trim();
+                            adquiriente.Nombre_adqu = nombreCompleto;
+
+                            // Separar el municipio y el departamento
+                            string municipioDepartamento = reader["trociudad"].ToString();
+                            string[] partes = municipioDepartamento.Split(',');
+                            if (partes.Length == 2)
+                            {
+                                adquiriente.Nombre_municipio_adqui = partes[0].Trim();
+                                adquiriente.Nombre_departamento_adqui = partes[1].Trim();
+                            }
+
                             adquiriente.Direccion_adqui = reader["trodirec"].ToString();
-                            // Agrega aquí más asignaciones si hay más columnas en la tabla
+                            adquiriente.Correo_adqui = reader["troemail"].ToString();
+                            adquiriente.Responsable = reader["troregimen"].ToString();
+                            adquiriente.Nit_adqui = nit.ToString();
+                            // Puedes agregar más asignaciones si hay más columnas en la tabla
                         }
                     }
                 }
@@ -44,5 +59,6 @@ namespace GeneradorCufe.Consultas
 
             return adquiriente;
         }
+
     }
 }
