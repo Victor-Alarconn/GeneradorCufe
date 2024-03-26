@@ -467,12 +467,8 @@ namespace GeneradorCufe.ViewModel
             // Namespace para elementos 'cac'
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
-            // Consultar la información del adquiriente desde la base de datos
-            //  Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
-            //  Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente();
-
-            // Ejemplo 
-            //  accountingCustomerPartyElement.Element(cac + "Party")?.Element(cac + "PartyName")?.Element(cbc + "Name")?.SetValue(adquiriente.Nombre_adqu);
+            Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
+            Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(Nit);
 
             // Información del adquiriente
             var accountingCustomerPartyElement = xmlDoc.Descendants(cac + "AccountingCustomerParty").FirstOrDefault();
@@ -497,28 +493,28 @@ namespace GeneradorCufe.ViewModel
 
                         if (partyElement != null)
                         {
-                            partyElement.Element(cac + "PartyName")?.Element(cbc + "Name")?.SetValue("ADQUIRIENTE DE EJEMPLO");
+                            partyElement.Element(cac + "PartyName")?.Element(cbc + "Name")?.SetValue(adquiriente.Nombre_adqu);
 
                             // Información de ubicación física del adquiriente
                             var physicalLocationElement = partyElement.Element(cac + "PhysicalLocation");
                             if (physicalLocationElement != null)
                             {
                                 physicalLocationElement.Element(cac + "Address")?.Element(cbc + "ID")?.SetValue("66001");
-                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CityName")?.SetValue("PEREIRA");
+                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CityName")?.SetValue(adquiriente.Nombre_municipio_adqui);
                                 physicalLocationElement.Element(cac + "Address")?.Element(cbc + "PostalZone")?.SetValue("54321");
-                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentity")?.SetValue("Risaralda");
+                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentity")?.SetValue(adquiriente.Nombre_departamento_adqui);
                                 physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentityCode")?.SetValue("66");
                                 physicalLocationElement.Element(cac + "Address")?.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
                                 physicalLocationElement.Element(cac + "Address")?.Element(cac + "Country")?.Element(cbc + "Name")?.SetValue("Colombia");
-                                physicalLocationElement.Element(cac + "Address")?.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue("CR 9 A N0 99 - 07 OF 802");
+                                physicalLocationElement.Element(cac + "Address")?.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue(adquiriente.Direccion_adqui);
                             }
 
                             // Información tributaria del adquiriente
                             var partyTaxSchemeElement = partyElement.Element(cac + "PartyTaxScheme");
                             if (partyTaxSchemeElement != null)
                             {
-                                partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue("ADQUIRIENTE DE VICTOR");
-                                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue("1017173008");
+                                partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue(adquiriente.Nombre_municipio_adqui);
+                                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue(adquiriente.Nit_adqui);
                                 partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("R-99-PN");
 
                                 // Información de ubicación de registro tributario del adquiriente
@@ -526,13 +522,13 @@ namespace GeneradorCufe.ViewModel
                                 if (registrationAddressElement != null)
                                 {
                                     registrationAddressElement.Element(cbc + "ID")?.SetValue("66001");
-                                    registrationAddressElement.Element(cbc + "CityName")?.SetValue("PEREIRA");
+                                    registrationAddressElement.Element(cbc + "CityName")?.SetValue(adquiriente.Nombre_municipio_adqui);
                                     registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("54321");
-                                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue("Risaralda");
+                                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(adquiriente.Nombre_departamento_adqui);
                                     registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue("66");
                                     registrationAddressElement.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
                                     registrationAddressElement.Element(cac + "Country")?.Element(cbc + "Name")?.SetValue("Colombia");
-                                    registrationAddressElement.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue("Riosucio, Caldas");
+                                    registrationAddressElement.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue(adquiriente.Direccion_adqui);
                                 }
 
                                 // Información del esquema tributario del adquiriente
@@ -548,8 +544,8 @@ namespace GeneradorCufe.ViewModel
                             var partyLegalEntityElement = partyElement.Element(cac + "PartyLegalEntity");
                             if (partyLegalEntityElement != null)
                             {
-                                partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue("ADQUIRIENTE DE ANGEE");
-                                partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue("1017173008");
+                                partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue(adquiriente.Nombre_adqu);
+                                partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue(adquiriente.Nit_adqui);
                                 partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme")?.Element(cbc + "Name")?.SetValue("1485596");
                             }
 
@@ -557,7 +553,7 @@ namespace GeneradorCufe.ViewModel
                             var contactElement = partyElement.Element(cac + "Contact");
                             if (contactElement != null)
                             {
-                                contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxx@xxxx.comutp");
+                                contactElement.Element(cbc + "ElectronicMail")?.SetValue(adquiriente.Correo_adqui);
                             }
                         }
                     }
