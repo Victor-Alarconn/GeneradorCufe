@@ -22,59 +22,59 @@ using System.Xml.Serialization;
 namespace GeneradorCufe.ViewModel
 {
 
-    public class InvoiceViewModel 
+    public class InvoiceViewModel
     {
 
         public static void EjecutarGeneracionXML(Emisor emisor, Factura factura)
-        { 
+        {
 
             // Generar el XML y la versión base64 sin pasar MyInvoice
             (string xmlContent, string base64Content) = GenerateXMLAndBase64(emisor, factura);
 
             // Verificar que el contenido XML no esté vacío antes de continuar
             if (string.IsNullOrEmpty(xmlContent))
+            {
+                MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
+                return; // Detiene la ejecución adicional si no se generó el XML
+            }
+
+            // Directorio donde se guardarán los archivos
+            string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
+
+            // Asegurarte de que el directorio 'xml' existe
+            if (!Directory.Exists(xmlDirectory))
+            {
+                Directory.CreateDirectory(xmlDirectory);
+            }
+
+            // Generar el nombre del archivo ZIP usando la fecha y hora actual
+            string zipFileName = $"Archivos_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
+            string zipFilePath = System.IO.Path.Combine(xmlDirectory, zipFileName);
+
+            // Crear un archivo ZIP y agregar los archivos XML y base64
+            using (var zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
+            {
+                // Agregar el archivo XML
+                var xmlEntry = zipArchive.CreateEntry("archivo.xml");
+                using (var writer = new StreamWriter(xmlEntry.Open()))
                 {
-                    MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return; // Detiene la ejecución adicional si no se generó el XML
+                    writer.Write(xmlContent);
                 }
 
-                // Directorio donde se guardarán los archivos
-                string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
-
-                // Asegurarte de que el directorio 'xml' existe
-                if (!Directory.Exists(xmlDirectory))
+                // Agregar el archivo base64
+                var base64Entry = zipArchive.CreateEntry("base64.txt");
+                using (var writer = new StreamWriter(base64Entry.Open()))
                 {
-                    Directory.CreateDirectory(xmlDirectory);
+                    writer.Write(base64Content);
                 }
+            }
 
-                // Generar el nombre del archivo ZIP usando la fecha y hora actual
-                string zipFileName = $"Archivos_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
-                string zipFilePath = System.IO.Path.Combine(xmlDirectory, zipFileName);
+            // Mostrar mensaje de confirmación
+            MessageBox.Show($"Archivos generados y guardados en: {zipFilePath}");
 
-                // Crear un archivo ZIP y agregar los archivos XML y base64
-                using (var zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
-                {
-                    // Agregar el archivo XML
-                    var xmlEntry = zipArchive.CreateEntry("archivo.xml");
-                    using (var writer = new StreamWriter(xmlEntry.Open()))
-                    {
-                        writer.Write(xmlContent);
-                    }
-
-                    // Agregar el archivo base64
-                    var base64Entry = zipArchive.CreateEntry("base64.txt");
-                    using (var writer = new StreamWriter(base64Entry.Open()))
-                    {
-                        writer.Write(base64Content);
-                    }
-                }
-
-                // Mostrar mensaje de confirmación
-                MessageBox.Show($"Archivos generados y guardados en: {zipFilePath}");
-
-                // Realizar la solicitud POST
-                string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
-                string response = SendPostRequest(url, base64Content);
+            // Realizar la solicitud POST
+            string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
+            string response = SendPostRequest(url, base64Content);
         }
 
         private static string SendPostRequest(string url, string base64Content)
@@ -467,11 +467,11 @@ namespace GeneradorCufe.ViewModel
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
             // Consultar la información del adquiriente desde la base de datos
-          //  Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
-          //  Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente();
+            //  Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
+            //  Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente();
 
             // Ejemplo 
-          //  accountingCustomerPartyElement.Element(cac + "Party")?.Element(cac + "PartyName")?.Element(cbc + "Name")?.SetValue(adquiriente.Nombre_adqu);
+            //  accountingCustomerPartyElement.Element(cac + "Party")?.Element(cac + "PartyName")?.Element(cbc + "Name")?.SetValue(adquiriente.Nombre_adqu);
 
             // Información del adquiriente
             var accountingCustomerPartyElement = xmlDoc.Descendants(cac + "AccountingCustomerParty").FirstOrDefault();
@@ -564,6 +564,52 @@ namespace GeneradorCufe.ViewModel
             }
         }
 
+
+        public static void UpdateXmlNotaCreditoWithViewModelData(XDocument xmlDoc, Emisor emisor)
+        {
+            XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+
+            // Actualizar 'CustomizationID'
+            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("");
+
+            // Actualizar 'ProfileExecutionID'
+            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("");
+
+            // Actualizar 'ID'
+            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("");
+
+            // Actualizar 'UUID'
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeID", "2");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
+
+            // Actualizar 'IssueDate' y 'IssueTime'
+            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("");
+
+            // Actualizar 'CreditNoteTypeCode'
+            xmlDoc.Descendants(cbc + "CreditNoteTypeCode").FirstOrDefault()?.SetValue("");
+
+            // Actualizar 'Note'
+            xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("");
+
+            // Actualizar 'DocumentCurrencyCode'
+            xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
+
+            // Actualizar 'LineCountNumeric'
+            xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue("");
+
+            // Actualizar 'DiscrepancyResponse'
+            var discrepancyResponseElement = xmlDoc.Descendants(cac + "DiscrepancyResponse").FirstOrDefault();
+            if (discrepancyResponseElement != null)
+            {
+                discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("");
+                discrepancyResponseElement.Element(cbc + "ResponseCode")?.SetValue("");
+                discrepancyResponseElement.Element(cbc + "Description")?.SetValue("");
+            }
+        }
+
         public static (string xmlContent, string base64Content) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
             // Define la ruta al archivo XML base
@@ -597,9 +643,10 @@ namespace GeneradorCufe.ViewModel
 
             return (xmlContent, base64Encoded);
         }
-
-
     }
+
+
+
 
     public static class DataSerializer
     {
