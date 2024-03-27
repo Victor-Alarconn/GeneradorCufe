@@ -17,17 +17,17 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public Movimiento ConsultarValoresTotales(string factura) // Consulta los valores totales de la factura
+        public Movimiento ConsultarValoresTotales(Factura factura, string cadenaConexion) // Consulta los valores totales de la factura
         {
             Movimiento movimiento = new Movimiento();
 
             string query = "SELECT valor, vriva, desctos, gravada, exentas FROM xxxxccfc WHERE factura = @factura";
 
-            using (MySqlConnection connection = _data.CreateConnection())
+            using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
             {
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@factura", factura);
+                    command.Parameters.AddWithValue("@factura", factura.Facturas);
 
                     connection.Open();
                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -46,6 +46,7 @@ namespace GeneradorCufe.Consultas
 
             return movimiento;
         }
+
 
     }
 }

@@ -18,13 +18,13 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public List<Productos> ConsultarProductosPorFactura(string numFac)
+        public List<Productos> ConsultarProductosPorFactura(Factura factura, string cadenaConexion)
         {
             List<Productos> productos = new List<Productos>();
 
             try
             {
-                using (MySqlConnection connection = _data.CreateConnection())
+                using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
                 {
                     // Abre la conexión
                     connection.Open();
@@ -35,7 +35,7 @@ namespace GeneradorCufe.Consultas
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         // Agregar el parámetro para el valor de la factura
-                        command.Parameters.AddWithValue("@numFac", numFac);
+                        command.Parameters.AddWithValue("@numFac", factura.Facturas);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
@@ -72,6 +72,7 @@ namespace GeneradorCufe.Consultas
 
             return productos;
         }
+
 
 
     }

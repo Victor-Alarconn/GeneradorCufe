@@ -21,6 +21,7 @@ namespace GeneradorCufe.Consultas
         {
             Adquiriente adquiriente = new Adquiriente();
 
+
             string query = "SELECT tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen FROM xxxx3ros WHERE tronit = @Nit LIMIT 1";
 
             using (MySqlConnection connection = _data.CreateConnection())
@@ -45,6 +46,14 @@ namespace GeneradorCufe.Consultas
                             {
                                 adquiriente.Nombre_municipio_adqui = partes[0].Trim();
                                 adquiriente.Nombre_departamento_adqui = partes[1].Trim();
+
+                                // Consultar los códigos correspondientes al municipio y departamento
+                                Codigos_Consulta codigosConsulta = new Codigos_Consulta();
+                                Codigos codigos = codigosConsulta.ConsultarCodigos(municipioDepartamento);
+
+                                // Establecer los códigos en el objeto adquiriente
+                                adquiriente.Codigo_municipio_adqui = codigos.Codigo_Municipio;
+                                adquiriente.Codigo_departamento_adqui = codigos.Codigo_Departamento;
                             }
 
                             adquiriente.Direccion_adqui = reader["trodirec"].ToString();
