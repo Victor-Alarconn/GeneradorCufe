@@ -298,10 +298,10 @@ namespace GeneradorCufe.ViewModel
                 contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com."); // angee pendiente por correo 
             }
 
-            if (listaProductos.Count > 2)
+            if (listaProductos.Count > 2) // errorr
             {
                 int nitValue = int.Parse(listaProductos[2].Nit);
-                MapAccountingCustomerParty(xmlDoc, nitValue);  // informacion del adquiriente
+                MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion);  // informacion del adquiriente
             }
             else
             {
@@ -487,8 +487,8 @@ namespace GeneradorCufe.ViewModel
 
         }
 
-        private static void MapAccountingCustomerParty(XDocument xmlDoc, int Nit) // Información del adquiriente 
-        {
+        private static void MapAccountingCustomerParty(XDocument xmlDoc, int Nit, string cadenaConexion) // Información del adquiriente 
+        { // esperelo aqui
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
             // Namespace para elementos 'cbc'
@@ -497,7 +497,7 @@ namespace GeneradorCufe.ViewModel
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
             Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
-            Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(Nit);
+            Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(Nit, cadenaConexion);
 
             // Información del adquiriente
             var accountingCustomerPartyElement = xmlDoc.Descendants(cac + "AccountingCustomerParty").FirstOrDefault();

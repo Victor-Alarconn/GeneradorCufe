@@ -17,14 +17,13 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public Adquiriente ConsultarAdquiriente(int nit)
+        public Adquiriente ConsultarAdquiriente(int nit, string cadenaConexion)
         {
             Adquiriente adquiriente = new Adquiriente();
 
-
             string query = "SELECT tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen FROM xxxx3ros WHERE tronit = @Nit LIMIT 1";
 
-            using (MySqlConnection connection = _data.CreateConnection())
+            using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
             {
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
@@ -68,6 +67,7 @@ namespace GeneradorCufe.Consultas
 
             return adquiriente;
         }
+
 
     }
 }
