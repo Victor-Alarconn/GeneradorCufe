@@ -146,11 +146,11 @@ namespace GeneradorCufe.ViewModel
 
             if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
             {
-                cadenaConexion = "Server=" + factura.Empresa + ";User Id=RmSoft20X;Password=**LiLo89**;";
+                cadenaConexion = $"Database={ factura.Empresa}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=**LiLo89**; ConvertZeroDateTime=True;";
             }
             else if (factura.Ip_base == "192.190.42.191")
             {
-                cadenaConexion = "Server=" + factura.Empresa + ";User Id=root;Password=**qwerty**;";
+                cadenaConexion = $"Database={factura.Empresa}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
             }
             // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
@@ -295,10 +295,22 @@ namespace GeneradorCufe.ViewModel
             var contactElement = xmlDoc.Descendants(cac + "Contact").FirstOrDefault();
             if (contactElement != null)
             {
-                contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com.correo"); // angee pendiente por correo 
+                contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com."); // angee pendiente por correo 
             }
 
-            MapAccountingCustomerParty(xmlDoc, listaProductos[2].Nit);   // informacion del adquiriente
+            if (listaProductos.Count > 2)
+            {
+                int nitValue = int.Parse(listaProductos[2].Nit);
+                MapAccountingCustomerParty(xmlDoc, nitValue);  // informacion del adquiriente
+            }
+            else
+            {
+                // Manejar el caso en que la lista no tiene suficientes elementos
+                Console.WriteLine("La lista de productos no tiene suficientes elementos para acceder al tercero.");
+                // Puedes mostrar otro mensaje de error o tomar otra acción apropiada aquí
+            }
+
+           
 
             // Información del medio de pago
             var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
@@ -346,7 +358,7 @@ namespace GeneradorCufe.ViewModel
                 legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Bruto antes de tributos
                 legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Base Imponible
                 legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(movimiento.Valor); // Total Valor Bruto más tributos
-                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar
+                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar // cufe ValTot
             }
 
             // Llamada a la función para mapear la información de InvoiceLine
@@ -384,13 +396,13 @@ namespace GeneradorCufe.ViewModel
                     // Establecer los valores del producto en el nuevo elemento
                     invoiceLineElement.Element(cbc + "ID")?.SetValue((i + 1).ToString());
                     invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(producto.Cantidad);
-                    invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.Neto);
+                    invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.Neto); // cufe  ValFac
 
                     // Establecer los valores del impuesto
                     var taxTotalElement = invoiceLineElement.Element(cac + "TaxTotal");
                     if (taxTotalElement != null)
                     {
-                        taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal);
+                        taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal); // cufe ValImp1
 
                         var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
                         if (taxSubtotalElement != null)
@@ -440,7 +452,7 @@ namespace GeneradorCufe.ViewModel
                     var priceElement = invoiceLineElement.Element(cac + "Price");
                     if (priceElement != null)
                     {
-                        priceElement.Element(cbc + "PriceAmount")?.SetValue(producto.Neto);
+                        priceElement.Element(cbc + "PriceAmount")?.SetValue(producto.Valor);
                         priceElement.Element(cbc + "BaseQuantity")?.SetValue(producto.Cantidad);
                     }
 

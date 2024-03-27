@@ -34,7 +34,7 @@ namespace GeneradorCufe.Consultas
                     {
                         if (reader.Read())
                         {
-                            encabezado.Autorizando = reader.GetInt32("resol_fe");
+                            encabezado.Autorizando = reader.GetString("resol_fe");
                             encabezado.Fecha_inicio = reader.GetDateTime("f_inicio");
                             encabezado.Fecha_termina = reader.GetDateTime("f_termina");
                             encabezado.R_inicio = reader.GetInt32("r_inicio");

@@ -30,12 +30,12 @@ namespace GeneradorCufe.Consultas
                     connection.Open();
 
                     // Define tu consulta SQL con las columnas específicas y el filtro por el valor de la factura
-                    string query = "SELECT codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, vrventa FROM xxxxmvin WHERE numfac = @numFac";
+                    string query = "SELECT codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, vrventa FROM xxxxmvin WHERE factura = @factura";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         // Agregar el parámetro para el valor de la factura
-                        command.Parameters.AddWithValue("@numFac", factura.Facturas);
+                        command.Parameters.AddWithValue("@factura", factura.Facturas);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
@@ -46,15 +46,15 @@ namespace GeneradorCufe.Consultas
                                 {
                                     Codigo = reader.GetString("codigo"),
                                     Recibo = reader.GetString("recibo"),
-                                    Nit = reader.GetInt32("nit"),
+                                    Nit = reader.GetString("nit"),
                                     Detalle = reader.GetString("detalle"),
                                     Cantidad = reader.GetDecimal("cantidad"),
                                     Valor = reader.GetDecimal("valor"),
                                     Neto = reader.GetDecimal("neto"),
-                                    Descuento = reader.GetString("dsct4"),
+                                    Descuento = reader.GetDecimal("dsct4"),
                                     Iva = reader.GetDecimal("iva"),
-                                    IvaTotal = reader.GetString("vriva"),
-                                    Total = reader.GetString("vrventa")
+                                    IvaTotal = reader.GetDecimal("vriva"),
+                                    Total = reader.GetDecimal("vrventa")
                                 };
 
                                 // Agregar el producto a la lista

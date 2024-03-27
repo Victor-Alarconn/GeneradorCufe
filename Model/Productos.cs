@@ -10,14 +10,14 @@ namespace GeneradorCufe.Model
     {
         public string Codigo { get; set; }
         public string Recibo { get; set; }
-        public int Nit { get; set; }
+        public string Nit { get; set; }
         public string Detalle { get; set; }
         public decimal Cantidad { get; set; }
         public decimal Valor { get; set; }
         public decimal Neto { get; set; }
-        public string Descuento { get; set; }
+        public decimal Descuento { get; set; }
         public decimal Iva { get; set; }
-        public string IvaTotal { get; set; }
-        public string Total { get; set; }
+        public decimal IvaTotal { get; set; }
+        public decimal Total { get; set; }
     }
 }

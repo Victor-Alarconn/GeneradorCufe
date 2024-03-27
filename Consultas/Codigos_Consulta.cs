@@ -14,7 +14,7 @@ namespace GeneradorCufe.Consultas
 
         public Codigos_Consulta()
         {
-            _data = new Conexion.Data("MySqlConnectionString");
+            _data = new Conexion.Data("ArticulosConnectionString");
         }
 
         public Codigos ConsultarCodigos(string ciudad)

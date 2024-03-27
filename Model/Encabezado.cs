@@ -8,7 +8,7 @@ namespace GeneradorCufe.Model
 {
     public class Encabezado
     {
-        public int Autorizando { get; set; }
+        public string Autorizando { get; set; }
         public DateTime Fecha_inicio { get; set; }
         public DateTime Fecha_termina { get; set; }
         public int R_inicio { get; set; }

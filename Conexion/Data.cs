@@ -21,7 +21,7 @@ namespace GeneradorCufe.Conexion
             }
             else if (nombreBaseDatos == "ArticulosConnectionString")
             {
-                _connectionString = "Database=a001; Data Source=192.190.42.191; User Id=root; Password=**qwerty**; ConvertZeroDateTime=True;";
+                _connectionString = "Database=empresas; Data Source=192.190.42.191; User Id=root; Password=**qwerty**; ConvertZeroDateTime=True;";
             }
             else
             {
