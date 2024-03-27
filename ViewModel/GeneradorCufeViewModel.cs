@@ -127,7 +127,7 @@ namespace GeneradorCufe.ViewModel
 
 
 
-        public static void UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)
+        public static void UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura) // emisor y factura
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -140,11 +140,13 @@ namespace GeneradorCufe.ViewModel
             Productos_Consulta productosConsulta = new Productos_Consulta();
             Encabezado_Consulta encabezadoConsulta = new Encabezado_Consulta();
             Codigos_Consulta codigosConsulta = new Codigos_Consulta();
+            Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
 
             // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura.Facturas);
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura.Terminal);
-            
+            Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura.Facturas);
+
 
             string nitCompleto = emisor.Nit_emisor ?? "";
             string[] partesNit = nitCompleto.Split('-');
@@ -301,15 +303,15 @@ namespace GeneradorCufe.ViewModel
             var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
             if (taxTotalElement != null)
             {
-                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00"); // Valor total del impuesto
+                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(movimiento.Valor_iva); // Valor total del impuesto
                 taxTotalElement.Element(cbc + "RoundingAmount")?.SetValue("2.000");
 
                 // Información del subtotal del impuesto
                 var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
                 if (taxSubtotalElement != null)
                 {
-                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("100000.00"); // Base imponible gravada
-                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00"); // Valor del impuesto
+                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto); // Base imponible gravada
+                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(movimiento.Valor_iva); // Valor del impuesto
 
                     // Información de la categoría del impuesto
                     var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
@@ -331,10 +333,10 @@ namespace GeneradorCufe.ViewModel
             var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
             if (legalMonetaryTotalElement != null)
             {
-                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue("100000.00"); // Total Valor Bruto antes de tributos
-                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue("100000.00"); // Total Valor Base Imponible
-                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue("119000.00"); // Total Valor Bruto más tributos
-                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue("119000.00"); // Total Valor a Pagar
+                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Bruto antes de tributos
+                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Base Imponible
+                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(movimiento.Valor); // Total Valor Bruto más tributos
+                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar
             }
 
             // Llamada a la función para mapear la información de InvoiceLine
@@ -343,7 +345,7 @@ namespace GeneradorCufe.ViewModel
 
         }
 
-       private static void MapInvoiceLine(XDocument xmlDoc, List<Productos> listaProductos)
+       private static void MapInvoiceLine(XDocument xmlDoc, List<Productos> listaProductos) // Productos
        {  
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -387,7 +389,11 @@ namespace GeneradorCufe.ViewModel
                             var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
                             if (taxCategoryElement != null)
                             {
-                                taxCategoryElement.Element(cbc + "Percent")?.SetValue(producto.Iva);
+                                // Formatear el valor del IVA con dos decimales
+                                string formattedIva = producto.Iva.ToString("F2");
+
+                                // Establecer el valor formateado en el elemento Percent
+                                taxCategoryElement.Element(cbc + "Percent")?.SetValue(formattedIva);
 
                                 // Agregar la parte faltante para TaxScheme dentro de TaxCategory
                                 var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
@@ -399,9 +405,10 @@ namespace GeneradorCufe.ViewModel
                                 }
 
                                 // Establecer los valores de ID y Name dentro de TaxScheme
-                                taxSchemeElement.Element(cbc + "ID")?.SetValue(producto.TaxSchemeID);
-                                taxSchemeElement.Element(cbc + "Name")?.SetValue(producto.TaxSchemeName);
+                                taxSchemeElement.Element(cbc + "ID")?.SetValue("01"); // yo pendiente
+                                taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA"); // yo
                             }
+
                         }
                     }
 
@@ -421,8 +428,8 @@ namespace GeneradorCufe.ViewModel
                     var priceElement = invoiceLineElement.Element(cac + "Price");
                     if (priceElement != null)
                     {
-                        priceElement.Element(cbc + "PriceAmount")?.SetValue(producto.PricePriceAmount);
-                        priceElement.Element(cbc + "BaseQuantity")?.SetValue(producto.PriceBaseQuantity);
+                        priceElement.Element(cbc + "PriceAmount")?.SetValue(producto.Neto);
+                        priceElement.Element(cbc + "BaseQuantity")?.SetValue(producto.Cantidad);
                     }
 
                     // Agregar el nuevo elemento 'cac:InvoiceLine' al XML
@@ -446,8 +453,8 @@ namespace GeneradorCufe.ViewModel
                 if (partnershipElement != null)
                 {
                     partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
-                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
-                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("af771a36-bdac-4fd4-97c7-14d225b3b948");
+                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pregunta 
+                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("af771a36-bdac-4fd4-97c7-14d225b3b948"); // pregunta 
                 }
             }
 

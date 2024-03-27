@@ -52,7 +52,7 @@ namespace GeneradorCufe.Consultas
                                     Valor = reader.GetDecimal("valor"),
                                     Neto = reader.GetDecimal("neto"),
                                     Descuento = reader.GetString("dsct4"),
-                                    Iva = reader.GetString("iva"),
+                                    Iva = reader.GetDecimal("iva"),
                                     IvaTotal = reader.GetString("vriva"),
                                     Total = reader.GetString("vrventa")
                                 };

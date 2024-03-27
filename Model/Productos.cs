@@ -16,7 +16,7 @@ namespace GeneradorCufe.Model
         public decimal Valor { get; set; }
         public decimal Neto { get; set; }
         public string Descuento { get; set; }
-        public string Iva { get; set; }
+        public decimal Iva { get; set; }
         public string IvaTotal { get; set; }
         public string Total { get; set; }
     }
