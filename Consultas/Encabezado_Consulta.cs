@@ -17,35 +17,30 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public Encabezado ConsultarEncabezado(int idEncabezado)  // Consulta para obtener los datos del encabezado
+        public Encabezado ConsultarEncabezado(string terminal)  // Consulta para obtener los datos del encabezado
         {
             Encabezado encabezado = new Encabezado();
 
-            string query = "SELECT id_enc, factura, fecha, valor_net, vlr_iva, vlr_ipo, vlr_dsto, notas, cufe, cude " +
-                           "FROM encabezado " +
-                           "WHERE id_enc = @idEncabezado";
+            string query = "SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0 FROM xxxxterm WHERE terminal = @Terminal";
 
             using (MySqlConnection connection = _data.CreateConnection())
             {
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@idEncabezado", idEncabezado);
+                    command.Parameters.AddWithValue("@Terminal", terminal);
 
                     connection.Open();
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            encabezado.Id_enc = Convert.ToInt32(reader["id_enc"]);
-                            encabezado.Factura_enc = reader["factura"].ToString();
-                            encabezado.Fecha_enc = Convert.ToDateTime(reader["fecha"]);
-                            encabezado.Valor_net = Convert.ToDecimal(reader["valor_net"]);
-                            encabezado.Vlr_iva = Convert.ToDecimal(reader["vlr_iva"]);
-                            encabezado.Vlr_ipo = Convert.ToDecimal(reader["vlr_ipo"]);
-                            encabezado.Vlr_dsto = Convert.ToDecimal(reader["vlr_dsto"]);
-                            encabezado.Notas = reader["notas"].ToString();
-                            encabezado.Cufe = reader["cufe"].ToString();
-                            encabezado.Cude = reader["cude"].ToString();
+                            encabezado.Autorizando = reader.GetInt32("resol_fe");
+                            encabezado.Fecha_inicio = reader.GetDateTime("f_inicio");
+                            encabezado.Fecha_termina = reader.GetDateTime("f_termina");
+                            encabezado.R_inicio = reader.GetInt32("r_inicio");
+                            encabezado.R_termina = reader.GetInt32("r_termina");
+                            encabezado.Prefijo = reader.GetString("prefijo0");
+
                         }
                     }
                 }

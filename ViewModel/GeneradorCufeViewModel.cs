@@ -138,9 +138,11 @@ namespace GeneradorCufe.ViewModel
 
             // Crear una instancia de la clase Productos_Consulta
             Productos_Consulta productosConsulta = new Productos_Consulta();
+            Encabezado_Consulta encabezadoConsulta = new Encabezado_Consulta();
 
             // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura.Facturas);
+            Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura.Terminal);
 
             string nitCompleto = emisor.Nit_emisor ?? "";
             string[] partesNit = nitCompleto.Split('-');
@@ -155,41 +157,36 @@ namespace GeneradorCufe.ViewModel
 
 
             // Actualizar el elemento 'InvoiceAuthorization'
-            xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue("18760000001");
+            xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue(encabezado.Autorizando);
 
             // Actualizar los elementos 'StartDate' y 'EndDate'
-            xmlDoc.Descendants(cbc + "StartDate").FirstOrDefault()?.SetValue("2019-01-19");
-            xmlDoc.Descendants(cbc + "EndDate").FirstOrDefault()?.SetValue("2030-01-19");
+            xmlDoc.Descendants(cbc + "StartDate").FirstOrDefault()?.SetValue(encabezado.Fecha_inicio);
+            xmlDoc.Descendants(cbc + "EndDate").FirstOrDefault()?.SetValue(encabezado.Fecha_termina);
 
 
             // Actualizaciones para 'AuthorizedInvoices'
             var authorizedInvoicesElement = xmlDoc.Descendants(sts + "AuthorizedInvoices").FirstOrDefault();
             if (authorizedInvoicesElement != null)
             {
-                authorizedInvoicesElement.Element(sts + "Prefix")?.SetValue("SETT");
-                authorizedInvoicesElement.Element(sts + "From")?.SetValue("1");
-                authorizedInvoicesElement.Element(sts + "To")?.SetValue("5000000");
+                authorizedInvoicesElement.Element(sts + "Prefix")?.SetValue(encabezado.Prefijo);
+                authorizedInvoicesElement.Element(sts + "From")?.SetValue(encabezado.R_inicio);
+                authorizedInvoicesElement.Element(sts + "To")?.SetValue(encabezado.R_termina);
             }
             DateTimeOffset now = DateTimeOffset.Now;
-            // Actualizar 'CustomizationID'
-            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("10");
+            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("10"); // Indicador del tipo de operación (10 para facturación electrónica)
+            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2"); // Tipo de ambiente (2 para pruebas)
 
-            // Actualizar 'ProfileExecutionID'
-            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2");
-
-            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("SETT74");
+            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(factura.Facturas);
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("04f450bc11eaea9181f71e30fb81db4eacf9828455cdffae168b333eb00a65d9b8ab66053fbccfa07c61dfc0914c3ff0");
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(now.ToString("yyyy-MM-dd"));
-            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("00:00:00-05:00");
-            xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01");
+            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(now.ToString("HH:mm:ss-05:00"));
+            xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("Prueba Factura Electronica Datos de victor");
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
             xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
 
-            // Actualizar 'AdditionalAccountID'
-            xmlDoc.Descendants(cbc + "AdditionalAccountID").FirstOrDefault()?.SetValue("1");
+            xmlDoc.Descendants(cbc + "AdditionalAccountID").FirstOrDefault()?.SetValue("1"); // Identificador de tipo de organización jurídica de la de persona
 
-            // Actualizar 'PartyName'
             var partyNameElement = xmlDoc.Descendants(cac + "Party")
                                          .Descendants(cac + "PartyName")
                                          .Descendants(cbc + "Name").FirstOrDefault();
