@@ -201,7 +201,7 @@ namespace GeneradorCufe.ViewModel
             {
                 physicalLocationElement.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("05380");
                 physicalLocationElement.Descendants(cbc + "CityName").FirstOrDefault()?.SetValue(Municipio);
-                physicalLocationElement.Descendants(cbc + "PostalZone").FirstOrDefault()?.SetValue("055460");
+                physicalLocationElement.Descendants(cbc + "PostalZone").FirstOrDefault()?.SetValue("660001");
                 physicalLocationElement.Descendants(cbc + "CountrySubentity").FirstOrDefault()?.SetValue(Departamento);
                 physicalLocationElement.Descendants(cbc + "CountrySubentityCode").FirstOrDefault()?.SetValue("05");
                 physicalLocationElement.Descendants(cac + "AddressLine")
@@ -249,7 +249,7 @@ namespace GeneradorCufe.ViewModel
                 var taxSchemeElement = partyTaxSchemeElement.Element(cac + "TaxScheme");
                 if (taxSchemeElement != null)
                 {
-                    taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
+                    taxSchemeElement.Element(cbc + "ID")?.SetValue("01"); // pendiente
                     taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
                 }
             }
@@ -273,8 +273,7 @@ namespace GeneradorCufe.ViewModel
                 var corporateRegistrationSchemeElement = partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme");
                 if (corporateRegistrationSchemeElement != null)
                 {
-                    corporateRegistrationSchemeElement.Element(cbc + "ID")?.SetValue("SETT");
-                    corporateRegistrationSchemeElement.Element(cbc + "Name")?.SetValue("1485596");
+                    corporateRegistrationSchemeElement.Element(cbc + "ID")?.SetValue(encabezado.Prefijo);
                 }
             }
 
@@ -282,7 +281,7 @@ namespace GeneradorCufe.ViewModel
             var contactElement = xmlDoc.Descendants(cac + "Contact").FirstOrDefault();
             if (contactElement != null)
             {
-                contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com.correo");
+                contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com.correo"); // angee pendiente por correo 
             }
 
             MapAccountingCustomerParty(xmlDoc, listaProductos[2].Nit);   // informacion del adquiriente
@@ -300,14 +299,14 @@ namespace GeneradorCufe.ViewModel
             var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
             if (taxTotalElement != null)
             {
-                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00");
-                taxTotalElement.Element(cbc + "RoundingAmount")?.SetValue("0.000");
+                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00"); // Valor total del impuesto
+                taxTotalElement.Element(cbc + "RoundingAmount")?.SetValue("2.000");
 
                 // Información del subtotal del impuesto
                 var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
                 if (taxSubtotalElement != null)
                 {
-                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("100000.00"); // Base imponible
+                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue("100000.00"); // Base imponible gravada
                     taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue("19000.00"); // Valor del impuesto
 
                     // Información de la categoría del impuesto
@@ -471,7 +470,7 @@ namespace GeneradorCufe.ViewModel
             var accountingCustomerPartyElement = xmlDoc.Descendants(cac + "AccountingCustomerParty").FirstOrDefault();
             if (accountingCustomerPartyElement != null)
             {
-                accountingCustomerPartyElement.Element(cbc + "AdditionalAccountID")?.SetValue("2");
+                accountingCustomerPartyElement.Element(cbc + "AdditionalAccountID")?.SetValue("2"); // Identificador de tipo de adquiriente  jurídica de la de persona
 
                 // Información del adquiriente
                 var partyElement = accountingCustomerPartyElement.Element(cac + "Party");
@@ -483,8 +482,8 @@ namespace GeneradorCufe.ViewModel
                         var idElement = partyIdentificationElement.Element(cbc + "ID");
                         if (idElement != null)
                         {
-                            idElement.Value = "1017173008";
-                            idElement.SetAttributeValue("schemeName", "13");
+                            idElement.Value = adquiriente.Nit_adqui;
+                            idElement.SetAttributeValue("schemeName", "13"); // cambio de 31 a 13
                         }
 
 
@@ -543,7 +542,7 @@ namespace GeneradorCufe.ViewModel
                             {
                                 partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue(adquiriente.Nombre_adqu);
                                 partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue(adquiriente.Nit_adqui);
-                                partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme")?.Element(cbc + "Name")?.SetValue("1485596");
+           
                             }
 
                             // Información de contacto del adquiriente
