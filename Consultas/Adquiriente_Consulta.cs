@@ -17,7 +17,7 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public Adquiriente ConsultarAdquiriente(int nit, string cadenaConexion)
+        public Adquiriente ConsultarAdquiriente(string nit, string cadenaConexion)
         {
             Adquiriente adquiriente = new Adquiriente();
 

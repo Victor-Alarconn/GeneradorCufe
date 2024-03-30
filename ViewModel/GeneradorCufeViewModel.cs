@@ -298,19 +298,15 @@ namespace GeneradorCufe.ViewModel
                 contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com."); // angee pendiente por correo 
             }
 
-            if (listaProductos.Count > 2) // errorr
+            if (listaProductos != null)
             {
-                int nitValue = int.Parse(listaProductos[2].Nit);
-                MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion);  // informacion del adquiriente
+                string nitValue = listaProductos[0].Nit;
+                MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion);  // Información del adquiriente
             }
             else
             {
-                // Manejar el caso en que la lista no tiene suficientes elementos
                 Console.WriteLine("La lista de productos no tiene suficientes elementos para acceder al tercero.");
-                // Puedes mostrar otro mensaje de error o tomar otra acción apropiada aquí
             }
-
-           
 
             // Información del medio de pago
             var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
@@ -487,7 +483,7 @@ namespace GeneradorCufe.ViewModel
 
         }
 
-        private static void MapAccountingCustomerParty(XDocument xmlDoc, int Nit, string cadenaConexion) // Información del adquiriente 
+        private static void MapAccountingCustomerParty(XDocument xmlDoc, string Nit, string cadenaConexion) // Información del adquiriente 
         { // esperelo aqui
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
