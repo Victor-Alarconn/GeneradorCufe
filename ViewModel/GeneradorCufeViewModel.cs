@@ -174,9 +174,8 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue(encabezado.Autorizando);
 
             // Actualizar los elementos 'StartDate' y 'EndDate'
-            xmlDoc.Descendants(cbc + "StartDate").FirstOrDefault()?.SetValue(encabezado.Fecha_inicio);
-            xmlDoc.Descendants(cbc + "EndDate").FirstOrDefault()?.SetValue(encabezado.Fecha_termina);
-
+            xmlDoc.Descendants(cbc + "StartDate").FirstOrDefault()?.SetValue(encabezado.Fecha_inicio.ToString("yyyy-MM-dd"));
+            xmlDoc.Descendants(cbc + "EndDate").FirstOrDefault()?.SetValue(encabezado.Fecha_termina.ToString("yyyy-MM-dd"));
 
             // Actualizaciones para 'AuthorizedInvoices'
             var authorizedInvoicesElement = xmlDoc.Descendants(sts + "AuthorizedInvoices").FirstOrDefault();
@@ -241,7 +240,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     registrationAddressElement.Element(cbc + "ID")?.SetValue(codigos.Codigo_Municipio);
                     registrationAddressElement.Element(cbc + "CityName")?.SetValue(Municipio);
-                    registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("055460");
+                    registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("660001");
                     registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(Departamento);
                     registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue(codigos.Codigo_Departamento);
                     registrationAddressElement.Element(cac + "AddressLine").Element(cbc + "Line")?.SetValue(emisor.Direccion_emisor);
@@ -448,9 +447,17 @@ namespace GeneradorCufe.ViewModel
                     var priceElement = invoiceLineElement.Element(cac + "Price");
                     if (priceElement != null)
                     {
-                        priceElement.Element(cbc + "PriceAmount")?.SetValue(producto.Valor);
-                        priceElement.Element(cbc + "BaseQuantity")?.SetValue(producto.Cantidad);
+                        // Formatear el precio con dos decimales
+                        string formattedPrice = producto.Valor.ToString("F2");
+                        // Asignar el precio formateado al elemento XML
+                        priceElement.Element(cbc + "PriceAmount")?.SetValue(formattedPrice);
+
+                        // Formatear la cantidad con dos decimales
+                        string formattedQuantity = producto.Cantidad.ToString("F2");
+                        // Asignar la cantidad formateada al elemento XML
+                        priceElement.Element(cbc + "BaseQuantity")?.SetValue(formattedQuantity);
                     }
+
 
                     // Agregar el nuevo elemento 'cac:InvoiceLine' al XML
                     xmlDoc.Descendants(cac + "InvoiceLine").LastOrDefault()?.AddAfterSelf(invoiceLineElement);
@@ -548,7 +555,7 @@ namespace GeneradorCufe.ViewModel
                                 {
                                     registrationAddressElement.Element(cbc + "ID")?.SetValue(adquiriente.Codigo_municipio_adqui);
                                     registrationAddressElement.Element(cbc + "CityName")?.SetValue(adquiriente.Nombre_municipio_adqui);
-                                    registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("54321");
+                                    registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("660001");
                                     registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(adquiriente.Nombre_departamento_adqui);
                                     registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue(adquiriente.Codigo_departamento_adqui);
                                     registrationAddressElement.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
