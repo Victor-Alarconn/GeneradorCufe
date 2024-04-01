@@ -8,6 +8,7 @@ namespace GeneradorCufe.Model
 {
     public class Movimiento
     {
+        public string Nit { get; set; }
         public decimal Valor { get; set; }
         public decimal Valor_iva { get; set; }
         public decimal Valor_dsto { get; set; }

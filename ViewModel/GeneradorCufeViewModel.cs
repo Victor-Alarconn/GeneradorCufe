@@ -1,5 +1,6 @@
 ﻿using GeneradorCufe.Consultas;
 using GeneradorCufe.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -99,6 +100,9 @@ namespace GeneradorCufe.ViewModel
                     // Mostrar un mensaje de éxito
                     MessageBox.Show("Solicitud POST exitosa", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
+                    // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
+                    ConsultarXML();
+
                     return response;
                 }
             }
@@ -125,6 +129,76 @@ namespace GeneradorCufe.ViewModel
                 }
             }
         }
+
+        private static void ConsultarXML()
+        {
+            try
+            {
+                // Construir la URL completa con los parámetros necesarios
+                string url = "vp/consulta/documentos";
+                string partnershipId = "900770401";
+                string nitEmisor = "43063221";
+                string idDocumento = "FVE00195";
+                string codigoTipoDocumento = "01";
+
+                // Construir los parámetros de la URL
+                string parametros = $"?nit_emisor={nitEmisor}&id_documento={idDocumento}&codigo_tipo_documento={codigoTipoDocumento}";
+
+                // Concatenar los parámetros a la URL
+                url += parametros;
+
+                // Crear la solicitud GET
+                using (WebClient client = new WebClient())
+                {
+                    // Establecer los encabezados de la solicitud
+                    client.Headers.Add("Partnership-Id", partnershipId);
+
+                    // Realizar la solicitud GET y obtener la respuesta
+                    byte[] responseBytes = client.DownloadData(url);
+
+                    // Convertir la respuesta a string
+                    string response = Encoding.UTF8.GetString(responseBytes);
+
+                    // Convertir la respuesta JSON a un objeto dynamic para acceder a los campos
+                    dynamic jsonResponse = JsonConvert.DeserializeObject(response);
+
+                    // Extraer el valor del parámetro 'document' (documento adjunto en base64)
+                    string documentBase64 = jsonResponse.document;
+
+                    // Decodificar el documento base64 si es necesario
+                    byte[] documentBytes = Convert.FromBase64String(documentBase64);
+
+                    // Guardar el documento en un archivo, por ejemplo
+                    string filePath = "documento_adjunto.pdf";
+                    File.WriteAllBytes(filePath, documentBytes);
+
+                    // Mostrar un mensaje de éxito
+                    MessageBox.Show($"Documento adjunto guardado en '{filePath}'", "Consulta XML", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (WebException webEx)
+            {
+                if (webEx.Response != null)
+                {
+                    HttpStatusCode statusCode = ((HttpWebResponse)webEx.Response).StatusCode;
+                    using (var stream = webEx.Response.GetResponseStream())
+                    {
+                        using (var reader = new StreamReader(stream))
+                        {
+                            string errorResponse = reader.ReadToEnd();
+                            MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                else
+                {
+                    // Manejar cualquier otro error de la solicitud GET
+                    MessageBox.Show("Error al enviar la solicitud GET:\n\n" + webEx.Message, "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+
 
 
 
@@ -158,7 +232,7 @@ namespace GeneradorCufe.ViewModel
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
 
-            string construir = ConstruirCadenaCUFE(movimiento, listaProductos);
+            string construir = ConstruirCadenaCUFE(movimiento, listaProductos, factura);
             string CUFE = GenerarCUFE(construir);
 
             string nitCompleto = emisor.Nit_emisor ?? "";
@@ -196,7 +270,7 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(factura.Facturas);
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(CUFE);
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(now.ToString("yyyy-MM-dd"));
-            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(now.ToString("HH:mm:ss-05:00"));
+            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("00:00:00-05:00");
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue(nota);
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
@@ -325,7 +399,7 @@ namespace GeneradorCufe.ViewModel
             if (taxTotalElement != null)
             {
                 taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(movimiento.Valor_iva); // Valor total del impuesto
-                taxTotalElement.Element(cbc + "RoundingAmount")?.SetValue("2.000");
+                //taxTotalElement.Element(cbc + "RoundingAmount")?.SetValue("2.000");
 
                 // Información del subtotal del impuesto
                 var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
@@ -393,8 +467,9 @@ namespace GeneradorCufe.ViewModel
                     var invoiceLineElement = new XElement(invoiceLineTemplate);
 
                     // Establecer los valores del producto en el nuevo elemento
+                    string cantidadformateada = producto.Cantidad.ToString("F2", CultureInfo.InvariantCulture);
                     invoiceLineElement.Element(cbc + "ID")?.SetValue((i + 1).ToString());
-                    invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(producto.Cantidad);
+                    invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(cantidadformateada);
                     invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.Neto); // cufe  ValFac
 
                     // Establecer los valores del impuesto
@@ -413,7 +488,7 @@ namespace GeneradorCufe.ViewModel
                             if (taxCategoryElement != null)
                             {
                                 // Formatear el valor del IVA con dos decimales
-                                string formattedIva = producto.Iva.ToString("F2");
+                                string formattedIva = producto.Iva.ToString("F2", CultureInfo.InvariantCulture);
 
                                 // Establecer el valor formateado en el elemento Percent
                                 taxCategoryElement.Element(cbc + "Percent")?.SetValue(formattedIva);
@@ -451,16 +526,17 @@ namespace GeneradorCufe.ViewModel
                     var priceElement = invoiceLineElement.Element(cac + "Price");
                     if (priceElement != null)
                     {
-                        // Formatear el precio con dos decimales
-                        string formattedPrice = producto.Valor.ToString("F2");
+                        // Formatear el precio con dos decimales utilizando CultureInfo.InvariantCulture
+                        string formattedPrice = producto.Valor.ToString("F2", CultureInfo.InvariantCulture);
                         // Asignar el precio formateado al elemento XML
                         priceElement.Element(cbc + "PriceAmount")?.SetValue(formattedPrice);
 
-                        // Formatear la cantidad con dos decimales
-                        string formattedQuantity = producto.Cantidad.ToString("F2");
+                        // Formatear la cantidad con dos decimales utilizando CultureInfo.InvariantCulture
+                        string formattedQuantity = producto.Cantidad.ToString("F2", CultureInfo.InvariantCulture);
                         // Asignar la cantidad formateada al elemento XML
                         priceElement.Element(cbc + "BaseQuantity")?.SetValue(formattedQuantity);
                     }
+
 
 
                     // Agregar el nuevo elemento 'cac:InvoiceLine' al XML
@@ -680,27 +756,37 @@ namespace GeneradorCufe.ViewModel
             return (xmlContent, base64Encoded);
         }
 
-        private static string ConstruirCadenaCUFE(Movimiento movimiento,  List<Productos> listaProductos)
+        private static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura)
         {
+            DateTimeOffset now = DateTimeOffset.Now;
             // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
-            string numeroFactura = TxtFactura.Text;
-            string fechaFactura = PikerFecha.SelectedDate?.ToString("yyyy-MM-dd") ?? "";
-            string horaFactura = TextHora.Text; // formato correcto
-            string valorSubtotal = Subtotal.Text;
+            string numeroFactura = factura.Facturas;
+            string fechaFactura = "2024-04-01";
+            string horaFactura = "00:00:00-05:00";
+            decimal valorSubtotal = movimiento.Valor_neto;
             string codigo = "01";
-            string iva = Iva.Text;
+            decimal iva = movimiento.Valor_iva;
             string codigo2 = "04";
-            string impuesto2 = Impuesto2.Text;
+            string impuesto2 = "0.00";
             string codigo3 = "03";
-            string impuesto3 = Impuesto3.Text;
-            string total = Total.Text;
-            string nitFacturador = NITFacturador.Text;
-            string numeroIdentificacionCliente = NumeroIdentificacion.Text;
-            string clavetecnica = Clave.Text;
+            string impuesto3 = "0.00";
+            //  string codigo4 = "06";
+            //  string impuesto4 = "0.00";
+            decimal total = movimiento.Valor;
+            string nitFacturador = "43063221";
+            string numeroIdentificacionCliente = movimiento.Nit;
+            string clavetecnica = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c";
             int tipodeambiente = 2;
+
+            // Construir la cadena CUFE
             string cadenaCUFE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{clavetecnica}{tipodeambiente}";
+
+            // Reemplazar comas por puntos en la cadena CUFE
+            cadenaCUFE = cadenaCUFE.Replace(',', '.');
+
             return cadenaCUFE;
         }
+
 
         private static string GenerarCUFE(string cadenaCUFE)
         {
