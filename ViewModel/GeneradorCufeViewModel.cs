@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -142,11 +143,11 @@ namespace GeneradorCufe.ViewModel
             Codigos_Consulta codigosConsulta = new Codigos_Consulta();
             Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
 
-            string cadenaConexion = ""; 
+            string cadenaConexion = "";
 
             if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
             {
-                cadenaConexion = $"Database={ factura.Empresa}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=**LiLo89**; ConvertZeroDateTime=True;";
+                cadenaConexion = $"Database={factura.Empresa}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=**LiLo89**; ConvertZeroDateTime=True;";
             }
             else if (factura.Ip_base == "192.190.42.191")
             {
@@ -156,6 +157,9 @@ namespace GeneradorCufe.ViewModel
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
+
+            string construir = ConstruirCadenaCUFE(movimiento, listaProductos);
+            string CUFE = GenerarCUFE(construir);
 
             string nitCompleto = emisor.Nit_emisor ?? "";
             string[] partesNit = nitCompleto.Split('-');
@@ -190,7 +194,7 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2"); // Tipo de ambiente (2 para pruebas)
 
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(factura.Facturas);
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("04f450bc11eaea9181f71e30fb81db4eacf9828455cdffae168b333eb00a65d9b8ab66053fbccfa07c61dfc0914c3ff0");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(CUFE);
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(now.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(now.ToString("HH:mm:ss-05:00"));
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
@@ -365,7 +369,7 @@ namespace GeneradorCufe.ViewModel
 
 
         private static void MapInvoiceLine(XDocument xmlDoc, List<Productos> listaProductos) // Productos
-       {  
+        {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
             // Namespace para elementos 'cbc'
@@ -578,7 +582,7 @@ namespace GeneradorCufe.ViewModel
                             {
                                 partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue(adquiriente.Nombre_adqu);
                                 partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue(adquiriente.Nit_adqui);
-           
+
                             }
 
                             // Información de contacto del adquiriente
@@ -639,7 +643,7 @@ namespace GeneradorCufe.ViewModel
             }
         }
 
-       
+
 
 
         public static (string xmlContent, string base64Content) GenerateXMLAndBase64(Emisor emisor, Factura factura)
@@ -675,10 +679,46 @@ namespace GeneradorCufe.ViewModel
 
             return (xmlContent, base64Encoded);
         }
+
+        private static string ConstruirCadenaCUFE(Movimiento movimiento,  List<Productos> listaProductos)
+        {
+            // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
+            string numeroFactura = TxtFactura.Text;
+            string fechaFactura = PikerFecha.SelectedDate?.ToString("yyyy-MM-dd") ?? "";
+            string horaFactura = TextHora.Text; // formato correcto
+            string valorSubtotal = Subtotal.Text;
+            string codigo = "01";
+            string iva = Iva.Text;
+            string codigo2 = "04";
+            string impuesto2 = Impuesto2.Text;
+            string codigo3 = "03";
+            string impuesto3 = Impuesto3.Text;
+            string total = Total.Text;
+            string nitFacturador = NITFacturador.Text;
+            string numeroIdentificacionCliente = NumeroIdentificacion.Text;
+            string clavetecnica = Clave.Text;
+            int tipodeambiente = 2;
+            string cadenaCUFE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{clavetecnica}{tipodeambiente}";
+            return cadenaCUFE;
+        }
+
+        private static string GenerarCUFE(string cadenaCUFE)
+        {
+            using (SHA384 sha384 = SHA384.Create())
+            {
+                // Convertir la cadena en un array de bytes
+                byte[] bytesCadena = Encoding.UTF8.GetBytes(cadenaCUFE);
+
+                // Aplicar SHA-384
+                byte[] hashBytes = sha384.ComputeHash(bytesCadena);
+
+                // Convertir el resultado del hash en una cadena hexadecimal en minúsculas
+                string cufe = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+                return cufe;
+            }
+        }
+
     }
-
-
-
 
     public static class DataSerializer
     {

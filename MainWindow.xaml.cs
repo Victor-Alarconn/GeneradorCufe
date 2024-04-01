@@ -115,45 +115,7 @@ namespace GeneradorCufe
 
         }
 
-        private string ConstruirCadenaCUFE()
-        {
-            // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
-            string numeroFactura = TxtFactura.Text;
-            string fechaFactura = PikerFecha.SelectedDate?.ToString("yyyy-MM-dd") ?? "";
-            string horaFactura = TextHora.Text; // formato correcto
-            string valorSubtotal = Subtotal.Text;
-            string codigo = "01";
-            string iva = Iva.Text;
-            string codigo2 = "04";
-            string impuesto2 = Impuesto2.Text;
-            string codigo3 = "03";
-            string impuesto3 = Impuesto3.Text;
-            string total = Total.Text;
-            string nitFacturador = NITFacturador.Text;
-            string numeroIdentificacionCliente = NumeroIdentificacion.Text;
-            string clavetecnica = Clave.Text;
-            int tipodeambiente = 2;
-            //  string tipoIdentificacionCliente = TipoDocumento.list;
-            // Concatenar los valores en el orden correcto
-            string cadenaCUFE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{clavetecnica}{tipodeambiente}"; 
-            return cadenaCUFE;
-        }
-
-        private string GenerarCUFE(string cadenaCUFE)
-        {
-            using (SHA384 sha384 = SHA384.Create())
-            {
-                // Convertir la cadena en un array de bytes
-                byte[] bytesCadena = Encoding.UTF8.GetBytes(cadenaCUFE);
-
-                // Aplicar SHA-384
-                byte[] hashBytes = sha384.ComputeHash(bytesCadena);
-
-                // Convertir el resultado del hash en una cadena hexadecimal en minúsculas
-                string cufe = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-                return cufe;
-            }
-        }
+        
 
 
         private void BtnCufe_Click_2(object sender, RoutedEventArgs e)
