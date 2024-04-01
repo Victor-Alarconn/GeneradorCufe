@@ -135,7 +135,7 @@ namespace GeneradorCufe.ViewModel
             try
             {
                 // Construir la URL completa con los parámetros necesarios
-                string url = "vp/consulta/documentos";
+                string url = "https://apivp.efacturacadena.com/staging/vp/consulta/documentos";
                 string partnershipId = "900770401";
                 string nitEmisor = "43063221";
                 string idDocumento = "FVE00195";
@@ -152,6 +152,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     // Establecer los encabezados de la solicitud
                     client.Headers.Add("Partnership-Id", partnershipId);
+                    client.Headers.Add("efacturaAuthorizationToken", "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV");
 
                     // Realizar la solicitud GET y obtener la respuesta
                     byte[] responseBytes = client.DownloadData(url);
