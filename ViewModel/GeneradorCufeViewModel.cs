@@ -48,9 +48,15 @@ namespace GeneradorCufe.ViewModel
                 Directory.CreateDirectory(xmlDirectory);
             }
 
-            // Generar el nombre del archivo ZIP usando la fecha y hora actual
+            // Generar el nombre del archivo ZIP usando el valor de la propiedad 'Facturas'
             string zipFileName = $"Archivos_{factura.Facturas}.zip";
             string zipFilePath = System.IO.Path.Combine(xmlDirectory, zipFileName);
+
+            // Verificar si el archivo ZIP ya existe y eliminarlo si es necesario
+            if (File.Exists(zipFilePath))
+            {
+                File.Delete(zipFilePath);
+            }
 
             // Crear un archivo ZIP y agregar los archivos XML y base64
             using (var zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
@@ -69,6 +75,7 @@ namespace GeneradorCufe.ViewModel
                     writer.Write(base64Content);
                 }
             }
+
 
             // Mostrar mensaje de confirmación
             MessageBox.Show($"Archivos generados y guardados en: {zipFilePath}");
@@ -233,8 +240,13 @@ namespace GeneradorCufe.ViewModel
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
+            // Obtener la hora en formato DateTimeOffset
+            DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
 
-            string construir = ConstruirCadenaCUFE(movimiento, listaProductos, factura);
+            // Agregar el desplazamiento horario
+            string horaformateada = horaConDesplazamiento.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
+
+            string construir = ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada);
             string CUFE = GenerarCUFE(construir);
 
             string nitCompleto = emisor.Nit_emisor ?? "";
@@ -248,6 +260,7 @@ namespace GeneradorCufe.ViewModel
             string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
             Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta); // Consulta para obtener los códigos de ciudad y departamento
             string nota = $"Factura de Venta Emitida por {nitCompleto}-{emisor.Nombre_emisor}";
+           
 
 
             // Actualizar el elemento 'InvoiceAuthorization'
@@ -271,8 +284,8 @@ namespace GeneradorCufe.ViewModel
 
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(factura.Facturas);
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(CUFE);
-            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(now.ToString("yyyy-MM-dd"));
-            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("00:00:00-05:00");
+            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
+            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue(nota);
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
@@ -481,7 +494,8 @@ namespace GeneradorCufe.ViewModel
                         var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
                         if (taxSubtotalElement != null)
                         {
-                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(producto.Neto);
+                            string valorformateada = producto.Valor.ToString("F2", CultureInfo.InvariantCulture);
+                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(valorformateada);
                             taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal);
 
                             var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
@@ -773,13 +787,13 @@ namespace GeneradorCufe.ViewModel
             return (xmlContent, base64Encoded, cadenaConexion);
         }
 
-        private static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura)
+        private static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora)
         {
             DateTimeOffset now = DateTimeOffset.Now;
             // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
             string numeroFactura = factura.Facturas;
-            string fechaFactura = "2024-04-02";
-            string horaFactura = "00:00:00-05:00";
+            string fechaFactura = movimiento.Fecha_Factura.ToString("yyyy-MM-dd");
+            string horaFactura = hora;
             decimal valorSubtotal = movimiento.Valor_neto;
             string codigo = "01";
             decimal iva = movimiento.Valor_iva;

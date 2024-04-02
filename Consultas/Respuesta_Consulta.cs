@@ -30,31 +30,45 @@ namespace GeneradorCufe.Consultas
                 // Convertir el XML a formato JSON
                 string jsonContent = JsonConvert.SerializeXNode(XDocument.Parse(xmlContent), Formatting.Indented);
 
-                using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
+                // Encontrar la posición del inicio del JSON deseado
+                int startIndex = jsonContent.IndexOf("\"cbc:UBLVersionID\": \"UBL 2.1\"");
+
+                // Verificar si se encontró el inicio del JSON deseado
+                if (startIndex >= 0)
                 {
-                    connection.Open();
+                    // Recortar el JSON desde el inicio deseado
+                    jsonContent = jsonContent.Substring(startIndex);
 
-                    // Definir la consulta SQL para actualizar la tabla xxxxccfc solo cuando el valor de factura coincida
-                    string updateQuery = "UPDATE xxxxccfc SET estado_fe = 3, dato_qr = @DocumentoJson WHERE factura = @Factura";
-
-                    using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
+                    using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
                     {
-                        // Asignar los valores de los parámetros DocumentoJson y Factura
-                        updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonContent);
-                        updateCommand.Parameters.AddWithValue("@Factura", factura);
+                        connection.Open();
 
-                        // Ejecutar la actualización
-                        int rowsAffected = updateCommand.ExecuteNonQuery();
+                        // Definir la consulta SQL para actualizar la tabla xxxxccfc solo cuando el valor de factura coincida
+                        string updateQuery = "UPDATE xxxxccfc SET estado_fe = 3, dato_qr = @DocumentoJson WHERE factura = @Factura";
 
-                        if (rowsAffected > 0)
+                        using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                         {
-                            Console.WriteLine("La respuesta de consulta se actualizó correctamente en la base de datos.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("No se pudo actualizar la respuesta de consulta en la base de datos. No se encontró la factura especificada.");
+                            // Asignar los valores de los parámetros DocumentoJson y Factura
+                            updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonContent);
+                            updateCommand.Parameters.AddWithValue("@Factura", factura);
+
+                            // Ejecutar la actualización
+                            int rowsAffected = updateCommand.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
+                            {
+                                Console.WriteLine("La respuesta de consulta se actualizó correctamente en la base de datos.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("No se pudo actualizar la respuesta de consulta en la base de datos. No se encontró la factura especificada.");
+                            }
                         }
                     }
+                }
+                else
+                {
+                    Console.WriteLine("No se pudo encontrar el inicio del JSON deseado en el contenido.");
                 }
             }
             catch (Exception ex)
@@ -62,6 +76,7 @@ namespace GeneradorCufe.Consultas
                 Console.WriteLine($"Error al guardar la respuesta de consulta en la base de datos: {ex.Message}");
             }
         }
+
 
 
     }

@@ -21,7 +21,7 @@ namespace GeneradorCufe.Consultas
         {
             Movimiento movimiento = new Movimiento();
 
-            string query = "SELECT nit, valor, vriva, desctos, gravada, exentas FROM xxxxccfc WHERE factura = @factura";
+            string query = "SELECT nit, valor, vriva, desctos, gravada, exentas, fcruce, hdigita FROM xxxxccfc WHERE factura = @factura";
 
             using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
             {
@@ -40,6 +40,8 @@ namespace GeneradorCufe.Consultas
                             movimiento.Valor_dsto = reader.GetDecimal("desctos");
                             movimiento.Valor_neto = reader.GetDecimal("gravada");
                             movimiento.Exentas = reader.GetDecimal("exentas");
+                            movimiento.Fecha_Factura = reader.GetDateTime("fcruce");
+                            movimiento.Hora_dig = reader["hdigita"].ToString();
                         }
                     }
                 }
