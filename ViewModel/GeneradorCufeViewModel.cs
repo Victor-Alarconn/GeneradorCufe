@@ -49,7 +49,7 @@ namespace GeneradorCufe.ViewModel
             }
 
             // Generar el nombre del archivo ZIP usando la fecha y hora actual
-            string zipFileName = $"Archivos_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
+            string zipFileName = $"Archivos_{factura.Facturas}.zip";
             string zipFilePath = System.IO.Path.Combine(xmlDirectory, zipFileName);
 
             // Crear un archivo ZIP y agregar los archivos XML y base64
@@ -575,6 +575,7 @@ namespace GeneradorCufe.ViewModel
 
             Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
             Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(Nit, cadenaConexion);
+            string Tipo = (adquiriente.Tipo_p == 1) ? "13" : "31";
 
             // Información del adquiriente
             var accountingCustomerPartyElement = xmlDoc.Descendants(cac + "AccountingCustomerParty").FirstOrDefault();
@@ -593,7 +594,7 @@ namespace GeneradorCufe.ViewModel
                         if (idElement != null)
                         {
                             idElement.Value = adquiriente.Nit_adqui;
-                            idElement.SetAttributeValue("schemeName", "13"); // cambio de 31 a 13
+                            idElement.SetAttributeValue("schemeName", Tipo); // cambio de 31 a 13
                         }
 
 
@@ -627,8 +628,8 @@ namespace GeneradorCufe.ViewModel
                                 if (companyIDElement != null)
                                 {
                                     companyIDElement.SetValue(adquiriente.Nit_adqui);
-                                    companyIDElement.SetAttributeValue("schemeID", "");
-                                    companyIDElement.SetAttributeValue("schemeName", "13");
+                                    companyIDElement.SetAttributeValue("schemeID", adquiriente.Dv_Adqui);
+                                    companyIDElement.SetAttributeValue("schemeName", Tipo);
                                     companyIDElement.SetAttributeValue("schemeAgencyID", "195");
                                     companyIDElement.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
                                 }
@@ -671,8 +672,8 @@ namespace GeneradorCufe.ViewModel
                                 if (companyIDElement != null)
                                 {
                                     companyIDElement.SetValue(adquiriente.Nit_adqui);
-                                    companyIDElement.SetAttributeValue("schemeID", "");
-                                    companyIDElement.SetAttributeValue("schemeName", "13");
+                                    companyIDElement.SetAttributeValue("schemeID", adquiriente.Dv_Adqui);
+                                    companyIDElement.SetAttributeValue("schemeName", Tipo);
                                     companyIDElement.SetAttributeValue("schemeAgencyID", "195");
                                     companyIDElement.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
                                 }
