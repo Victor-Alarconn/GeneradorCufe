@@ -132,15 +132,16 @@ namespace GeneradorCufe.ViewModel
             }
         }
 
-        private static void ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion)
+        private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion)
         {
             try
             {
+                string nit = emisor.Nit_emisor.Replace("-0", "");
                 // Construir la URL completa con los parámetros necesarios
                 string url = "https://apivp.efacturacadena.com/staging/vp/consulta/documentos";
                 string partnershipId = "900770401";
-                string nitEmisor = "43063221";
-                string idDocumento = "FVE00195";
+                string nitEmisor = nit;
+                string idDocumento = factura.Facturas;
                 string codigoTipoDocumento = "01";
 
                 // Construir los parámetros de la URL
@@ -149,63 +150,58 @@ namespace GeneradorCufe.ViewModel
                 // Concatenar los parámetros a la URL
                 url += parametros;
 
-                // Crear la solicitud GET
-                using (WebClient client = new WebClient())
+                // Crear la instancia de HttpClient
+                using (HttpClient client = new HttpClient())
                 {
                     // Establecer los encabezados de la solicitud
-                    client.Headers.Add("Partnership-Id", partnershipId);
-                    client.Headers.Add("efacturaAuthorizationToken", "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV");
+                    client.DefaultRequestHeaders.Add("Partnership-Id", partnershipId);
+                    client.DefaultRequestHeaders.Add("efacturaAuthorizationToken", "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV");
 
                     // Realizar la solicitud GET y obtener la respuesta
-                    byte[] responseBytes = client.DownloadData(url);
+                    HttpResponseMessage response = await client.GetAsync(url);
 
-                    // Convertir la respuesta a string
-                    string response = Encoding.UTF8.GetString(responseBytes);
-
-                    // Convertir la respuesta JSON a un objeto dynamic para acceder a los campos
-                    dynamic jsonResponse = JsonConvert.DeserializeObject(response);
-
-                    // Extraer el valor del parámetro 'document' (documento adjunto en base64)
-                    string documentBase64 = jsonResponse.document;
-
-                    // Decodificar el documento base64 si es necesario
-                    byte[] documentBytes = Convert.FromBase64String(documentBase64);
-
-                    // Guardar el documento en un archivo, por ejemplo
-                    string filePath = "documento_adjunto.txt";
-                    File.WriteAllBytes(filePath, documentBytes);
-
-                    // Mostrar un mensaje de éxito
-                    MessageBox.Show($"Documento adjunto guardado en '{filePath}'", "Consulta XML", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    // Crear una instancia de la clase Respuesta_Consulta
-                    Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
-
-                    // Llamar al método para guardar la respuesta en la base de datos
-                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64);
-                }
-            }
-            catch (WebException webEx)
-            {
-                if (webEx.Response != null)
-                {
-                    HttpStatusCode statusCode = ((HttpWebResponse)webEx.Response).StatusCode;
-                    using (var stream = webEx.Response.GetResponseStream())
+                    // Verificar si la solicitud fue exitosa
+                    if (response.IsSuccessStatusCode)
                     {
-                        using (var reader = new StreamReader(stream))
-                        {
-                            string errorResponse = reader.ReadToEnd();
-                            MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
+                        // Obtener la respuesta en formato JSON
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                        // Convertir la respuesta JSON a un objeto dynamic para acceder a los campos
+                        dynamic jsonResponseObject = JsonConvert.DeserializeObject(jsonResponse);
+
+                        // Extraer el valor del parámetro 'document' (documento adjunto en base64)
+                        string documentBase64 = jsonResponseObject.document;
+
+                        // Decodificar el documento base64 si es necesario
+                        byte[] documentBytes = Convert.FromBase64String(documentBase64);
+
+                        // Guardar el documento en un archivo, por ejemplo
+                        string filePath = "documento_adjunto.txt";
+                        File.WriteAllBytes(filePath, documentBytes);
+
+                        // Mostrar un mensaje de éxito
+                        MessageBox.Show($"Documento adjunto guardado en '{filePath}'", "Consulta XML", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        // Crear una instancia de la clase Respuesta_Consulta
+                        Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
+
+                        // Llamar al método para guardar la respuesta en la base de datos
+                        respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento);
+                    }
+                    else
+                    {
+                        // Mostrar un mensaje de error si la solicitud no fue exitosa
+                        MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-                else
-                {
-                    // Manejar cualquier otro error de la solicitud GET
-                    MessageBox.Show("Error al enviar la solicitud GET:\n\n" + webEx.Message, "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier otra excepción
+                MessageBox.Show("Error al enviar la solicitud GET:\n\n" + ex.Message, "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
         public static string UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura) // emisor y factura
@@ -563,7 +559,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
                     partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pregunta 
-                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("af771a36-bdac-4fd4-97c7-14d225b3b948"); // pregunta 
+                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
                 }
             }
         }
@@ -623,8 +619,21 @@ namespace GeneradorCufe.ViewModel
                             var partyTaxSchemeElement = partyElement.Element(cac + "PartyTaxScheme");
                             if (partyTaxSchemeElement != null)
                             {
+                                // Establecer el nombre de registro
                                 partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue(adquiriente.Nombre_municipio_adqui);
-                                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue(adquiriente.Nit_adqui);
+
+                                // Establecer el ID de la compañía
+                                var companyIDElement = partyTaxSchemeElement.Element(cbc + "CompanyID");
+                                if (companyIDElement != null)
+                                {
+                                    companyIDElement.SetValue(adquiriente.Nit_adqui);
+                                    companyIDElement.SetAttributeValue("schemeID", "");
+                                    companyIDElement.SetAttributeValue("schemeName", "13");
+                                    companyIDElement.SetAttributeValue("schemeAgencyID", "195");
+                                    companyIDElement.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
+                                }
+
+                                // Establecer el código de nivel de impuestos
                                 partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("R-99-PN");
 
                                 // Información de ubicación de registro tributario del adquiriente
@@ -654,10 +663,21 @@ namespace GeneradorCufe.ViewModel
                             var partyLegalEntityElement = partyElement.Element(cac + "PartyLegalEntity");
                             if (partyLegalEntityElement != null)
                             {
+                                // Establecer el nombre de registro
                                 partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue(adquiriente.Nombre_adqu);
-                                partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue(adquiriente.Nit_adqui);
 
+                                // Establecer el ID de la compañía
+                                var companyIDElement = partyLegalEntityElement.Element(cbc + "CompanyID");
+                                if (companyIDElement != null)
+                                {
+                                    companyIDElement.SetValue(adquiriente.Nit_adqui);
+                                    companyIDElement.SetAttributeValue("schemeID", "");
+                                    companyIDElement.SetAttributeValue("schemeName", "13");
+                                    companyIDElement.SetAttributeValue("schemeAgencyID", "195");
+                                    companyIDElement.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
+                                }
                             }
+
 
                             // Información de contacto del adquiriente
                             var contactElement = partyElement.Element(cac + "Contact");
@@ -769,7 +789,7 @@ namespace GeneradorCufe.ViewModel
             //  string codigo4 = "06";
             //  string impuesto4 = "0.00";
             decimal total = movimiento.Valor;
-            string nitFacturador = "43063221";
+            string nitFacturador = "1004994836";
             string numeroIdentificacionCliente = movimiento.Nit;
             string clavetecnica = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c";
             int tipodeambiente = 2;

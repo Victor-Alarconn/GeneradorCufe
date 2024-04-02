@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using GeneradorCufe.Model;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,36 +17,42 @@ namespace GeneradorCufe.Consultas
             _data = data;
         }
 
-        public void GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64)
+        public void GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura)
         {
             try
             {
-                // Conectarse a la base de datos MySQL
                 using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
                 {
-                    // Abrir la conexión
                     connection.Open();
 
-                    // Definir la consulta SQL para insertar la respuesta en la base de datos
-                    string query = "INSERT INTO RespuestasConsulta (DocumentoBase64) VALUES (@DocumentoBase64)";
+                    // Definir la consulta SQL para actualizar la tabla xxxxccfc solo cuando el valor de factura coincida
+                    string updateQuery = "UPDATE xxxxccfc SET estado_fe = 3, dato_qr = @DocumentoBase64 WHERE factura = @Factura";
 
-                    // Crear el comando SQL con la consulta y la conexión
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                     {
-                        // Asignar el valor del parámetro DocumentoBase64
-                        command.Parameters.AddWithValue("@DocumentoBase64", documentoBase64);
+                        // Asignar los valores de los parámetros DocumentoBase64 y Factura
+                        updateCommand.Parameters.AddWithValue("@DocumentoBase64", documentoBase64);
+                        updateCommand.Parameters.AddWithValue("@Factura", factura);
 
-                        // Ejecutar el comando SQL
-                        command.ExecuteNonQuery();
+                        // Ejecutar la actualización
+                        int rowsAffected = updateCommand.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            Console.WriteLine("La respuesta de consulta se actualizó correctamente en la base de datos.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("No se pudo actualizar la respuesta de consulta en la base de datos. No se encontró la factura especificada.");
+                        }
                     }
                 }
-
-                Console.WriteLine("Respuesta de consulta guardada en la base de datos correctamente.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al guardar la respuesta de consulta en la base de datos: {ex.Message}");
             }
         }
+
     }
 }
