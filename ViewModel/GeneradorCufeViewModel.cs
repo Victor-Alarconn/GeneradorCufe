@@ -87,6 +87,8 @@ namespace GeneradorCufe.ViewModel
 
         private static string SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion)
         {
+            // Crear una instancia de la clase Respuesta_Consulta
+            Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
             try
             {
                 using (WebClient client = new WebClient())
@@ -100,14 +102,11 @@ namespace GeneradorCufe.ViewModel
                     // Realizar la solicitud POST y obtener la respuesta
                     byte[] responseBytes = client.UploadData(url, "POST", bytes);
 
-                    // Obtener el código de estado de la respuesta
-                    HttpStatusCode statusCode = HttpStatusCode.OK; 
-
                     // Convertir la respuesta a string
                     string response = Encoding.UTF8.GetString(responseBytes);
 
                     // Mostrar un mensaje de éxito con el código de estado
-                    MessageBox.Show($"Solicitud POST exitosa. Código de estado: {(int)statusCode} - {statusCode}", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
                     ConsultarXML(emisor, factura, cadenaConexion);
@@ -126,6 +125,10 @@ namespace GeneradorCufe.ViewModel
                         {
                             string errorResponse = reader.ReadToEnd();
                             MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                            // Guardar el error en la base de datos
+                            respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
+
                             return "";
                         }
                     }
@@ -194,6 +197,7 @@ namespace GeneradorCufe.ViewModel
 
                         // Llamar al método para guardar la respuesta en la base de datos
                         respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento);
+                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento);
                     }
                     else
                     {
