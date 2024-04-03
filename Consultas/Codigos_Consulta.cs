@@ -21,28 +21,37 @@ namespace GeneradorCufe.Consultas
         {
             Codigos codigo = new Codigos();
 
-            string query = "SELECT citycodigo, citydepto FROM xxxxcity WHERE citynomb = @ciudad";
-
-            using (MySqlConnection connection = _data.CreateConnection())
+            try
             {
-                using (MySqlCommand command = new MySqlCommand(query, connection))
+                string query = "SELECT citycodigo, citydepto FROM xxxxcity WHERE citynomb = @ciudad";
+
+                using (MySqlConnection connection = _data.CreateConnection())
                 {
-                    command.Parameters.AddWithValue("@ciudad", ciudad);
-
-                    connection.Open();
-
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        if (reader.Read())
+                        command.Parameters.AddWithValue("@ciudad", ciudad);
+
+                        connection.Open();
+
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            codigo.Codigo_Municipio = reader["citycodigo"].ToString();
-                            codigo.Codigo_Departamento = reader["citydepto"].ToString();
+                            if (reader.Read())
+                            {
+                                codigo.Codigo_Municipio = reader["citycodigo"].ToString();
+                                codigo.Codigo_Departamento = reader["citydepto"].ToString();
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                // Manejar la excepción
+                Console.WriteLine("Error en la consulta de códigos: " + ex.Message);
+            }
 
             return codigo;
         }
+
     }
 }

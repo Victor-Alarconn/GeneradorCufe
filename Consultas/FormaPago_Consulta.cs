@@ -21,33 +21,42 @@ namespace GeneradorCufe.Consultas
         {
             FormaPago formaPago = new FormaPago();
 
-            string query = "SELECT id_forma, codg_form, vlr_pag, fecha, factura, 3ros " +
-                           "FROM forma_pago " +
-                           "WHERE id_forma = @idFormaPago";
-
-            using (MySqlConnection connection = _data.CreateConnection())
+            try
             {
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@idFormaPago", idFormaPago);
+                string query = "SELECT id_forma, codg_form, vlr_pag, fecha, factura, 3ros " +
+                               "FROM forma_pago " +
+                               "WHERE id_forma = @idFormaPago";
 
-                    connection.Open();
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                using (MySqlConnection connection = _data.CreateConnection())
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        if (reader.Read())
+                        command.Parameters.AddWithValue("@idFormaPago", idFormaPago);
+
+                        connection.Open();
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            formaPago.Id_forma = Convert.ToInt32(reader["id_forma"]);
-                            formaPago.Codigo_forma = reader["codg_form"].ToString();
-                            formaPago.Valor_pago = Convert.ToDecimal(reader["vlr_pag"]);
-                            formaPago.Fecha_pago = Convert.ToDateTime(reader["fecha"]);
-                            formaPago.Factura_pago = reader["factura"].ToString();
-                            formaPago.Terceros_pago = Convert.ToInt32(reader["3ros"]);
+                            if (reader.Read())
+                            {
+                                formaPago.Id_forma = Convert.ToInt32(reader["id_forma"]);
+                                formaPago.Codigo_forma = reader["codg_form"].ToString();
+                                formaPago.Valor_pago = Convert.ToDecimal(reader["vlr_pag"]);
+                                formaPago.Fecha_pago = Convert.ToDateTime(reader["fecha"]);
+                                formaPago.Factura_pago = reader["factura"].ToString();
+                                formaPago.Terceros_pago = Convert.ToInt32(reader["3ros"]);
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                // Manejar la excepción
+                Console.WriteLine("Error en la consulta de forma de pago: " + ex.Message);
+            }
 
             return formaPago;
         }
+
     }
 }

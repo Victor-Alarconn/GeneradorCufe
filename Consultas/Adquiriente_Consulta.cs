@@ -23,53 +23,62 @@ namespace GeneradorCufe.Consultas
 
             string query = "SELECT tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen, trodigito, trotp_3ro FROM xxxx3ros WHERE tronit = @Nit LIMIT 1";
 
-            using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
+            try
             {
-                using (MySqlCommand command = new MySqlCommand(query, connection))
+                using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
                 {
-                    command.Parameters.AddWithValue("@Nit", nit);
-
-                    connection.Open();
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        if (reader.Read())
+                        command.Parameters.AddWithValue("@Nit", nit);
+
+                        connection.Open();
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            // Concatenar los nombres y apellidos para formar el NombreCompleto
-                            string nombreCompleto = $"{reader["tronombre"]} {reader["tronomb_2"]} {reader["troapel_1"]} {reader["troapel_2"]}".Trim();
-                            adquiriente.Nombre_adqu = nombreCompleto;
-
-                            // Separar el municipio y el departamento
-                            string municipioDepartamento = reader["trociudad"].ToString();
-                            string[] partes = municipioDepartamento.Split(',');
-                            if (partes.Length == 2)
+                            if (reader.Read())
                             {
-                                adquiriente.Nombre_municipio_adqui = partes[0].Trim();
-                                adquiriente.Nombre_departamento_adqui = partes[1].Trim();
+                                // Concatenar los nombres y apellidos para formar el NombreCompleto
+                                string nombreCompleto = $"{reader["tronombre"]} {reader["tronomb_2"]} {reader["troapel_1"]} {reader["troapel_2"]}".Trim();
+                                adquiriente.Nombre_adqu = nombreCompleto;
 
-                                // Consultar los códigos correspondientes al municipio y departamento
-                                Codigos_Consulta codigosConsulta = new Codigos_Consulta();
-                                Codigos codigos = codigosConsulta.ConsultarCodigos(municipioDepartamento);
+                                // Separar el municipio y el departamento
+                                string municipioDepartamento = reader["trociudad"].ToString();
+                                string[] partes = municipioDepartamento.Split(',');
+                                if (partes.Length == 2)
+                                {
+                                    adquiriente.Nombre_municipio_adqui = partes[0].Trim();
+                                    adquiriente.Nombre_departamento_adqui = partes[1].Trim();
 
-                                // Establecer los códigos en el objeto adquiriente
-                                adquiriente.Codigo_municipio_adqui = codigos.Codigo_Municipio;
-                                adquiriente.Codigo_departamento_adqui = codigos.Codigo_Departamento;
+                                    // Consultar los códigos correspondientes al municipio y departamento
+                                    Codigos_Consulta codigosConsulta = new Codigos_Consulta();
+                                    Codigos codigos = codigosConsulta.ConsultarCodigos(municipioDepartamento);
+
+                                    // Establecer los códigos en el objeto adquiriente
+                                    adquiriente.Codigo_municipio_adqui = codigos.Codigo_Municipio;
+                                    adquiriente.Codigo_departamento_adqui = codigos.Codigo_Departamento;
+                                }
+
+                                adquiriente.Direccion_adqui = reader["trodirec"].ToString();
+                                adquiriente.Correo_adqui = reader["troemail"].ToString();
+                                adquiriente.Responsable = reader["troregimen"].ToString();
+                                adquiriente.Dv_Adqui = reader["trodigito"].ToString();
+                                adquiriente.Tipo_p = reader.GetDecimal("trotp_3ro");
+
+                                adquiriente.Nit_adqui = nit.ToString();
+                                // Puedes agregar más asignaciones si hay más columnas en la tabla
                             }
-
-                            adquiriente.Direccion_adqui = reader["trodirec"].ToString();
-                            adquiriente.Correo_adqui = reader["troemail"].ToString();
-                            adquiriente.Responsable = reader["troregimen"].ToString();
-                            adquiriente.Dv_Adqui = reader["trodigito"].ToString();
-                            adquiriente.Tipo_p = reader.GetDecimal("trotp_3ro"); 
-
-                            adquiriente.Nit_adqui = nit.ToString();
-                            // Puedes agregar más asignaciones si hay más columnas en la tabla
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                // Manejar la excepción
+                Console.WriteLine("Error en la consulta de adquiriente: " + ex.Message);
+            }
 
             return adquiriente;
         }
+
 
 
     }

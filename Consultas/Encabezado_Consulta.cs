@@ -17,36 +17,45 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public Encabezado ConsultarEncabezado(Factura factura, string cadenaConexion)  // Consulta para obtener los datos del encabezado
+        public Encabezado ConsultarEncabezado(Factura factura, string cadenaConexion)
         {
             Encabezado encabezado = new Encabezado();
 
-            string query = "SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0 FROM xxxxterm WHERE terminal = @Terminal";
-
-            using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
+            try
             {
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Terminal", factura.Terminal);
+                string query = "SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0 FROM xxxxterm WHERE terminal = @Terminal";
 
-                    connection.Open();
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        if (reader.Read())
+                        command.Parameters.AddWithValue("@Terminal", factura.Terminal);
+
+                        connection.Open();
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            encabezado.Autorizando = reader.GetString("resol_fe");
-                            encabezado.Fecha_inicio = reader.GetDateTime("f_inicio");
-                            encabezado.Fecha_termina = reader.GetDateTime("f_termina");
-                            encabezado.R_inicio = reader.GetInt32("r_inicio");
-                            encabezado.R_termina = reader.GetInt32("r_termina");
-                            encabezado.Prefijo = reader.GetString("prefijo0");
+                            if (reader.Read())
+                            {
+                                encabezado.Autorizando = reader.GetString("resol_fe");
+                                encabezado.Fecha_inicio = reader.GetDateTime("f_inicio");
+                                encabezado.Fecha_termina = reader.GetDateTime("f_termina");
+                                encabezado.R_inicio = reader.GetInt32("r_inicio");
+                                encabezado.R_termina = reader.GetInt32("r_termina");
+                                encabezado.Prefijo = reader.GetString("prefijo0");
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                // Manejar la excepción
+                Console.WriteLine("Error en la consulta del encabezado: " + ex.Message);
+            }
 
             return encabezado;
         }
+
 
     }
 }
