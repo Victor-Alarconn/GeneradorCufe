@@ -229,6 +229,7 @@ namespace GeneradorCufe.ViewModel
             Encabezado_Consulta encabezadoConsulta = new Encabezado_Consulta();
             Codigos_Consulta codigosConsulta = new Codigos_Consulta();
             Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
+            FormaPago_Consulta formaPagoConsulta = new FormaPago_Consulta();
 
             string cadenaConexion = "";
 
@@ -244,6 +245,7 @@ namespace GeneradorCufe.ViewModel
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
+            List<FormaPago> listaFormaPago = formaPagoConsulta.ConsultarFormaPago(factura, cadenaConexion);
             // Obtener la hora en formato DateTimeOffset
             DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
 
@@ -412,6 +414,39 @@ namespace GeneradorCufe.ViewModel
                 paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
                 paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
             }
+            //var paymentMeansElementParent = xmlDoc.Descendants(cac + "Invoice").FirstOrDefault()?.Element(cac + "PaymentMeans");
+
+            //if (listaFormaPago != null && listaFormaPago.Count > 0)
+            //{
+            //    foreach (var formaPago in listaFormaPago)
+            //    {
+            //        var paymentMeansElement = new XElement(cac + "PaymentMeans",
+            //            new XElement(cbc + "ID", "1")); // ID fijo 
+
+            //        // Asignar PaymentMeansCode y PaymentID según el Id_forma de la forma de pago
+            //        if (formaPago.Id_forma == "00")
+            //        {
+            //            paymentMeansElement.Add(new XElement(cbc + "PaymentMeansCode", "10"),
+            //                new XElement(cbc + "PaymentID", "Efectivo"));
+            //        }
+            //        else if (formaPago.Id_forma == "01")
+            //        {
+            //            paymentMeansElement.Add(new XElement(cbc + "PaymentMeansCode", "49"),
+            //                new XElement(cbc + "PaymentID", "Tarjeta Débito"));
+            //        }
+            //        else if (formaPago.Id_forma == "99")
+            //        {
+            //            paymentMeansElement.Add(new XElement(cbc + "PaymentMeansCode", "48"),
+            //                new XElement(cbc + "PaymentID", "Tarjeta Crédito"),
+            //                new XElement(cbc + "PaymentDueDate", DateTime.Now.ToString("yyyy-MM-dd")));
+            //        }
+
+            //        // Agregar PaymentMeans al XML
+            //        paymentMeansElementParent?.Add(paymentMeansElement);
+            //    }
+            //}
+
+
 
             // Información total de impuestos
             var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
@@ -499,7 +534,7 @@ namespace GeneradorCufe.ViewModel
                         if (taxSubtotalElement != null)
                         {
                             string valorformateada = producto.Valor.ToString("F2", CultureInfo.InvariantCulture);
-                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(valorformateada);
+                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(producto.Neto);
                             taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal);
 
                             var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");

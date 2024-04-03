@@ -17,33 +17,29 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public FormaPago ConsultarFormaPago(int idFormaPago)
+        public List<FormaPago> ConsultarFormaPago(Factura factura, string cadenaConexion)
         {
-            FormaPago formaPago = new FormaPago();
+            List<FormaPago> listaFormaPago = new List<FormaPago>();
 
             try
             {
-                string query = "SELECT id_forma, codg_form, vlr_pag, fecha, factura, 3ros " +
-                               "FROM forma_pago " +
-                               "WHERE id_forma = @idFormaPago";
+                string query = "SELECT bancop, vrpago FROM xxxxccpg WHERE factura = @factura";
 
-                using (MySqlConnection connection = _data.CreateConnection())
+                using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
                 {
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@idFormaPago", idFormaPago);
+                        command.Parameters.AddWithValue("@factura", factura.Facturas);
 
                         connection.Open();
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            if (reader.Read())
+                            while (reader.Read())
                             {
-                                formaPago.Id_forma = Convert.ToInt32(reader["id_forma"]);
-                                formaPago.Codigo_forma = reader["codg_form"].ToString();
-                                formaPago.Valor_pago = Convert.ToDecimal(reader["vlr_pag"]);
-                                formaPago.Fecha_pago = Convert.ToDateTime(reader["fecha"]);
-                                formaPago.Factura_pago = reader["factura"].ToString();
-                                formaPago.Terceros_pago = Convert.ToInt32(reader["3ros"]);
+                                FormaPago formaPago = new FormaPago(); // Crear un nuevo objeto FormaPago por cada fila leída
+                                formaPago.Id_forma = reader["bancop"].ToString();
+                                formaPago.Valor_pago = reader.GetDecimal("vrpago");
+                                listaFormaPago.Add(formaPago); // Agregar el objeto FormaPago a la lista
                             }
                         }
                     }
@@ -55,8 +51,11 @@ namespace GeneradorCufe.Consultas
                 Console.WriteLine("Error en la consulta de forma de pago: " + ex.Message);
             }
 
-            return formaPago;
+            return listaFormaPago;
         }
+
+
+
 
     }
 }

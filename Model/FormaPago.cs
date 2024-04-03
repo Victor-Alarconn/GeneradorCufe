@@ -8,7 +8,7 @@ namespace GeneradorCufe.Model
 {
     public class FormaPago
     {
-        public int Id_forma { get; set; }
+        public string Id_forma { get; set; }
         public string? Codigo_forma { get; set; }
         public decimal Valor_pago { get; set; }
         public DateTime Fecha_pago { get; set; }

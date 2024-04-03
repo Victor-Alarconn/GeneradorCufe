@@ -136,13 +136,13 @@ namespace GeneradorCufe.Consultas
                     connection.Open();
 
                     // Definir la consulta SQL para actualizar la tabla xxxxccfc donde Facturas sea igual a factura.Facturas
-                    string updateQuery = "UPDATE xxxxccfc SET dato_qr = @EstadoMensaje WHERE Facturas = @Factura";
+                    string updateQuery = "UPDATE xxxxccfc SET dato_qr = @EstadoMensaje WHERE factura = @factura";
 
                     using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                     {
                         // Asignar los valores de los parámetros EstadoMensaje y Factura
                         updateCommand.Parameters.AddWithValue("@EstadoMensaje", estadoMensaje);
-                        updateCommand.Parameters.AddWithValue("@Factura", factura.Facturas);
+                        updateCommand.Parameters.AddWithValue("@factura", factura.Facturas);
 
                         // Ejecutar la actualización
                         int rowsAffected = updateCommand.ExecuteNonQuery();
