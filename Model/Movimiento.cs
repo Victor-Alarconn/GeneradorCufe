@@ -16,6 +16,7 @@ namespace GeneradorCufe.Model
         public decimal Exentas { get; set; }
         public DateTime Fecha_Factura { get; set; }
         public string? Hora_dig { get; set; }
+        public decimal Retiene { get; set; }
 
     }
 }

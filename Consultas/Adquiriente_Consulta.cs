@@ -21,7 +21,7 @@ namespace GeneradorCufe.Consultas
         {
             Adquiriente adquiriente = new Adquiriente();
 
-            string query = "SELECT tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen, trodigito, trotp_3ro FROM xxxx3ros WHERE tronit = @Nit LIMIT 1";
+            string query = "SELECT tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen, trodigito, trotp_3ro, trotelef FROM xxxx3ros WHERE tronit = @Nit LIMIT 1";
 
             try
             {
@@ -62,6 +62,7 @@ namespace GeneradorCufe.Consultas
                                 adquiriente.Responsable = reader["troregimen"].ToString();
                                 adquiriente.Dv_Adqui = reader["trodigito"].ToString();
                                 adquiriente.Tipo_p = reader.GetDecimal("trotp_3ro");
+                                adquiriente.Telefono_adqui = reader["trotelef"].ToString();
 
                                 adquiriente.Nit_adqui = nit.ToString();
                                 // Puedes agregar más asignaciones si hay más columnas en la tabla

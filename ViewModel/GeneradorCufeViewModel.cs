@@ -27,7 +27,7 @@ namespace GeneradorCufe.ViewModel
     public class InvoiceViewModel
     {
 
-        public static void EjecutarGeneracionXML(Emisor emisor, Factura factura)
+        public static async Task EjecutarGeneracionXML(Emisor emisor, Factura factura)
         {
             // Generar el XML y la versión base64
             (string xmlContent, string base64Content, string cadenaConexion) = GenerateXMLAndBase64(emisor, factura);
@@ -78,42 +78,52 @@ namespace GeneradorCufe.ViewModel
 
             // Mostrar mensaje informativo de éxito
             var successMessage = $"La generación de archivos XML se ha completado con éxito. Los archivos se han guardado en: {zipFilePath}";
-            Task.Delay(3000).ContinueWith(t => MessageBox.Show(successMessage));
+            await Task.Delay(3000);
+            MessageBox.Show(successMessage);
 
-
-            // Realizar la solicitud POST
+            // Realizar la solicitud POST y esperar la tarea
             string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
-            string response = SendPostRequest(url, base64Content, emisor, factura, cadenaConexion);
+            string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion);
         }
 
-        private static string SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion)
+
+
+        private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion)
         {
             // Crear una instancia de la clase Respuesta_Consulta
             Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
             try
             {
-                using (WebClient client = new WebClient())
+                using (HttpClient client = new HttpClient())
                 {
                     // Establecer el encabezado efacturaAuthorizationToken
-                    client.Headers["efacturaAuthorizationToken"] = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
+                    client.DefaultRequestHeaders.Add("efacturaAuthorizationToken", "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV");
 
                     // Convertir el contenido base64 en bytes
                     byte[] bytes = Encoding.UTF8.GetBytes(base64Content);
+                    HttpContent content = new ByteArrayContent(bytes);
 
                     // Realizar la solicitud POST y obtener la respuesta
-                    byte[] responseBytes = client.UploadData(url, "POST", bytes);
+                    HttpResponseMessage response = await client.PostAsync(url, content);
 
                     // Convertir la respuesta a string
-                    string response = Encoding.UTF8.GetString(responseBytes);
+                    string responseContent = await response.Content.ReadAsStringAsync();
 
                     // Mostrar un mensaje de éxito con el código de estado
                     MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
+                    // Retrasar la ejecución de ConsultarXML después de 3 segundos
+                    await Task.Delay(3000);
                     ConsultarXML(emisor, factura, cadenaConexion);
 
-                    return response;
+                    return responseContent;
                 }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar cualquier error de la solicitud POST
+                MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                return "";
             }
             catch (WebException webEx)
             {
@@ -142,6 +152,7 @@ namespace GeneradorCufe.ViewModel
                 }
             }
         }
+
 
         private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion)
         {
@@ -183,16 +194,6 @@ namespace GeneradorCufe.ViewModel
                         // Extraer el valor del parámetro 'document' (documento adjunto en base64)
                         string documentBase64 = jsonResponseObject.document;
 
-                        // Decodificar el documento base64 si es necesario
-                        byte[] documentBytes = Convert.FromBase64String(documentBase64);
-
-                        // Guardar el documento en un archivo, por ejemplo
-                        string filePath = "documento_adjunto.txt";
-                        File.WriteAllBytes(filePath, documentBytes);
-
-                        // Mostrar un mensaje de éxito
-                        MessageBox.Show($"Documento adjunto guardado en '{filePath}'", "Consulta XML", MessageBoxButton.OK, MessageBoxImage.Information);
-
                         // Crear una instancia de la clase Respuesta_Consulta
                         Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
 
@@ -205,6 +206,7 @@ namespace GeneradorCufe.ViewModel
                         // Mostrar un mensaje de error si la solicitud no fue exitosa
                         MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
+
                 }
             }
             catch (Exception ex)
@@ -213,7 +215,6 @@ namespace GeneradorCufe.ViewModel
                 MessageBox.Show("Error al enviar la solicitud GET:\n\n" + ex.Message, "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
 
         public static string UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura) // emisor y factura
@@ -267,13 +268,10 @@ namespace GeneradorCufe.ViewModel
             string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
             Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta); // Consulta para obtener los códigos de ciudad y departamento
             string nota = $"Factura de Venta Emitida por {nitCompleto}-{emisor.Nombre_emisor}";
+            string TipoA = (emisor.Tipo_emisor == 1) ? "2" : "1";
+            string Identificador = (emisor.Tipo_emisor == 1) ? "13" : "31";
 
-
-
-            // Actualizar el elemento 'InvoiceAuthorization'
             xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue(encabezado.Autorizando);
-
-            // Actualizar los elementos 'StartDate' y 'EndDate'
             xmlDoc.Descendants(cbc + "StartDate").FirstOrDefault()?.SetValue(encabezado.Fecha_inicio.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "EndDate").FirstOrDefault()?.SetValue(encabezado.Fecha_termina.ToString("yyyy-MM-dd"));
 
@@ -298,7 +296,7 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
             xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
 
-            xmlDoc.Descendants(cbc + "AdditionalAccountID").FirstOrDefault()?.SetValue("1"); // Identificador de tipo de organización jurídica de la de persona
+            xmlDoc.Descendants(cbc + "AdditionalAccountID").FirstOrDefault()?.SetValue(TipoA); // Identificador de tipo de organización jurídica de la de persona
 
             var partyNameElement = xmlDoc.Descendants(cac + "Party")
                                          .Descendants(cac + "PartyName")
@@ -329,7 +327,7 @@ namespace GeneradorCufe.ViewModel
 
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue(Nit);
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeID", Dv);
-                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeName", "31");
+                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeName", Identificador);
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyID", "195");
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
 
@@ -359,12 +357,23 @@ namespace GeneradorCufe.ViewModel
 
                 }
 
+                string Aplica = emisor.Responsable_emisor;
                 var taxSchemeElement = partyTaxSchemeElement.Element(cac + "TaxScheme");
+
                 if (taxSchemeElement != null)
                 {
-                    taxSchemeElement.Element(cbc + "ID")?.SetValue("01"); // pendiente
-                    taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                    if (Aplica == "Responsable IVA")
+                    {
+                        taxSchemeElement.Element(cbc + "ID")?.SetValue("01"); // ID es 01 si es Responsable IVA
+                        taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA"); // Name es IVA si es Responsable IVA
+                    }
+                    else
+                    {
+                        taxSchemeElement.Element(cbc + "ID")?.SetValue("ZZ"); // ID es ZZ si no es Responsable IVA
+                        taxSchemeElement.Element(cbc + "Name")?.SetValue("No aplica"); // Name es No aplica si no es Responsable IVA
+                    }
                 }
+
             }
 
             // Mapeo para PartyLegalEntity
@@ -378,7 +387,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     companyIDElement.SetValue(Nit);
                     companyIDElement.SetAttributeValue("schemeID", Dv);
-                    companyIDElement.SetAttributeValue("schemeName", "31");
+                    companyIDElement.SetAttributeValue("schemeName", Identificador);
                     companyIDElement.SetAttributeValue("schemeAgencyID", "195");
                     companyIDElement.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
                 }
@@ -390,11 +399,25 @@ namespace GeneradorCufe.ViewModel
                 }
             }
 
+            // Función para formatear el número de teléfono
+            string FormatearTelefono(string telefono)
+            {
+                // Remover paréntesis y guiones del número de teléfono
+                string telefonoFormateado = telefono.Replace("(", "").Replace(")", "").Replace("-", "");
+
+                // Devolver el número formateado
+                return telefonoFormateado;
+            }
+
+            // Obtener el teléfono formateado
+            string telefonoFormateado = FormatearTelefono(emisor.Telefono_emisor);
+
             // Mapeo para Contact
             var contactElement = xmlDoc.Descendants(cac + "Contact").FirstOrDefault();
             if (contactElement != null)
             {
-                contactElement.Element(cbc + "ElectronicMail")?.SetValue("xxxxx@xxxxx.com."); // angee pendiente por correo 
+                contactElement.Element(cbc + "Telephone")?.SetValue(telefonoFormateado); // Asignar el teléfono
+                contactElement.Element(cbc + "ElectronicMail")?.SetValue(emisor.Correo_emisor); // Asignar el correo electrónico
             }
 
             if (listaProductos != null)
@@ -407,8 +430,8 @@ namespace GeneradorCufe.ViewModel
                 Console.WriteLine("La lista de productos no tiene suficientes elementos para acceder al tercero.");
             }
 
-            // Información del medio de pago
-            var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
+           // Información del medio de pago
+           var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
             if (paymentMeansElement != null)
             {
                 paymentMeansElement.Element(cbc + "ID")?.SetValue("1");
@@ -417,35 +440,46 @@ namespace GeneradorCufe.ViewModel
             }
             //var paymentMeansElementParent = xmlDoc.Descendants(cac + "Invoice").FirstOrDefault()?.Element(cac + "PaymentMeans");
 
+            //// Crear una plantilla de PaymentMeans
+            //var paymentMeansTemplate = new XElement(cac + "PaymentMeans",
+            //    new XElement(cbc + "ID", "1")); // ID fijo
+
+            //// Agregar la plantilla al XML antes del bucle foreach
+            //paymentMeansElementParent?.Add(paymentMeansTemplate);
+
             //if (listaFormaPago != null && listaFormaPago.Count > 0)
             //{
             //    foreach (var formaPago in listaFormaPago)
             //    {
-            //        var paymentMeansElement = new XElement(cac + "PaymentMeans",
-            //            new XElement(cbc + "ID", "1")); // ID fijo 
+            //        // Clonar la plantilla para cada forma de pago
+            //        var paymentMeansElement = new XElement(paymentMeansTemplate);
 
             //        // Asignar PaymentMeansCode y PaymentID según el Id_forma de la forma de pago
             //        if (formaPago.Id_forma == "00")
             //        {
-            //            paymentMeansElement.Add(new XElement(cbc + "PaymentMeansCode", "10"),
-            //                new XElement(cbc + "PaymentID", "Efectivo"));
+            //            paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
+            //            paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
             //        }
             //        else if (formaPago.Id_forma == "01")
             //        {
-            //            paymentMeansElement.Add(new XElement(cbc + "PaymentMeansCode", "49"),
-            //                new XElement(cbc + "PaymentID", "Tarjeta Débito"));
+            //            paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("49");
+            //            paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Tarjeta Débito");
             //        }
             //        else if (formaPago.Id_forma == "99")
             //        {
-            //            paymentMeansElement.Add(new XElement(cbc + "PaymentMeansCode", "48"),
-            //                new XElement(cbc + "PaymentID", "Tarjeta Crédito"),
-            //                new XElement(cbc + "PaymentDueDate", DateTime.Now.ToString("yyyy-MM-dd")));
+            //            paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("48");
+            //            paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Tarjeta Crédito");
+            //            paymentMeansElement.Element(cbc + "PaymentDueDate")?.SetValue(DateTime.Now.ToString("yyyy-MM-dd"));
             //        }
 
             //        // Agregar PaymentMeans al XML
             //        paymentMeansElementParent?.Add(paymentMeansElement);
             //    }
             //}
+
+            //// Eliminar la plantilla del XML después del bucle foreach
+            //paymentMeansTemplate?.Remove();
+
 
             // Calcular el total del IVA de todos los productos
             decimal totalImpuesto = listaProductos.Sum(p => p.IvaTotal);
@@ -478,6 +512,50 @@ namespace GeneradorCufe.ViewModel
                 // Eliminar la plantilla del documento XML después de haberla utilizado
                 var taxSubtotalTemplate = xmlDoc.Descendants(cac + "TaxSubtotal").FirstOrDefault();
                 taxSubtotalTemplate?.Remove();
+            }
+
+            decimal retiene = movimiento.Retiene;
+
+            // Obtener el elemento WithholdingTaxTotal si existe
+            var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
+
+            // Verificar si retiene es igual a 0.00 y si existe el elemento WithholdingTaxTotal
+            if (retiene == 0.00m && withholdingTaxTotalElement != null)
+            {
+                // Eliminar el elemento WithholdingTaxTotal si retiene es igual a 0.00
+                withholdingTaxTotalElement.Remove();
+            }
+            else if (retiene != 0.00m)
+            {
+                // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es diferente de 0.00
+                withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue("3361344.00");
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue("84033.60");
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue("2.50");
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "ID")?.SetValue("06");
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "Name")?.SetValue("ReteFuente");
+
+                // Si el elemento WithholdingTaxTotal no existe, crear uno nuevo
+                if (withholdingTaxTotalElement == null)
+                {
+                    withholdingTaxTotalElement = new XElement(cac + "WithholdingTaxTotal",
+                        new XElement(cbc + "TaxAmount", retiene.ToString("F2", CultureInfo.InvariantCulture)),
+                        new XElement(cac + "TaxSubtotal",
+                            new XElement(cbc + "TaxableAmount", "3361344.00"),
+                            new XElement(cbc + "TaxAmount", "84033.60"),
+                            new XElement(cac + "TaxCategory",
+                                new XElement(cbc + "Percent", "2.50"),
+                                new XElement(cac + "TaxScheme",
+                                    new XElement(cbc + "ID", "06"),
+                                    new XElement(cbc + "Name", "ReteFuente")
+                                )
+                            )
+                        )
+                    );
+
+                    // Agregar el elemento WithholdingTaxTotal al XML
+                    xmlDoc.Root?.Add(withholdingTaxTotalElement);
+                }
             }
 
 
@@ -692,12 +770,13 @@ namespace GeneradorCufe.ViewModel
             Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
             Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(Nit, cadenaConexion);
             string Tipo = (adquiriente.Tipo_p == 1) ? "13" : "31";
+            string AdditionalAccountID = (adquiriente.Tipo_p == 1) ? "2" : "1";
 
             // Información del adquiriente
             var accountingCustomerPartyElement = xmlDoc.Descendants(cac + "AccountingCustomerParty").FirstOrDefault();
             if (accountingCustomerPartyElement != null)
             {
-                accountingCustomerPartyElement.Element(cbc + "AdditionalAccountID")?.SetValue("2"); // Identificador de tipo de adquiriente  jurídica de la de persona
+                accountingCustomerPartyElement.Element(cbc + "AdditionalAccountID")?.SetValue(AdditionalAccountID); // Identificador de tipo de adquiriente  jurídica de la de persona
 
                 // Información del adquiriente
                 var partyElement = accountingCustomerPartyElement.Element(cac + "Party");
@@ -800,6 +879,7 @@ namespace GeneradorCufe.ViewModel
                             var contactElement = partyElement.Element(cac + "Contact");
                             if (contactElement != null)
                             {
+                                contactElement.Element(cbc + "Telephone")?.SetValue(adquiriente.Telefono_adqui);
                                 contactElement.Element(cbc + "ElectronicMail")?.SetValue(adquiriente.Correo_adqui);
                             }
                         }
