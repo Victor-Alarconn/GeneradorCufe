@@ -76,9 +76,10 @@ namespace GeneradorCufe.ViewModel
                 }
             }
 
+            // Mostrar mensaje informativo de éxito
+            var successMessage = $"La generación de archivos XML se ha completado con éxito. Los archivos se han guardado en: {zipFilePath}";
+            Task.Delay(3000).ContinueWith(t => MessageBox.Show(successMessage));
 
-            // Mostrar mensaje de confirmación
-            MessageBox.Show($"Archivos generados y guardados en: {zipFilePath}");
 
             // Realizar la solicitud POST
             string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
