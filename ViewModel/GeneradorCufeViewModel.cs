@@ -39,6 +39,11 @@ namespace GeneradorCufe.ViewModel
                 return; // Detiene la ejecución adicional si no se generó el XML
             }
 
+            GeneradorPDF generadorPDF = new GeneradorPDF();
+            string directorioProyecto = Directory.GetCurrentDirectory();
+            string rutaArchivoPDF = Path.Combine(directorioProyecto, "archivo.pdf");
+            generadorPDF.CrearPDF(rutaArchivoPDF);
+
             // Directorio donde se guardarán los archivos
             string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
 
