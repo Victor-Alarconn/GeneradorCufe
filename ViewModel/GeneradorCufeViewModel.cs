@@ -47,6 +47,12 @@ namespace GeneradorCufe.ViewModel
             // Directorio donde se guardarán los archivos
             string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
 
+            if (string.IsNullOrEmpty(xmlDirectory))
+            {
+                MessageBox.Show("Error al obtener el directorio para guardar los archivos XML.", "Error de Directorio", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             // Asegurarte de que el directorio 'xml' existe
             if (!Directory.Exists(xmlDirectory))
             {
@@ -99,29 +105,27 @@ namespace GeneradorCufe.ViewModel
             Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
             try
             {
-                using (HttpClient client = new HttpClient())
+               using (WebClient client = new WebClient())
                 {
                     // Establecer el encabezado efacturaAuthorizationToken
-                    client.DefaultRequestHeaders.Add("efacturaAuthorizationToken", "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV");
+                    client.Headers["efacturaAuthorizationToken"] = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
 
                     // Convertir el contenido base64 en bytes
                     byte[] bytes = Encoding.UTF8.GetBytes(base64Content);
-                    HttpContent content = new ByteArrayContent(bytes);
 
                     // Realizar la solicitud POST y obtener la respuesta
-                    HttpResponseMessage response = await client.PostAsync(url, content);
+                    byte[] responseBytes = client.UploadData(url, "POST", bytes);
 
                     // Convertir la respuesta a string
-                    string responseContent = await response.Content.ReadAsStringAsync();
+                    string response = Encoding.UTF8.GetString(responseBytes);
 
                     // Mostrar un mensaje de éxito con el código de estado
                     MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Retrasar la ejecución de ConsultarXML después de 3 segundos
-                    await Task.Delay(3000);
+                    // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
                     ConsultarXML(emisor, factura, cadenaConexion);
 
-                    return responseContent;
+                    return response;
                 }
             }
             catch (HttpRequestException ex)
@@ -163,7 +167,7 @@ namespace GeneradorCufe.ViewModel
         {
             try
             {
-                string nit = emisor.Nit_emisor.Replace("-0", "");
+                string nit = emisor.Nit_emisor?.Replace("-0", "");
                 // Construir la URL completa con los parámetros necesarios
                 string url = "https://apivp.efacturacadena.com/staging/vp/consulta/documentos";
                 string partnershipId = "900770401";
@@ -336,7 +340,7 @@ namespace GeneradorCufe.ViewModel
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyID", "195");
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
 
-                partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("R-99-PN");
+                partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("O-15");
 
                 var registrationAddressElement = partyTaxSchemeElement.Element(cac + "RegistrationAddress");
                 if (registrationAddressElement != null)
