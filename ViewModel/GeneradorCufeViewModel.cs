@@ -88,16 +88,16 @@ namespace GeneradorCufe.ViewModel
             }
 
             // Mostrar mensaje informativo de éxito
-            var successMessage = $"La generación de archivos XML se ha completado con éxito. Los archivos se han guardado en: {zipFilePath}";
-            await Task.Delay(3000);
-            MessageBox.Show(successMessage);
+            //var successMessage = $"La generación de archivos XML se ha completado con éxito. Los archivos se han guardado en: {zipFilePath}";
+            //await Task.Delay(3000);
+            //MessageBox.Show(successMessage);
 
             // Realizar la solicitud POST y esperar la tarea
             string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
             string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion);
         }
 
-
+        
 
         private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion)
         {
@@ -538,9 +538,9 @@ namespace GeneradorCufe.ViewModel
             {
                 // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es diferente de 0.00
                 withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
-                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue("3361344.00");
-                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue("84033.60");
-                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue("2.50");
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue("3.50");
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "ID")?.SetValue("06");
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "Name")?.SetValue("ReteFuente");
 
@@ -553,7 +553,7 @@ namespace GeneradorCufe.ViewModel
                             new XElement(cbc + "TaxableAmount", "3361344.00"),
                             new XElement(cbc + "TaxAmount", "84033.60"),
                             new XElement(cac + "TaxCategory",
-                                new XElement(cbc + "Percent", "2.50"),
+                                new XElement(cbc + "Percent", "3.50"),
                                 new XElement(cac + "TaxScheme",
                                     new XElement(cbc + "ID", "06"),
                                     new XElement(cbc + "Name", "ReteFuente")
