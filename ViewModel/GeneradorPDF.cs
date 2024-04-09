@@ -642,31 +642,35 @@ namespace GeneradorCufe.ViewModel
 
                 documento.Add(tTotales);
 
-
                 // Espacio adicional
                 documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                documento.Add(new Chunk("\n"));
 
                 // Sección de firmas
                 PdfPTable seccionFirmas = new PdfPTable(2);
                 seccionFirmas.WidthPercentage = 100;
+                seccionFirmas.SpacingBefore = 10f; // Espacio antes de la tabla
                 seccionFirmas.SetWidths(new float[] { 1, 1 });
 
                 // Firma y sello del cliente
                 PdfPCell celdaFirmaCliente = new PdfPCell(new Phrase("Firma y sello del cliente", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                 celdaFirmaCliente.HorizontalAlignment = Element.ALIGN_CENTER;
-                celdaFirmaCliente.Border = PdfPCell.BOTTOM_BORDER;
-                celdaFirmaCliente.PaddingBottom = 5;
+                celdaFirmaCliente.Border = PdfPCell.TOP_BORDER;
+                celdaFirmaCliente.PaddingTop = 5;
                 seccionFirmas.AddCell(celdaFirmaCliente);
 
                 // Revisado y entregado
                 PdfPCell celdaRevisadoEntregado = new PdfPCell(new Phrase("Revisado y entregado", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                 celdaRevisadoEntregado.HorizontalAlignment = Element.ALIGN_CENTER;
-                celdaRevisadoEntregado.Border = PdfPCell.BOTTOM_BORDER;
-                celdaRevisadoEntregado.PaddingBottom = 5;
+                celdaRevisadoEntregado.Border = PdfPCell.TOP_BORDER;
+                celdaRevisadoEntregado.PaddingTop = 5;
                 seccionFirmas.AddCell(celdaRevisadoEntregado);
 
                 // Agregar la sección de firmas al documento
                 documento.Add(seccionFirmas);
+
+
+
 
                 // Espacio adicional después de las firmas
                 documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
