@@ -39,11 +39,6 @@ namespace GeneradorCufe.ViewModel
                 return; // Detiene la ejecución adicional si no se generó el XML
             }
 
-            GeneradorPDF generadorPDF = new GeneradorPDF();
-            string directorioProyecto = Directory.GetCurrentDirectory();
-            string rutaArchivoPDF = Path.Combine(directorioProyecto, "archivo.pdf");
-            generadorPDF.CrearPDF(rutaArchivoPDF);
-
             // Directorio donde se guardarán los archivos
             string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
 
@@ -205,6 +200,11 @@ namespace GeneradorCufe.ViewModel
 
                         // Crear una instancia de la clase Respuesta_Consulta
                         Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
+
+                        GeneradorPDF generadorPDF = new GeneradorPDF();
+                        string directorioProyecto = Directory.GetCurrentDirectory();
+                        string rutaArchivoPDF = Path.Combine(directorioProyecto, "archivo.pdf");
+                        generadorPDF.CrearPDF(rutaArchivoPDF,emisor, factura);
 
                         // Llamar al método para guardar la respuesta en la base de datos
                         respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento);

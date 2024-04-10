@@ -21,6 +21,7 @@ using Font = iTextSharp.text.Font;
 using System.Drawing;
 using Image = iTextSharp.text.Image;
 using System.Drawing.Imaging;
+using GeneradorCufe.Model;
 
 
 namespace GeneradorCufe.ViewModel
@@ -33,11 +34,11 @@ namespace GeneradorCufe.ViewModel
             
         }
 
-        public void CrearPDF(string rutaArchivo)
+        public void CrearPDF(string rutaArchivo, Emisor emisor, Factura factura)
         {
             try
             {
-                Document documento = new Document(PageSize.A4, 25, 25, 25, 25);
+                Document documento = new Document(PageSize.A4, 15, 18, 15, 18);
                 PdfWriter.GetInstance(documento, new FileStream(rutaArchivo, FileMode.Create));
                 documento.Open();
 
@@ -63,23 +64,28 @@ namespace GeneradorCufe.ViewModel
                 if (File.Exists(RutaLogo))
                 {
                     Image logo = Image.GetInstance(RutaLogo);
+                    logo.ScaleAbsoluteWidth(120); // Ajustar el ancho de la imagen
+                    logo.ScaleAbsoluteHeight(80); // Opcional: ajustar también la altura de la imagen si es necesario
                     logo.BackgroundColor = BaseColor.WHITE;
                     logo.Alignment = Element.ALIGN_MIDDLE;
 
-                    encabezado.AddCell(logo);
+                    // Agregar el logo en la primera columna (izquierda)
+                    PdfPCell cLogo = new PdfPCell(logo);
+                    cLogo.Border = Rectangle.NO_BORDER;
+                    encabezado.AddCell(cLogo);
                 }
                 else
                 {
                     encabezado.AddCell(cEmpty15);
                 }
 
+
+                // Agregar celda vacía en la tercera columna (derecha)
+                encabezado.AddCell(cEmpty15);
+
                 // Datos del emisor (ficticios)
                 string nombreEmisor = "PINTURAS PANELTON Y DISTRIBUCIONES SAS";
-                string representante = "Representante : JURIDICA - Responsable IVA";
                 string nitEmisor = "123456789-0";
-                string direccionEmisor = "Dirección : Panelton Dosquebradas Cr16#70-21 Bd1 Dosq,Rda";
-                string correoEmisor = "facturacionpinturaspaneltonsas@gmail.com\r\n";
-                string telefonoEmisor = "Telefono: 3131732";
 
                 var tEmisor = new PdfPTable(1);
                 tEmisor.WidthPercentage = 100;
@@ -90,44 +96,77 @@ namespace GeneradorCufe.ViewModel
                 cNombreEmisor.Border = Rectangle.NO_BORDER;
                 cNombreEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-                var fnt2 = FontFactory.GetFont("Helvetica", 9, Font.BOLD); //f11
+                var fnt2 = FontFactory.GetFont("Helvetica", 10, Font.BOLD); //f11
                 var cNitEmisor = new PdfPCell(new Phrase("NIT: " + nitEmisor, fnt2));
                 cNitEmisor.Border = Rectangle.NO_BORDER;
                 cNitEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-                var fnt3 = FontFactory.GetFont("Helvetica", 8, Font.NORMAL); //f9
-                var cDireccionEmisor = new PdfPCell(new Phrase(direccionEmisor.ToUpper().Trim(), fnt3));
+                var fnt3 = FontFactory.GetFont("Helvetica", 9, Font.NORMAL); //f9
+
+                // Crear tabla interna para los datos del emisor
+                var tDatosEmisor = new PdfPTable(1);
+                tDatosEmisor.WidthPercentage = 100;
+                tDatosEmisor.DefaultCell.Border = Rectangle.NO_BORDER;
+
+                // Aquí eliminamos la redefinición de las variables
+
+                var cRepresentante = new PdfPCell(new Phrase("Representante : JURIDICA - Responsable IVA", fnt3));
+                cRepresentante.Border = Rectangle.NO_BORDER;
+                cRepresentante.HorizontalAlignment = Element.ALIGN_CENTER;
+                cRepresentante.VerticalAlignment = Element.ALIGN_TOP;
+
+                var cDireccionEmisor = new PdfPCell(new Phrase("Dirección : Panelton Dosquebradas Cr16#70-21 Bd1 Dosq,Rda", fnt3));
                 cDireccionEmisor.Border = Rectangle.NO_BORDER;
                 cDireccionEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-                var cCorreoEmisor = new PdfPCell(new Phrase(correoEmisor, fnt3));
+                var cCorreoEmisor = new PdfPCell(new Phrase("facturacionpinturaspaneltonsas@gmail.com\r\n", fnt3));
                 cCorreoEmisor.Border = Rectangle.NO_BORDER;
                 cCorreoEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-                var cTelefonoEmisor = new PdfPCell(new Phrase(telefonoEmisor, fnt3));
+                var cTelefonoEmisor = new PdfPCell(new Phrase("Telefono: 3131732", fnt3));
                 cTelefonoEmisor.Border = Rectangle.NO_BORDER;
                 cTelefonoEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-
+                // Agregar datos del emisor en la segunda columna (central)
                 encabezado.AddCell(cEmpty5);
                 encabezado.AddCell(cNombreEmisor);
                 encabezado.AddCell(cNitEmisor);
-                encabezado.AddCell(cEmpty5);
-                encabezado.AddCell(new PdfPCell(new Phrase("Texto del Encabezado", FontFactory.GetFont("Helvetica", 8, Font.NORMAL))));
-                encabezado.AddCell(cEmpty15);
+                encabezado.AddCell(cRepresentante);
                 encabezado.AddCell(cDireccionEmisor);
                 encabezado.AddCell(cCorreoEmisor);
                 encabezado.AddCell(cTelefonoEmisor);
-
-                // Agregar encabezado al documento
+                encabezado.AddCell(cEmpty5);
+                encabezado.AddCell(cEmpty15);
                 documento.Add(encabezado);
 
                 // Espacio adicional
                 documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
 
-                // Información general
+                // Create a table with two columns
+                PdfPTable table = new PdfPTable(2);
+                table.WidthPercentage = 100;
+                table.DefaultCell.Border = Rectangle.NO_BORDER;
+
+                // Add the QR code and title to the first column
+                string TextoQR = "NumFac:323200000129FecFac:2019-16-01HorFac:10:53:10-05:00NitFac:700085371DocAdq:800199436ValFac:1500000.00ValIva:285000.00ValOtroIm:0.00ValTolFac:1785000.00CUFE:e5bac48e354bc907bccff0ea7d45fbf784f0a8e7243b58337361e1fbd430489d";
+                if (string.IsNullOrEmpty(TextoQR)) TextoQR = "TextoQR"; // Use a default value if the text is null or empty
+
+                Image imageQr = CrearQR(TextoQR);
+                imageQr.Border = Rectangle.NO_BORDER;
+                imageQr.Alignment = Element.ALIGN_CENTER;
+
+                PdfPCell qrCell = new PdfPCell();
+                qrCell.AddElement(new Phrase("Representación Gráfica De Factura Electrónica De Venta", FontFactory.GetFont("Helvetica", 12, Font.BOLD)));
+                qrCell.AddElement(imageQr);
+                qrCell.Border = Rectangle.NO_BORDER;
+                qrCell.PaddingBottom = 10;
+                qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
+
+                table.AddCell(qrCell);
+
+                // Add the general information to the second column
                 PdfPTable tInfoGeneral = new PdfPTable(1);
-                tInfoGeneral.WidthPercentage = 20;
+                tInfoGeneral.WidthPercentage = 100;
                 tInfoGeneral.DefaultCell.Border = Rectangle.NO_BORDER;
 
                 // Tipo de factura (ficticio)
@@ -147,19 +186,11 @@ namespace GeneradorCufe.ViewModel
                 cNumeroFactura.PaddingTop = 5;
                 cNumeroFactura.PaddingBottom = 7;
 
-                // Texto QR (ficticio)
-                string TextoQR = "TextoQR";
-                if (string.IsNullOrEmpty(TextoQR)) TextoQR = "TextoQR"; // Se usa un valor por defecto si el texto es nulo o vacío
-
-                Image imageQr = CrearQR(TextoQR);
-                imageQr.Border = Rectangle.NO_BORDER;
-                imageQr.Alignment = Element.ALIGN_CENTER;
-
                 tInfoGeneral.AddCell(ciTipoFactura);
                 tInfoGeneral.AddCell(cNumeroFactura);
-                tInfoGeneral.AddCell(imageQr);
+                table.AddCell(tInfoGeneral);
 
-                documento.Add(tInfoGeneral);
+                documento.Add(table);
 
                 // Espacio adicional
                 documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
@@ -278,49 +309,8 @@ namespace GeneradorCufe.ViewModel
                 // Agregar la tabla al documento
                 documento.Add(tabla);
 
-
-                // Supongamos que tienes un total de 25 líneas en tu "factura ficticia"
-                int totalLineasFicticias = 25;
-
-                if (totalLineasFicticias > 7)
-                {
-                    agregarLineas(documento, 0, 16);
-
-                    if (totalLineasFicticias > 16)
-                    {
-                        bool masPaginas = true;
-                        int inicio = 16;
-
-                        do
-                        {
-                            documento.NewPage();
-
-                            agregarLineas(documento, inicio, 28);
-
-                            inicio += 28;
-                            masPaginas = (inicio < totalLineasFicticias);
-                        }
-                        while (masPaginas);
-
-                        // Aquí podrías calcular las líneas de la última página ficticia
-                        var lineasUltimaPagina = (totalLineasFicticias - 16) % 28;
-                        var difLineasPrimeraPagina = 16 - 16;
-
-                        // Aquí puedes decidir si agregar una página adicional ficticia según tus necesidades
-                        if (lineasUltimaPagina > 28 - difLineasPrimeraPagina)
-                        {
-                            documento.NewPage();
-                        }
-                    }
-                    else
-                    {
-                        documento.NewPage();
-                    }
-                }
-                else
-                {
-                    agregarLineas(documento, 0, 7);
-                }
+                // Espacio adicional
+                documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
 
                 // Tabla de totales
                 var tTotales = new PdfPTable(3);
@@ -333,7 +323,7 @@ namespace GeneradorCufe.ViewModel
                 string TextoResolucion = "Resolución: Lorem ipsum dolor sit amet.";
 
                 string iDatos = (TextoAdicional + "\r\n\r\n" + TextoConstancia + "\r\n\r\n" + TextoResolucion).Trim();
-                var fnt7 = FontFactory.GetFont("Helvetica", 8, Font.NORMAL);
+                var fnt7 = FontFactory.GetFont("Helvetica", 12, Font.NORMAL);
                 var cDatos = new PdfPCell(new Phrase(iDatos, fnt7));
                 cDatos.BorderColor = BaseColor.GRAY;
                 cDatos.Border = Rectangle.BOX;
@@ -344,8 +334,8 @@ namespace GeneradorCufe.ViewModel
                 cDatos.PaddingRight = 7;
                 cDatos.PaddingLeft = 7;
 
-                var fnt8 = FontFactory.GetFont("Helvetica", 9, Font.BOLD); //f10
-                var ciSubtotalPU = new PdfPCell(new Phrase("Subtotal Precio Unitario (=)", fnt8));
+                var fnt8 = FontFactory.GetFont("Helvetica", 10, Font.BOLD); //f10
+                var ciSubtotalPU = new PdfPCell(new Phrase("Descuentos", fnt8));
                 ciSubtotalPU.BorderColor = BaseColor.GRAY;
                 ciSubtotalPU.Border = Rectangle.BOX;
                 ciSubtotalPU.BorderWidthBottom = 0f;
@@ -353,13 +343,13 @@ namespace GeneradorCufe.ViewModel
                 ciSubtotalPU.VerticalAlignment = Element.ALIGN_MIDDLE;
                 ciSubtotalPU.Padding = 4;
 
-                var fnt9 = FontFactory.GetFont("Helvetica", 9, Font.NORMAL);
+                var fnt9 = FontFactory.GetFont("Helvetica", 11, Font.NORMAL);
 
                 // Simulación de valores ficticios para los descuentos y el subtotal
                 decimal descuentosDetalle = 50.0m; // Valor ficticio de descuentos
                 decimal subtotalPU = 1000.0m; // Valor ficticio del subtotal
 
-                string ivSubtotaoPU = subtotalPU.ToString("#,###,##0.##");
+                string ivSubtotaoPU = subtotalPU.ToString("$#,###,##0.##");
                 var cvSubtotalPU = new PdfPCell(new Phrase(ivSubtotaoPU, fnt9));
                 cvSubtotalPU.BorderColor = BaseColor.GRAY;
                 cvSubtotalPU.Border = Rectangle.BOX;
@@ -368,7 +358,7 @@ namespace GeneradorCufe.ViewModel
                 cvSubtotalPU.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvSubtotalPU.Padding = 4;
 
-                var ciDescuentosDetalle = new PdfPCell(new Phrase("Descuentos detalle (-)", fnt8));
+                var ciDescuentosDetalle = new PdfPCell(new Phrase("Valor Exento", fnt8));
                 ciDescuentosDetalle.BorderColor = BaseColor.GRAY;
                 ciDescuentosDetalle.Border = Rectangle.BOX;
                 ciDescuentosDetalle.BorderWidthTop = 0f;
@@ -377,7 +367,7 @@ namespace GeneradorCufe.ViewModel
                 ciDescuentosDetalle.VerticalAlignment = Element.ALIGN_MIDDLE;
                 ciDescuentosDetalle.Padding = 4;
 
-                var ivDescuentosDetalle = descuentosDetalle != 0 ? descuentosDetalle.ToString("#,###,##0.##") : "0";
+                var ivDescuentosDetalle = descuentosDetalle != 0 ? descuentosDetalle.ToString("$#,###,##0.##") : "0";
                 var cvDescuentosDetalle = new PdfPCell(new Phrase(ivDescuentosDetalle, fnt9));
                 cvDescuentosDetalle.BorderColor = BaseColor.GRAY;
                 cvDescuentosDetalle.Border = Rectangle.BOX;
@@ -387,7 +377,7 @@ namespace GeneradorCufe.ViewModel
                 cvDescuentosDetalle.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvDescuentosDetalle.Padding = 4;
 
-                var ciRecargosDetalle = new PdfPCell(new Phrase("Recargos detalle (+)", fnt8));
+                var ciRecargosDetalle = new PdfPCell(new Phrase("Valor Gravado", fnt8));
                 ciRecargosDetalle.BorderColor = BaseColor.GRAY;
                 ciRecargosDetalle.Border = Rectangle.BOX;
                 ciRecargosDetalle.BorderWidthTop = 0f;
@@ -399,7 +389,7 @@ namespace GeneradorCufe.ViewModel
                 decimal recargosDetalle = 75.0m; // Valor ficticio de recargos
 
                 // Convertir el valor de recargos a cadena
-                string iRecargosDetalle = recargosDetalle.ToString("#,###,##0.##");
+                string iRecargosDetalle = recargosDetalle.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor de recargos
                 var cvRecargosDetalle = new PdfPCell(new Phrase(iRecargosDetalle, fnt9));
@@ -410,7 +400,7 @@ namespace GeneradorCufe.ViewModel
                 cvRecargosDetalle.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvRecargosDetalle.Padding = 4;
 
-                var ciSubtotalNG = new PdfPCell(new Phrase("Subtotal No Gravados (=)", fnt8));
+                var ciSubtotalNG = new PdfPCell(new Phrase("Valor IVA", fnt8));
                 ciSubtotalNG.BorderColor = BaseColor.GRAY;
                 ciSubtotalNG.Border = Rectangle.BOX;
                 ciSubtotalNG.BorderWidthBottom = 0f;
@@ -418,15 +408,13 @@ namespace GeneradorCufe.ViewModel
                 ciSubtotalNG.VerticalAlignment = Element.ALIGN_MIDDLE;
                 ciSubtotalNG.Padding = 4;
 
-                // Simulación de valores ficticios para el subtotal y el monto exclusivo de impuestos
-               
                 decimal taxExclusiveAmount = 200.0m; // Monto exclusivo de impuestos ficticio
 
                 // Calcular el subtotal no gravado ficticio
                 decimal subtotalNG = Math.Abs(subtotalPU - taxExclusiveAmount);
 
                 // Convertir el subtotal no gravado a cadena
-                string iSubtotalNG = subtotalNG.ToString("#,###,##0.##");
+                string iSubtotalNG = subtotalNG.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor del subtotal no gravado ficticio
                 var cvSubtotalNG = new PdfPCell(new Phrase(iSubtotalNG, fnt9));
@@ -437,7 +425,7 @@ namespace GeneradorCufe.ViewModel
                 cvSubtotalNG.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvSubtotalNG.Padding = 4;
 
-                var ciSubtotalBG = new PdfPCell(new Phrase("Subtotal Base Gravable (=)", fnt8));
+                var ciSubtotalBG = new PdfPCell(new Phrase("Impoconsumo", fnt8));
                 ciSubtotalBG.BorderColor = BaseColor.GRAY;
                 ciSubtotalBG.Border = Rectangle.BOX;
                 ciSubtotalBG.BorderWidthTop = 0f;
@@ -447,7 +435,7 @@ namespace GeneradorCufe.ViewModel
                 ciSubtotalBG.Padding = 4;
 
                 // Convertir el monto exclusivo de impuestos a cadena
-                string iSubtotalBG = taxExclusiveAmount.ToString("#,###,##0.##");
+                string iSubtotalBG = taxExclusiveAmount.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor del monto exclusivo de impuestos ficticio
                 var cvSubtotalBG = new PdfPCell(new Phrase(iSubtotalBG, fnt9));
@@ -459,7 +447,7 @@ namespace GeneradorCufe.ViewModel
                 cvSubtotalBG.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvSubtotalBG.Padding = 4;
 
-                var ciTotalImpuesto = new PdfPCell(new Phrase("Total impuesto (+)", fnt8));
+                var ciTotalImpuesto = new PdfPCell(new Phrase("Impto. Bolsas", fnt8));
                 ciTotalImpuesto.BorderColor = BaseColor.GRAY;
                 ciTotalImpuesto.Border = Rectangle.BOX;
                 ciTotalImpuesto.BorderWidthTop = 0f;
@@ -472,7 +460,7 @@ namespace GeneradorCufe.ViewModel
                 decimal totalImpuesto = 50.0m; // Total de impuestos ficticio
 
                 // Convertir el total de impuestos a cadena
-                string iTotalImpuesto = totalImpuesto.ToString("#,###,##0.##");
+                string iTotalImpuesto = totalImpuesto.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor del total de impuestos ficticio
                 var cvTotalImpuesto = new PdfPCell(new Phrase(iTotalImpuesto, fnt9));
@@ -484,7 +472,7 @@ namespace GeneradorCufe.ViewModel
                 cvTotalImpuesto.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvTotalImpuesto.Padding = 4;
 
-                var ciTotalMI = new PdfPCell(new Phrase("Total más impuesto (=)", fnt8));
+                var ciTotalMI = new PdfPCell(new Phrase("TOTAL (=)", fnt8));
                 ciTotalMI.BorderColor = BaseColor.GRAY;
                 ciTotalMI.Border = Rectangle.BOX;
                 ciTotalMI.BorderWidthTop = 0f;
@@ -496,7 +484,7 @@ namespace GeneradorCufe.ViewModel
                 decimal totalMI = 1200.0m; // Total más impuesto ficticio
 
                 // Convertir el total más impuesto a cadena
-                string iTotalMI = totalMI.ToString("#,###,##0.##");
+                string iTotalMI = totalMI.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor del total más impuesto ficticio
                 var cvTotalMI = new PdfPCell(new Phrase(iTotalMI, fnt9));
@@ -507,7 +495,7 @@ namespace GeneradorCufe.ViewModel
                 cvTotalMI.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvTotalMI.Padding = 4;
 
-                var ciDescuentoGlobal = new PdfPCell(new Phrase("Descuento Global (-)", fnt8));
+                var ciDescuentoGlobal = new PdfPCell(new Phrase("Rete. Fuente", fnt8));
                 ciDescuentoGlobal.BorderColor = BaseColor.GRAY;
                 ciDescuentoGlobal.Border = Rectangle.BOX;
                 ciDescuentoGlobal.BorderWidthBottom = 0f;
@@ -519,7 +507,7 @@ namespace GeneradorCufe.ViewModel
                 decimal descuentoGlobal = 100.0m; // Descuento global ficticio
 
                 // Convertir el descuento global a cadena
-                string iDescuentoGlobal = descuentoGlobal.ToString("#,###,##0.##");
+                string iDescuentoGlobal = descuentoGlobal.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor del descuento global ficticio
                 var cvDescuentoGlobal = new PdfPCell(new Phrase(iDescuentoGlobal, fnt9));
@@ -530,7 +518,7 @@ namespace GeneradorCufe.ViewModel
                 cvDescuentoGlobal.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvDescuentoGlobal.Padding = 4;
 
-                var ciRecargoGlobal = new PdfPCell(new Phrase("Recargo Global (+)", fnt8));
+                var ciRecargoGlobal = new PdfPCell(new Phrase("Rete. ICA", fnt8));
                 ciRecargoGlobal.BorderColor = BaseColor.GRAY;
                 ciRecargoGlobal.Border = Rectangle.BOX;
                 ciRecargoGlobal.BorderWidthTop = 0f;
@@ -542,7 +530,7 @@ namespace GeneradorCufe.ViewModel
                 decimal recargoGlobal = 50.0m; // Recargo global ficticio
 
                 // Convertir el recargo global a cadena
-                string iRecargoGlobal = recargoGlobal.ToString("#,###,##0.##");
+                string iRecargoGlobal = recargoGlobal.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor del recargo global ficticio
                 var cvRecargoGlobal = new PdfPCell(new Phrase(iRecargoGlobal, fnt9));
@@ -553,7 +541,7 @@ namespace GeneradorCufe.ViewModel
                 cvRecargoGlobal.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvRecargoGlobal.Padding = 4;
 
-                var ciAnticipo = new PdfPCell(new Phrase("Anticipo (-)", fnt8));
+                var ciAnticipo = new PdfPCell(new Phrase("Anticipo", fnt8));
                 ciAnticipo.BorderColor = BaseColor.GRAY;
                 ciAnticipo.Border = Rectangle.BOX;
                 ciAnticipo.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -564,7 +552,7 @@ namespace GeneradorCufe.ViewModel
                 decimal anticipo = 300.0m; // Anticipo ficticio
 
                 // Convertir el anticipo a cadena
-                string iAnticipo = anticipo.ToString("#,###,##0.##");
+                string iAnticipo = anticipo.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor del anticipo ficticio
                 var cvAnticipo = new PdfPCell(new Phrase(iAnticipo, fnt9));
@@ -574,7 +562,7 @@ namespace GeneradorCufe.ViewModel
                 cvAnticipo.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvAnticipo.Padding = 4;
 
-                var ciTotalNeto = new PdfPCell(new Phrase("Valor Total", fnt8));
+                var ciTotalNeto = new PdfPCell(new Phrase("Total menos rete.", fnt8));
                 ciTotalNeto.BorderColor = BaseColor.GRAY;
                 ciTotalNeto.Border = Rectangle.BOX;
                 ciTotalNeto.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -585,7 +573,7 @@ namespace GeneradorCufe.ViewModel
                 decimal vTotalAP = 10570.20m; // Total neto ficticio
 
                 // Convertir el total neto a cadena
-                string iTotalNeto = vTotalAP.ToString("#,###,##0.##");
+                string iTotalNeto = vTotalAP.ToString("$#,###,##0.##");
 
                 // Crear la celda con el valor del total neto ficticio
                 var cvTotalNeto = new PdfPCell(new Phrase(iTotalNeto, fnt8));
@@ -594,9 +582,6 @@ namespace GeneradorCufe.ViewModel
                 cvTotalNeto.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvTotalNeto.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cvTotalNeto.Padding = 4;
-
-
-                // Valor ficticio para la moneda
                 string moneda = "COP";
 
 
@@ -643,7 +628,7 @@ namespace GeneradorCufe.ViewModel
                 documento.Add(tTotales);
 
                 // Espacio adicional
-                documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 10, Font.NORMAL)));
                 documento.Add(new Chunk("\n"));
 
                 // Sección de firmas
@@ -653,30 +638,24 @@ namespace GeneradorCufe.ViewModel
                 seccionFirmas.SetWidths(new float[] { 1, 1 });
 
                 // Firma y sello del cliente
-                PdfPCell celdaFirmaCliente = new PdfPCell(new Phrase("Firma y sello del cliente", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                PdfPCell celdaFirmaCliente = new PdfPCell(new Phrase("Firma y sello del cliente", FontFactory.GetFont("Helvetica", 11, Font.NORMAL)));
                 celdaFirmaCliente.HorizontalAlignment = Element.ALIGN_CENTER;
                 celdaFirmaCliente.Border = PdfPCell.TOP_BORDER;
-                celdaFirmaCliente.PaddingTop = 5;
+                celdaFirmaCliente.PaddingTop = 6;
                 seccionFirmas.AddCell(celdaFirmaCliente);
 
                 // Revisado y entregado
-                PdfPCell celdaRevisadoEntregado = new PdfPCell(new Phrase("Revisado y entregado", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                PdfPCell celdaRevisadoEntregado = new PdfPCell(new Phrase("Revisado y entregado", FontFactory.GetFont("Helvetica", 11, Font.NORMAL)));
                 celdaRevisadoEntregado.HorizontalAlignment = Element.ALIGN_CENTER;
                 celdaRevisadoEntregado.Border = PdfPCell.TOP_BORDER;
-                celdaRevisadoEntregado.PaddingTop = 5;
+                celdaRevisadoEntregado.PaddingTop = 6;
                 seccionFirmas.AddCell(celdaRevisadoEntregado);
-
-                // Agregar la sección de firmas al documento
                 documento.Add(seccionFirmas);
 
-
-
-
                 // Espacio adicional después de las firmas
-                documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 9, Font.NORMAL)));
 
-                // Nueva sección
-                Paragraph nuevaSeccion = new Paragraph("RMSOFT CASA DE SOFTWARE  S.A.S. Nit 90074400-7", FontFactory.GetFont("Helvetica", 8, Font.NORMAL));
+                Paragraph nuevaSeccion = new Paragraph("Proveedor Tecnológico: RMSOFT CASA DE SOFTWARE  S.A.S. Nit 90074400-7", FontFactory.GetFont("Helvetica", 9, Font.NORMAL));
                 documento.Add(nuevaSeccion);
 
                 documento.Close();
@@ -688,56 +667,6 @@ namespace GeneradorCufe.ViewModel
             }
         }
 
-
-        private void agregarLineas(Document document, int desdeIndex, int cantidad)
-        {
-            // tabla de items
-            var tItems = new PdfPTable(6);
-            tItems.WidthPercentage = 100;
-            tItems.SetWidths(new float[] { 0.5f, 3.5f, 0.5f, 1.25f, 1.75f, 1.5f });
-
-            // encabezado de items
-            var fnt71 = FontFactory.GetFont("Helvetica", 8, Font.NORMAL, BaseColor.WHITE); //f10
-            var cILinea = new PdfPCell(new Phrase("#", fnt71));
-            cILinea.BackgroundColor = BaseColor.GRAY; // Color ficticio
-            cILinea.BorderColor = BaseColor.GRAY;
-            cILinea.Border = Rectangle.BOX;
-            cILinea.HorizontalAlignment = Element.ALIGN_CENTER;
-            cILinea.VerticalAlignment = Element.ALIGN_MIDDLE;
-            cILinea.Padding = 4;
-
-            var cIDescripcion = new PdfPCell(new Phrase("DESCRIPCIÓN", fnt71));
-            cIDescripcion.BackgroundColor = BaseColor.GRAY; // Color ficticio
-            cIDescripcion.BorderColor = BaseColor.GRAY;
-            cIDescripcion.Border = Rectangle.BOX;
-            cIDescripcion.HorizontalAlignment = Element.ALIGN_CENTER;
-            cIDescripcion.VerticalAlignment = Element.ALIGN_MIDDLE;
-            cIDescripcion.Padding = 4;
-
-            tItems.AddCell(cILinea);
-            tItems.AddCell(cIDescripcion);
-            // Aquí se agregan las otras celdas
-
-            // Lógica para agregar las líneas de la factura
-            var fnt82 = FontFactory.GetFont("Helvetica", 7, Font.NORMAL); //f9
-
-            // agregar lineas
-            var totalLineas = 20;
-            for (int i = 0; i < cantidad; i++)
-            {
-                int x = (desdeIndex + i);
-
-                // verificar y agregar
-                if (x < totalLineas)
-                {
-                   // var linea = Invoice.InvoiceLine[x];
-
-                    // Se repite el proceso de creación y agregado de celdas para cada línea de la factura
-                }
-            }
-
-            document.Add(tItems);
-        }
 
         public Image CrearQR(string texto)
         {
@@ -756,7 +685,6 @@ namespace GeneradorCufe.ViewModel
 
             return imagenQr;
         }
-
 
 
         protected string montoALetras(decimal valor, string moneda)
