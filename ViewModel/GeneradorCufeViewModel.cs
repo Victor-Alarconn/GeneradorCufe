@@ -491,37 +491,59 @@ namespace GeneradorCufe.ViewModel
 
 
             // Calcular el total del IVA de todos los productos
-            decimal totalImpuesto = listaProductos.Sum(p => p.IvaTotal);
+            decimal totalImpuesto = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
+            decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
 
             // Obtener el elemento TaxTotal
             var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
             if (taxTotalElement != null)
             {
-                // Establecer el total del impuesto (IVA) en el elemento TaxAmount
-                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(totalImpuesto.ToString("F2", CultureInfo.InvariantCulture));
-
-                // Verificar si hay productos con y sin IVA
-                bool hayProductosConIVA = listaProductos.Any(p => p.Iva > 0);
-                bool hayProductosSinIVA = listaProductos.Any(p => p.Iva == 0);
-
-                // Generar sección para productos con IVA
-                if (hayProductosConIVA)
+                // Verificar si el total de impuestos es 0.00 y hay consumo
+                if (totalImpuesto == 0.00m && consumo > 0.00m)
                 {
-                    var taxSubtotalElementConIVA = GenerarElementoTaxSubtotal(xmlDoc, "19.00", listaProductos.Where(p => p.Iva > 0).ToList());
-                    taxTotalElement.Add(taxSubtotalElementConIVA);
+                    // Establecer el consumo como el total de impuestos
+                    taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(consumo.ToString("F2", CultureInfo.InvariantCulture));
+
+                    // Generar el elemento TaxSubtotal con porcentajeIVA del 8.00 y cambiar el ID y nombre del esquema de impuestos
+                    var taxSubtotalElement = GenerarElementoTaxSubtotal(xmlDoc, "8.00", listaProductos);
+                    var taxCategoryElement = taxSubtotalElement?.Element(cac + "TaxCategory");
+                    var taxSchemeElement = taxCategoryElement?.Element(cac + "TaxScheme");
+                    if (taxSchemeElement != null)
+                    {
+                        taxSchemeElement.Element(cbc + "ID")?.SetValue("04");
+                        taxSchemeElement.Element(cbc + "Name")?.SetValue("INC");
+                    }
+                    taxTotalElement.Add(taxSubtotalElement);
                 }
-
-                // Generar sección para productos sin IVA
-                if (hayProductosSinIVA)
+                else
                 {
-                    var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", listaProductos.Where(p => p.Iva == 0).ToList());
-                    taxTotalElement.Add(taxSubtotalElementSinIVA);
+                    // Establecer el total de impuestos en el elemento TaxAmount
+                    taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(totalImpuesto.ToString("F2", CultureInfo.InvariantCulture));
+
+                    // Verificar si hay productos con y sin IVA
+                    bool hayProductosConIVA = listaProductos.Any(p => p.Iva > 0);
+                    bool hayProductosSinIVA = listaProductos.Any(p => p.Iva == 0);
+
+                    // Generar sección para productos con IVA
+                    if (hayProductosConIVA)
+                    {
+                        var taxSubtotalElementConIVA = GenerarElementoTaxSubtotal(xmlDoc, "19.00", listaProductos.Where(p => p.Iva > 0).ToList());
+                        taxTotalElement.Add(taxSubtotalElementConIVA);
+                    }
+
+                    // Generar sección para productos sin IVA
+                    if (hayProductosSinIVA)
+                    {
+                        var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", listaProductos.Where(p => p.Iva == 0).ToList());
+                        taxTotalElement.Add(taxSubtotalElementSinIVA);
+                    }
                 }
 
                 // Eliminar la plantilla del documento XML después de haberla utilizado
                 var taxSubtotalTemplate = xmlDoc.Descendants(cac + "TaxSubtotal").FirstOrDefault();
                 taxSubtotalTemplate?.Remove();
             }
+
 
             decimal retiene = movimiento.Retiene;
 
@@ -894,51 +916,6 @@ namespace GeneradorCufe.ViewModel
                         }
                     }
                 }
-            }
-        }
-
-        public static void UpdateXmlNotaCreditoWithViewModelData(XDocument xmlDoc, Emisor emisor)
-        {
-            XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
-            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
-
-            // Actualizar 'CustomizationID'
-            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("");
-
-            // Actualizar 'ProfileExecutionID'
-            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("");
-
-            // Actualizar 'ID'
-            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("");
-
-            // Actualizar 'UUID'
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("");
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeID", "2");
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
-
-            // Actualizar 'IssueDate' y 'IssueTime'
-            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue("");
-            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("");
-
-            // Actualizar 'CreditNoteTypeCode'
-            xmlDoc.Descendants(cbc + "CreditNoteTypeCode").FirstOrDefault()?.SetValue("");
-
-            // Actualizar 'Note'
-            xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("");
-
-            // Actualizar 'DocumentCurrencyCode'
-            xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
-
-            // Actualizar 'LineCountNumeric'
-            xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue("");
-
-            // Actualizar 'DiscrepancyResponse'
-            var discrepancyResponseElement = xmlDoc.Descendants(cac + "DiscrepancyResponse").FirstOrDefault();
-            if (discrepancyResponseElement != null)
-            {
-                discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("");
-                discrepancyResponseElement.Element(cbc + "ResponseCode")?.SetValue("");
-                discrepancyResponseElement.Element(cbc + "Description")?.SetValue("");
             }
         }
 

@@ -30,7 +30,7 @@ namespace GeneradorCufe.Consultas
                     connection.Open();
 
                     // Define tu consulta SQL con las columnas específicas y el filtro por el valor de la factura
-                    string query = "SELECT codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, vrventa FROM xxxxmvin WHERE factura = @factura";
+                    string query = "SELECT codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, vrventa, consumo FROM xxxxmvin WHERE factura = @factura";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
@@ -54,7 +54,8 @@ namespace GeneradorCufe.Consultas
                                     Descuento = reader.GetDecimal("dsct4"),
                                     Iva = reader.GetDecimal("iva"),
                                     IvaTotal = reader.GetDecimal("vriva"),
-                                    Total = reader.GetDecimal("vrventa")
+                                    Total = reader.GetDecimal("vrventa"),
+                                    Consumo = reader.GetDecimal("consumo")
                                 };
 
                                 // Agregar el producto a la lista
