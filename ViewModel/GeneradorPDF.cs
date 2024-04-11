@@ -142,26 +142,30 @@ namespace GeneradorCufe.ViewModel
                 // Espacio adicional
                 documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
 
-                // Create a table with two columns
+                // Create a table for qr
                 PdfPTable table = new PdfPTable(2);
                 table.WidthPercentage = 100;
                 table.DefaultCell.Border = Rectangle.NO_BORDER;
 
-                // Add the QR code and title to the first column
+                // Declarar qrCell antes de establecer su altura fija
+                PdfPCell qrCell = new PdfPCell();
+
+                // Definir la altura deseada para las celdas
+                float alturaCelda = 50f;
+
+                // Añadir elementos a qrCell
                 string TextoQR = "NumFac:323200000129FecFac:2019-16-01HorFac:10:53:10-05:00NitFac:700085371DocAdq:800199436ValFac:1500000.00ValIva:285000.00ValOtroIm:0.00ValTolFac:1785000.00CUFE:e5bac48e354bc907bccff0ea7d45fbf784f0a8e7243b58337361e1fbd430489d";
                 if (string.IsNullOrEmpty(TextoQR)) TextoQR = "TextoQR"; // Use a default value if the text is null or empty
-
                 Image imageQr = CrearQR(TextoQR);
                 imageQr.Border = Rectangle.NO_BORDER;
                 imageQr.Alignment = Element.ALIGN_CENTER;
-
-                PdfPCell qrCell = new PdfPCell();
                 qrCell.AddElement(new Phrase("Representación Gráfica De Factura Electrónica De Venta", FontFactory.GetFont("Helvetica", 12, Font.BOLD)));
                 qrCell.AddElement(imageQr);
                 qrCell.Border = Rectangle.NO_BORDER;
                 qrCell.PaddingBottom = 10;
                 qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
-
+                // Establecer la altura fija de qrCell
+                qrCell.FixedHeight = alturaCelda;
                 table.AddCell(qrCell);
 
                 // Add the general information to the second column
@@ -191,6 +195,7 @@ namespace GeneradorCufe.ViewModel
                 table.AddCell(tInfoGeneral);
 
                 documento.Add(table);
+
 
                 // Espacio adicional
                 documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
@@ -673,7 +678,7 @@ namespace GeneradorCufe.ViewModel
             var qrGenerator = new QRCoder.QRCodeGenerator();
             var qrData = qrGenerator.CreateQrCode(texto, QRCoder.QRCodeGenerator.ECCLevel.Q);
             var qrCode = new QRCoder.QRCode(qrData);
-            var qrBitmap = qrCode.GetGraphic(1); // Cambiar escala a 1 para hacer el QR más pequeño
+            var qrBitmap = qrCode.GetGraphic(1); 
 
             // Convertimos el objeto Bitmap a un objeto Image
             Image imagenQr;

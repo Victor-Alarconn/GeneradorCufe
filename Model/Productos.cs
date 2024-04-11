@@ -8,10 +8,10 @@ namespace GeneradorCufe.Model
 {
     public class Productos
     {
-        public string Codigo { get; set; }
-        public string Recibo { get; set; }
-        public string Nit { get; set; }
-        public string Detalle { get; set; }
+        public string? Codigo { get; set; }
+        public string? Recibo { get; set; }
+        public string? Nit { get; set; }
+        public string? Detalle { get; set; }
         public decimal Cantidad { get; set; }
         public decimal Valor { get; set; }
         public decimal Neto { get; set; }
