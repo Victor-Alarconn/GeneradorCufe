@@ -271,14 +271,9 @@ namespace GeneradorCufe.ViewModel
             string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
             string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
 
-            string ciudadCompleta = emisor.Nombre_municipio_emisor ?? "";
-            string[] partesCiudad = ciudadCompleta.Split(',');
-            string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
-            string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
-            Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta); // Consulta para obtener los códigos de ciudad y departamento
+           
             string nota = $"Factura de Venta Emitida por {nitCompleto}-{emisor.Nombre_emisor}";
-            string TipoA = (emisor.Tipo_emisor == 1) ? "2" : "1";
-            string Identificador = (emisor.Tipo_emisor == 1) ? "13" : "31";
+            
 
             xmlDoc.Descendants(sts + "InvoiceAuthorization").FirstOrDefault()?.SetValue(encabezado.Autorizando);
             xmlDoc.Descendants(cbc + "StartDate").FirstOrDefault()?.SetValue(encabezado.Fecha_inicio.ToString("yyyy-MM-dd"));
@@ -305,142 +300,21 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
             xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
 
-            xmlDoc.Descendants(cbc + "AdditionalAccountID").FirstOrDefault()?.SetValue(TipoA); // Identificador de tipo de organización jurídica de la de persona
+            string ciudadCompleta = emisor.Nombre_municipio_emisor ?? "";
+            string[] partesCiudad = ciudadCompleta.Split(',');
+            string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
+            string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
+            Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta); // Consulta para obtener los códigos de ciudad y departamento
 
-            var partyNameElement = xmlDoc.Descendants(cac + "Party")
-                                         .Descendants(cac + "PartyName")
-                                         .Descendants(cbc + "Name").FirstOrDefault();
-            if (partyNameElement != null)
-            {
-                partyNameElement.SetValue(emisor.Nombre_emisor);
-            }
+            GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos);  // Información del emisor
 
-            // Actualizar detalles de 'PhysicalLocation'
-            var physicalLocationElement = xmlDoc.Descendants(cac + "PhysicalLocation").FirstOrDefault();
-            if (physicalLocationElement != null)
-            {
-                physicalLocationElement.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(codigos.Codigo_Municipio);
-                physicalLocationElement.Descendants(cbc + "CityName").FirstOrDefault()?.SetValue(Municipio);
-                physicalLocationElement.Descendants(cbc + "PostalZone").FirstOrDefault()?.SetValue("660001");
-                physicalLocationElement.Descendants(cbc + "CountrySubentity").FirstOrDefault()?.SetValue(Departamento);
-                physicalLocationElement.Descendants(cbc + "CountrySubentityCode").FirstOrDefault()?.SetValue(codigos.Codigo_Departamento);
-                physicalLocationElement.Descendants(cac + "AddressLine")
-                                       .Descendants(cbc + "Line").FirstOrDefault()?.SetValue(emisor.Direccion_emisor);
-            }
 
-            // Actualizaciones para 'PartyTaxScheme'
-            var partyTaxSchemeElement = xmlDoc.Descendants(cac + "PartyTaxScheme").FirstOrDefault();
-            if (partyTaxSchemeElement != null)
-            {
-                partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue(emisor.Nombre_emisor);
+            string nitValue = listaProductos[0].Nit;
+            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion); // Información del adquiriente
 
-                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue(Nit);
-                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeID", Dv);
-                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeName", Identificador);
-                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyID", "195");
-                partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
 
-                partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("O-15");
-
-                var registrationAddressElement = partyTaxSchemeElement.Element(cac + "RegistrationAddress");
-                if (registrationAddressElement != null)
-                {
-                    registrationAddressElement.Element(cbc + "ID")?.SetValue(codigos.Codigo_Municipio);
-                    registrationAddressElement.Element(cbc + "CityName")?.SetValue(Municipio);
-                    registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("660001");
-                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(Departamento);
-                    registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue(codigos.Codigo_Departamento);
-                    registrationAddressElement.Element(cac + "AddressLine").Element(cbc + "Line")?.SetValue(emisor.Direccion_emisor);
-
-                    var countryElement = registrationAddressElement.Element(cac + "Country");
-                    if (countryElement != null)
-                    {
-                        countryElement.Element(cbc + "IdentificationCode")?.SetValue("CO");
-                        var nameElement = countryElement.Element(cbc + "Name");
-                        if (nameElement != null)
-                        {
-                            nameElement.SetValue("Colombia");
-                            nameElement.SetAttributeValue("languageID", "es");
-                        }
-                    }
-
-                }
-
-                string Aplica = emisor.Responsable_emisor;
-                var taxSchemeElement = partyTaxSchemeElement.Element(cac + "TaxScheme");
-
-                if (taxSchemeElement != null)
-                {
-                    if (Aplica == "Responsable IVA")
-                    {
-                        taxSchemeElement.Element(cbc + "ID")?.SetValue("01"); // ID es 01 si es Responsable IVA
-                        taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA"); // Name es IVA si es Responsable IVA
-                    }
-                    else
-                    {
-                        taxSchemeElement.Element(cbc + "ID")?.SetValue("ZZ"); // ID es ZZ si no es Responsable IVA
-                        taxSchemeElement.Element(cbc + "Name")?.SetValue("No aplica"); // Name es No aplica si no es Responsable IVA
-                    }
-                }
-
-            }
-
-            // Mapeo para PartyLegalEntity
-            var partyLegalEntityElement = xmlDoc.Descendants(cac + "PartyLegalEntity").FirstOrDefault();
-            if (partyLegalEntityElement != null)
-            {
-                partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue(emisor.Nombre_emisor);
-                // Establecer el valor de CompanyID y sus atributos si existe
-                var companyIDElement = partyLegalEntityElement.Element(cbc + "CompanyID");
-                if (companyIDElement != null)
-                {
-                    companyIDElement.SetValue(Nit);
-                    companyIDElement.SetAttributeValue("schemeID", Dv);
-                    companyIDElement.SetAttributeValue("schemeName", Identificador);
-                    companyIDElement.SetAttributeValue("schemeAgencyID", "195");
-                    companyIDElement.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
-                }
-
-                var corporateRegistrationSchemeElement = partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme");
-                if (corporateRegistrationSchemeElement != null)
-                {
-                    corporateRegistrationSchemeElement.Element(cbc + "ID")?.SetValue(encabezado.Prefijo);
-                }
-            }
-
-            // Función para formatear el número de teléfono
-            string FormatearTelefono(string telefono)
-            {
-                // Remover paréntesis y guiones del número de teléfono
-                string telefonoFormateado = telefono.Replace("(", "").Replace(")", "").Replace("-", "");
-
-                // Devolver el número formateado
-                return telefonoFormateado;
-            }
-
-            // Obtener el teléfono formateado
-            string telefonoFormateado = FormatearTelefono(emisor.Telefono_emisor);
-
-            // Mapeo para Contact
-            var contactElement = xmlDoc.Descendants(cac + "Contact").FirstOrDefault();
-            if (contactElement != null)
-            {
-                contactElement.Element(cbc + "Telephone")?.SetValue(telefonoFormateado); // Asignar el teléfono
-                contactElement.Element(cbc + "ElectronicMail")?.SetValue(emisor.Correo_emisor); // Asignar el correo electrónico
-            }
-
-            if (listaProductos != null)
-            {
-                string nitValue = listaProductos[0].Nit;
-                GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion);
-            }
-            else
-            {
-                Console.WriteLine("La lista de productos no tiene suficientes elementos para acceder al tercero.");
-            }
-
-           // Información del medio de pago
-           var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
+            // Información del medio de pago
+            var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
             if (paymentMeansElement != null)
             {
                 paymentMeansElement.Element(cbc + "ID")?.SetValue("1");
@@ -608,9 +482,28 @@ namespace GeneradorCufe.ViewModel
                 legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(movimiento.Valor); // Total Valor Bruto más tributos
                 legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar // cufe ValTot
             }
+            
+            GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos); // Llamada a la función para mapear la información de InvoiceLine
 
-            // Llamada a la función para mapear la información de InvoiceLine
-            MapInvoiceLine(xmlDoc, listaProductos);
+            // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
+            XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
+            var dataElement = xmlDoc.Descendants(invoiceNs + "DATA").FirstOrDefault();
+
+            // Verificar si se encontró el elemento <DATA>
+            if (dataElement != null)
+            {
+                // Modificar los elementos dentro de <DATA>
+                dataElement.Element(invoiceNs + "UBL21")?.SetValue("true");
+
+                // Buscar el elemento <Partnership> dentro de <DATA> con el espacio de nombres completo
+                var partnershipElement = dataElement.Descendants(invoiceNs + "Partnership").FirstOrDefault();
+                if (partnershipElement != null)
+                {
+                    partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
+                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pregunta 
+                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
+                }
+            }
 
             // Retornar la cadena de conexión
             return cadenaConexion;
@@ -664,176 +557,6 @@ namespace GeneradorCufe.ViewModel
             }
             return null; // En caso de que la plantilla no se encuentre en el XML
         }
-
-
-
-        private static void MapInvoiceLine(XDocument xmlDoc, List<Productos> listaProductos) // Productos
-        {
-            // Namespace específico para los elementos bajo 'sts'
-            XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
-            // Namespace para elementos 'cbc'
-            XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
-            // Namespace para elementos 'cac'
-            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
-
-            // Obtener el elemento 'cac:InvoiceLine' para utilizarlo como plantilla para agregar nuevos productos
-            var invoiceLineTemplate = xmlDoc.Descendants(cac + "InvoiceLine").FirstOrDefault();
-
-            // Verificar si la plantilla existe
-            if (invoiceLineTemplate != null)
-            {
-                // Iterar sobre cada producto en la lista y agregarlos al XML
-                for (int i = 0; i < listaProductos.Count; i++)
-                {
-                    var producto = listaProductos[i];
-                    // Crear un nuevo elemento 'cac:InvoiceLine' basado en la plantilla
-                    var invoiceLineElement = new XElement(invoiceLineTemplate);
-
-                    // Establecer los valores del producto en el nuevo elemento
-                    string cantidadformateada = producto.Cantidad.ToString("F2", CultureInfo.InvariantCulture);
-                    invoiceLineElement.Element(cbc + "ID")?.SetValue((i + 1).ToString());
-                    invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(cantidadformateada);
-                    invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.Neto); // cufe  ValFac
-
-                    // Establecer los valores del impuesto
-                    // Establecer los valores del impuesto
-                    var taxTotalElement = invoiceLineElement.Element(cac + "TaxTotal");
-                    if (taxTotalElement != null)
-                    {
-                        // Verificar si el total de impuestos es 0.00 y hay consumo
-                        if (producto.IvaTotal == 0.00m && producto.Consumo > 0.00m)
-                        {
-                            // Eliminar la plantilla de TaxSubtotal si existe
-                            var taxSubtotalTemplate = taxTotalElement.Elements(cac + "TaxSubtotal").FirstOrDefault();
-                            taxSubtotalTemplate?.Remove();
-
-                            // Crear y establecer los elementos TaxAmount, Percent, ID y Name directamente
-                            var taxSubtotalElement = new XElement(cac + "TaxSubtotal");
-                            taxSubtotalElement.Add(new XElement(cbc + "TaxableAmount", producto.Neto.ToString("F2", CultureInfo.InvariantCulture)));
-                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetAttributeValue("currencyID", "COP");
-                            taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", producto.Consumo.ToString("F2", CultureInfo.InvariantCulture)));
-                            taxSubtotalElement.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
-
-                            var taxCategoryElement = new XElement(cac + "TaxCategory");
-                            taxCategoryElement.Add(new XElement(cbc + "Percent", "8.00"));
-
-                            var taxSchemeElement = new XElement(cac + "TaxScheme");
-                            taxSchemeElement.Add(new XElement(cbc + "ID", "04"));
-                            taxSchemeElement.Add(new XElement(cbc + "Name", "INC"));
-
-                            taxCategoryElement.Add(taxSchemeElement);
-                            taxSubtotalElement.Add(taxCategoryElement);
-
-                            // Agregar el elemento TaxSubtotal al TaxTotal
-                            taxTotalElement.Add(taxSubtotalElement);
-
-                            // Reemplazar el elemento TaxAmount existente con el valor de producto.Consumo
-                            var existingTaxAmountElement = taxTotalElement.Element(cbc + "TaxAmount");
-                            existingTaxAmountElement?.SetValue(producto.Consumo.ToString("F2", CultureInfo.InvariantCulture));
-                        }
-                        else
-                        {
-                            // Si no se cumple la condición anterior, establecer los valores predeterminados del impuesto
-                            taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal); // cufe ValImp1
-
-                            var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
-                            if (taxSubtotalElement != null)
-                            {
-                                string valorformateada = producto.Valor.ToString("F2", CultureInfo.InvariantCulture);
-                                taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(producto.Neto);
-                                taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal);
-
-                                var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
-                                if (taxCategoryElement != null)
-                                {
-                                    // Formatear el valor del IVA con dos decimales
-                                    string formattedIva = producto.Iva.ToString("F2", CultureInfo.InvariantCulture);
-
-                                    // Establecer el valor formateado en el elemento Percent
-                                    taxCategoryElement.Element(cbc + "Percent")?.SetValue(formattedIva);
-
-                                    // Agregar la parte faltante para TaxScheme dentro de TaxCategory
-                                    var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
-                                    if (taxSchemeElement == null)
-                                    {
-                                        // Si no existe el elemento TaxScheme, lo creamos
-                                        taxSchemeElement = new XElement(cac + "TaxScheme");
-                                        taxCategoryElement.Add(taxSchemeElement);
-                                    }
-
-                                    // Verificar el valor del IVA del producto
-                                    if (producto.Iva == 8)
-                                    {
-                                        // Si el IVA es 8, cambiar el ID y el nombre del esquema de impuestos
-                                        taxSchemeElement.Element(cbc + "ID")?.SetValue("04");
-                                        taxSchemeElement.Element(cbc + "Name")?.SetValue("INC");
-                                    }
-                                    else
-                                    {
-                                        // Si no es 8, mantener los valores predeterminados (ID = 01, Name = IVA)
-                                        taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
-                                        taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Establecer los valores del ítem
-                    var itemElement = invoiceLineElement.Element(cac + "Item");
-                    if (itemElement != null)
-                    {
-                        itemElement.Element(cbc + "Description")?.SetValue(producto.Detalle);
-
-                        var standardItemIdentificationElement = itemElement.Element(cac + "StandardItemIdentification");
-                        if (standardItemIdentificationElement != null)
-                        {
-                            standardItemIdentificationElement.Element(cbc + "ID")?.SetValue(producto.Codigo);
-                        }
-                    }
-
-                    var priceElement = invoiceLineElement.Element(cac + "Price");
-                    if (priceElement != null)
-                    {
-                        // Formatear el precio con dos decimales utilizando CultureInfo.InvariantCulture
-                        string formattedPrice = producto.Valor.ToString("F2", CultureInfo.InvariantCulture);
-                        // Asignar el precio formateado al elemento XML
-                        priceElement.Element(cbc + "PriceAmount")?.SetValue(formattedPrice);
-
-                        // Formatear la cantidad con dos decimales utilizando CultureInfo.InvariantCulture
-                        string formattedQuantity = producto.Cantidad.ToString("F2", CultureInfo.InvariantCulture);
-                        // Asignar la cantidad formateada al elemento XML
-                        priceElement.Element(cbc + "BaseQuantity")?.SetValue(formattedQuantity);
-                    }
-
-                    // Agregar el nuevo elemento 'cac:InvoiceLine' al XML
-                    xmlDoc.Descendants(cac + "InvoiceLine").LastOrDefault()?.AddAfterSelf(invoiceLineElement);
-                }
-                invoiceLineTemplate.Remove();
-            }
-
-            // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
-            XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
-            var dataElement = xmlDoc.Descendants(invoiceNs + "DATA").FirstOrDefault();
-
-            // Verificar si se encontró el elemento <DATA>
-            if (dataElement != null)
-            {
-                // Modificar los elementos dentro de <DATA>
-                dataElement.Element(invoiceNs + "UBL21")?.SetValue("true");
-
-                // Buscar el elemento <Partnership> dentro de <DATA> con el espacio de nombres completo
-                var partnershipElement = dataElement.Descendants(invoiceNs + "Partnership").FirstOrDefault();
-                if (partnershipElement != null)
-                {
-                    partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
-                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pregunta 
-                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
-                }
-            }
-        }
-
-        
 
 
         public static (string xmlContent, string base64Content, string cadenaConexion) GenerateXMLAndBase64(Emisor emisor, Factura factura)

@@ -1,6 +1,8 @@
-﻿using GeneradorCufe.Model;
+﻿using GeneradorCufe.Consultas;
+using GeneradorCufe.Model;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +12,32 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorNC
     {
-        public static void GeneradorNotaCredito(XDocument xmlDoc, Emisor emisor)
+        public static void GeneradorNotaCredito(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+
+            
+            Productos_Consulta productosConsulta = new Productos_Consulta();
+            Encabezado_Consulta encabezadoConsulta = new Encabezado_Consulta();
+            Codigos_Consulta codigosConsulta = new Codigos_Consulta();
+            Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
+            FormaPago_Consulta formaPagoConsulta = new FormaPago_Consulta();
+
+            string cadenaConexion = "";
+
+            if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
+            {
+                cadenaConexion = $"Database={factura.Empresa}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=**LiLo89**; ConvertZeroDateTime=True;";
+            }
+            else if (factura.Ip_base == "192.190.42.191")
+            {
+                cadenaConexion = $"Database={factura.Empresa}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
+            }
+            // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
+            Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
+            Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
+            List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
 
             // Actualizar 'CustomizationID'
             xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("");
@@ -67,118 +91,216 @@ namespace GeneradorCufe.ViewModel
                     invoiceDocumentReferenceElement.Element(cbc + "IssueDate")?.SetValue("2019-06-04");
                 }
             }
-            MapearAccountingSupplierParty(xmlDoc);
-        }
 
-        public static void MapearAccountingSupplierParty(XDocument xmlDoc)
-        {
-            XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
-            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+            string ciudadCompleta = emisor.Nombre_municipio_emisor ?? "";
+            string[] partesCiudad = ciudadCompleta.Split(',');
+            string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
+            string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
+            Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta);
 
-            var accountingSupplierPartyElement = xmlDoc.Descendants(cac + "AccountingSupplierParty").FirstOrDefault();
-            if (accountingSupplierPartyElement != null)
+            GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos);
+
+            string nitValue = listaProductos[0].Nit;
+            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion);
+
+            // Información del medio de pago
+            var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
+            if (paymentMeansElement != null)
             {
-                accountingSupplierPartyElement.Element(cbc + "AdditionalAccountID")?.SetValue("1");
+                paymentMeansElement.Element(cbc + "ID")?.SetValue("1");
+                paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
+                paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
+            }
 
-                var partyElement = accountingSupplierPartyElement.Element(cac + "Party");
-                if (partyElement != null)
+            // Calcular el total del IVA de todos los productos
+            decimal totalImpuesto = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
+            decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
+            decimal totalBaseImponible = Math.Round(listaProductos.Sum(p => p.Neto), 2);
+            bool hayProductosConIPO = listaProductos.Any(p => p.Iva == 0 && p.Consumo > 0);
+            bool hayProductosConIVA = listaProductos.Any(p => p.Iva > 0);
+            bool hayProductosSinIVA = listaProductos.Any(p => p.Iva == 0 && p.Consumo == 0);
+
+            // Obtener el elemento TaxTotal
+            var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
+            if (taxTotalElement != null)
+            {
+                // Verificar si el total de impuestos es 0.00 y hay consumo
+                if (hayProductosConIPO)
                 {
-                    var partyNameElement = partyElement.Element(cac + "PartyName");
-                    if (partyNameElement != null)
+                    // Establecer el consumo como el total de impuestos
+                    taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(consumo.ToString("F2", CultureInfo.InvariantCulture));
+
+                    // Crear y establecer los elementos TaxAmount, Percent, ID y Name directamente
+                    var taxSubtotalElement = new XElement(cac + "TaxSubtotal");
+                    taxSubtotalElement.Add(new XElement(cbc + "TaxableAmount", totalBaseImponible.ToString("F2", CultureInfo.InvariantCulture)));
+                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetAttributeValue("currencyID", "COP");
+                    taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", consumo.ToString("F2", CultureInfo.InvariantCulture)));
+                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
+
+                    var taxCategoryElement = new XElement(cac + "TaxCategory");
+                    taxCategoryElement.Add(new XElement(cbc + "Percent", "8.00"));
+
+                    var taxSchemeElement = new XElement(cac + "TaxScheme");
+                    taxSchemeElement.Add(new XElement(cbc + "ID", "04"));
+                    taxSchemeElement.Add(new XElement(cbc + "Name", "INC"));
+
+                    taxCategoryElement.Add(taxSchemeElement);
+                    taxSubtotalElement.Add(taxCategoryElement);
+
+                    // Agregar el elemento TaxSubtotal al TaxTotal
+                    taxTotalElement.Add(taxSubtotalElement);
+                }
+
+                if (hayProductosConIVA || hayProductosSinIVA)
+                {
+                    // Establecer el total de impuestos en el elemento TaxAmount
+                    taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(totalImpuesto.ToString("F2", CultureInfo.InvariantCulture));
+
+                    // Generar sección para productos con IVA
+                    if (hayProductosConIVA)
                     {
-                        partyNameElement.Element(cbc + "Name")?.SetValue("Cadena S.A.");
+                        var taxSubtotalElementConIVA = GenerarElementoTaxSubtotal(xmlDoc, "19.00", listaProductos.Where(p => p.Iva > 0).ToList());
+                        taxTotalElement.Add(taxSubtotalElementConIVA);
                     }
 
-                    var physicalLocationElement = partyElement.Element(cac + "PhysicalLocation");
-                    if (physicalLocationElement != null)
+                    // Generar sección para productos sin IVA
+                    if (hayProductosSinIVA)
                     {
-                        var addressElement = physicalLocationElement.Element(cac + "Address");
-                        if (addressElement != null)
-                        {
-                            addressElement.Element(cbc + "ID")?.SetValue("05380");
-                            addressElement.Element(cbc + "CityName")?.SetValue("LA ESTRELLA");
-                            addressElement.Element(cbc + "PostalZone")?.SetValue("54321");
-                            addressElement.Element(cbc + "CountrySubentity")?.SetValue("Antioquia");
-                            addressElement.Element(cbc + "CountrySubentityCode")?.SetValue("05");
-                            var addressLineElement = addressElement.Element(cac + "AddressLine");
-                            if (addressLineElement != null)
-                            {
-                                addressLineElement.Element(cbc + "Line")?.SetValue("Cra. 50 #97a Sur-180 a 97a Sur-394");
-                            }
-                            var countryElement = addressElement.Element(cac + "Country");
-                            if (countryElement != null)
-                            {
-                                countryElement.Element(cbc + "IdentificationCode")?.SetValue("CO");
-                                countryElement.Element(cbc + "Name")?.SetValue("Colombia");
-                            }
-                        }
-
-                        var partyTaxSchemeElement = partyElement.Element(cac + "PartyTaxScheme");
-                        if (partyTaxSchemeElement != null)
-                        {
-                            partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue("Cadena S.A.");
-                            partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetValue("890930534");
-                            partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeID", "0");
-                            partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeName", "31");
-                            partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyID", "195");
-                            partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
-                            partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("O-13");
-
-                            var registrationAddressElement = partyTaxSchemeElement.Element(cac + "RegistrationAddress");
-                            if (registrationAddressElement != null)
-                            {
-                                registrationAddressElement.Element(cbc + "ID")?.SetValue("05380");
-                                registrationAddressElement.Element(cbc + "CityName")?.SetValue("LA ESTRELLA");
-                                registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("055468");
-                                registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue("Antioquia");
-                                registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue("05");
-                                var addressLineRegistrationElement = registrationAddressElement.Element(cac + "AddressLine");
-                                if (addressLineRegistrationElement != null)
-                                {
-                                    addressLineRegistrationElement.Element(cbc + "Line")?.SetValue("Cra. 50 #97a Sur-180 a 97a Sur-394");
-                                }
-                                var countryRegistrationElement = registrationAddressElement.Element(cac + "Country");
-                                if (countryRegistrationElement != null)
-                                {
-                                    countryRegistrationElement.Element(cbc + "IdentificationCode")?.SetValue("CO");
-                                    countryRegistrationElement.Element(cbc + "Name")?.SetValue("Colombia");
-                                }
-                            }
-
-                            var taxSchemeElement = partyTaxSchemeElement.Element(cac + "TaxScheme");
-                            if (taxSchemeElement != null)
-                            {
-                                taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
-                                taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
-                            }
-                        }
-
-                        var partyLegalEntityElement = partyElement.Element(cac + "PartyLegalEntity");
-                        if (partyLegalEntityElement != null)
-                        {
-                            partyLegalEntityElement.Element(cbc + "RegistrationName")?.SetValue("Cadena S.A.");
-                            partyLegalEntityElement.Element(cbc + "CompanyID")?.SetValue("890930534");
-                            partyLegalEntityElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeID", "0");
-                            partyLegalEntityElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeName", "31");
-                            partyLegalEntityElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyID", "195");
-                            partyLegalEntityElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
-
-                            var corporateRegistrationSchemeElement = partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme");
-                            if (corporateRegistrationSchemeElement != null)
-                            {
-                                corporateRegistrationSchemeElement.Element(cbc + "ID")?.SetValue("NC");
-                                corporateRegistrationSchemeElement.Element(cbc + "Name")?.SetValue("1485596");
-                            }
-                        }
-
-                        var contactElement = partyElement.Element(cac + "Contact");
-                        if (contactElement != null)
-                        {
-                            contactElement.Element(cbc + "ElectronicMail")?.SetValue("lxxxxx@cadena.com.co");
-                        }
+                        var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", listaProductos.Where(p => p.Iva == 0).ToList());
+                        taxTotalElement.Add(taxSubtotalElementSinIVA);
                     }
                 }
+
+                // Eliminar la plantilla del documento XML después de haberla utilizado
+                var taxSubtotalTemplate = xmlDoc.Descendants(cac + "TaxSubtotal").FirstOrDefault();
+                taxSubtotalTemplate?.Remove();
             }
+
+
+            decimal retiene = movimiento.Retiene;
+
+            // Obtener el elemento WithholdingTaxTotal si existe
+            var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
+
+            // Verificar si retiene es igual a 0.00 y si existe el elemento WithholdingTaxTotal
+            if (retiene == 0.00m && withholdingTaxTotalElement != null)
+            {
+                // Eliminar el elemento WithholdingTaxTotal si retiene es igual a 0.00
+                withholdingTaxTotalElement.Remove();
+            }
+            else if (retiene != 0.00m)
+            {
+                // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es diferente de 0.00
+                withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue("3.50");
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "ID")?.SetValue("06");
+                withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "Name")?.SetValue("ReteFuente");
+
+                // Si el elemento WithholdingTaxTotal no existe, crear uno nuevo
+                if (withholdingTaxTotalElement == null)
+                {
+                    withholdingTaxTotalElement = new XElement(cac + "WithholdingTaxTotal",
+                        new XElement(cbc + "TaxAmount", retiene.ToString("F2", CultureInfo.InvariantCulture)),
+                        new XElement(cac + "TaxSubtotal",
+                            new XElement(cbc + "TaxableAmount", "3361344.00"),
+                            new XElement(cbc + "TaxAmount", "84033.60"),
+                            new XElement(cac + "TaxCategory",
+                                new XElement(cbc + "Percent", "3.50"),
+                                new XElement(cac + "TaxScheme",
+                                    new XElement(cbc + "ID", "06"),
+                                    new XElement(cbc + "Name", "ReteFuente")
+                                )
+                            )
+                        )
+                    );
+
+                    // Agregar el elemento WithholdingTaxTotal al XML
+                    xmlDoc.Root?.Add(withholdingTaxTotalElement);
+                }
+            }
+
+
+            var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
+            if (legalMonetaryTotalElement != null)
+            {
+                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Bruto antes de tributos
+                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Base Imponible
+                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(movimiento.Valor); // Total Valor Bruto más tributos
+                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar // cufe ValTot
+            }
+
+            GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos); // Llamada a la función para mapear la información de InvoiceLine
+
+            // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
+            XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
+            var dataElement = xmlDoc.Descendants(invoiceNs + "DATA").FirstOrDefault();
+
+            // Verificar si se encontró el elemento <DATA>
+            if (dataElement != null)
+            {
+                // Modificar los elementos dentro de <DATA>
+                dataElement.Element(invoiceNs + "UBL21")?.SetValue("true");
+
+                // Buscar el elemento <Partnership> dentro de <DATA> con el espacio de nombres completo
+                var partnershipElement = dataElement.Descendants(invoiceNs + "Partnership").FirstOrDefault();
+                if (partnershipElement != null)
+                {
+                    partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
+                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pregunta 
+                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
+                }
+            }
+        }
+
+        private static XElement GenerarElementoTaxSubtotal(XDocument xmlDoc, string porcentajeIVA, List<Productos> productos)
+        {
+            // Namespace específico para los elementos bajo 'sts'
+            XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
+            // Namespace para elementos 'cbc'
+            XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+            // Namespace para elementos 'cac'
+            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+
+            // Obtener la plantilla del elemento TaxSubtotal
+            var taxSubtotalTemplate = xmlDoc.Descendants(cac + "TaxSubtotal").FirstOrDefault();
+
+            if (taxSubtotalTemplate != null)
+            {
+                // Crear una copia de la plantilla
+                var taxSubtotalElement = new XElement(taxSubtotalTemplate);
+
+                // Calcular el total de la base imponible para los productos dados
+                decimal totalBaseImponible = productos.Sum(p => p.Neto);
+
+                // Establecer los valores calculados en la copia de la plantilla
+                taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(totalBaseImponible.ToString("F2", CultureInfo.InvariantCulture));
+                taxSubtotalElement.Element(cac + "TaxCategory").Element(cbc + "Percent")?.SetValue(porcentajeIVA);
+
+                // Verificar si ya existe un TaxScheme en el TaxSubtotal
+                var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
+                if (taxCategoryElement != null)
+                {
+                    var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
+                    if (taxSchemeElement == null)
+                    {
+                        // Agregar el elemento TaxScheme con ID y nombre solo si no existe
+                        taxSchemeElement = new XElement(cac + "TaxScheme");
+                        taxSchemeElement.Add(new XElement(cbc + "ID", "01"));
+                        taxSchemeElement.Add(new XElement(cbc + "Name", "IVA"));
+                        taxCategoryElement.Add(taxSchemeElement);
+                    }
+                }
+
+                // Calcular el TaxAmount individual solo para los productos sin IVA
+                decimal totalImpuesto = productos.Where(p => p.Iva != 0).Sum(p => p.IvaTotal);
+                taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(totalImpuesto.ToString("F2", CultureInfo.InvariantCulture));
+
+                // Retornar la copia del elemento TaxSubtotal
+                return taxSubtotalElement;
+            }
+            return null; // En caso de que la plantilla no se encuentre en el XML
         }
 
     }
