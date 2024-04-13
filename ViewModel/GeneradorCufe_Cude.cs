@@ -25,8 +25,6 @@ namespace GeneradorCufe.ViewModel
             decimal impuesto2 = consumo;
             string codigo3 = "03";
             string impuesto3 = "0.00";
-            //  string codigo4 = "06";
-            //  string impuesto4 = "0.00";
             decimal total = movimiento.Valor;
             string nitFacturador = "1004994836";
             string numeroIdentificacionCliente = movimiento.Nit;
@@ -58,21 +56,18 @@ namespace GeneradorCufe.ViewModel
             decimal impuesto2 = consumo;
             string codigo3 = "03";
             string impuesto3 = "0.00";
-            //  string codigo4 = "06";
-            //  string impuesto4 = "0.00";
             decimal total = movimiento.Valor;
             string nitFacturador = "1004994836";
             string numeroIdentificacionCliente = movimiento.Nit;
-            string clavetecnica = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c";
+            string Software_Pin = "75315";
             int tipodeambiente = 2;
 
-            // Construir la cadena CUFE
-            string cadenaCUFE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{clavetecnica}{tipodeambiente}";
+            string cadenaCUDE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{Software_Pin}{tipodeambiente}";
 
             // Reemplazar comas por puntos en la cadena CUFE
-            cadenaCUFE = cadenaCUFE.Replace(',', '.');
+            cadenaCUDE = cadenaCUDE.Replace(',', '.');
 
-            return cadenaCUFE;
+            return cadenaCUDE;
         }
     }
 }
