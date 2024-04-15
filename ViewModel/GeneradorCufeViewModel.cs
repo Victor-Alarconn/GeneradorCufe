@@ -263,15 +263,15 @@ namespace GeneradorCufe.ViewModel
             // Agregar el desplazamiento horario
             string horaformateada = horaConDesplazamiento.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
 
-            string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada);
-            string CUFE = GenerarCUFE(construir);
-
             string nitCompleto = emisor.Nit_emisor ?? "";
             string[] partesNit = nitCompleto.Split('-');
             string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
             string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
 
-           
+            string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit);
+            string CUFE = GenerarCUFE(construir);
+
+
             string nota = $"Factura de Venta Emitida por {nitCompleto}-{emisor.Nombre_emisor}";
             
 
@@ -364,77 +364,7 @@ namespace GeneradorCufe.ViewModel
             //paymentMeansTemplate?.Remove();
 
 
-            // Calcular el total del IVA de todos los productos
-            decimal totalImpuesto = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
-            decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
-            decimal totalBaseImponible = Math.Round(listaProductos.Sum(p => p.Neto), 2);
-            bool hayProductosConIPO = listaProductos.Any(p => p.Iva == 0 && p.Consumo > 0);
-            bool hayProductosConIVA = listaProductos.Any(p => p.Iva > 0);
-            bool hayProductosSinIVA = listaProductos.Any(p => p.Iva == 0 && p.Consumo == 0);
-
-            // Obtener el elemento TaxTotal
-            var taxTotalElement = xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault();
-            if (taxTotalElement != null)
-            {
-                // Verificar si el total de impuestos es 0.00 y hay consumo
-                if (hayProductosConIPO)
-                {
-                    // Establecer el consumo como el total de impuestos
-                    taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(consumo.ToString("F2", CultureInfo.InvariantCulture));
-
-                    // Crear y establecer los elementos TaxAmount, Percent, ID y Name directamente
-                    var taxSubtotalElement = new XElement(cac + "TaxSubtotal");
-                    taxSubtotalElement.Add(new XElement(cbc + "TaxableAmount", totalBaseImponible.ToString("F2", CultureInfo.InvariantCulture)));
-                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetAttributeValue("currencyID", "COP");
-                    taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", consumo.ToString("F2", CultureInfo.InvariantCulture)));
-                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
-
-                    var taxCategoryElement = new XElement(cac + "TaxCategory");
-                    taxCategoryElement.Add(new XElement(cbc + "Percent", "8.00"));
-
-                    var taxSchemeElement = new XElement(cac + "TaxScheme");
-                    taxSchemeElement.Add(new XElement(cbc + "ID", "04"));
-                    taxSchemeElement.Add(new XElement(cbc + "Name", "INC"));
-
-                    taxCategoryElement.Add(taxSchemeElement);
-                    taxSubtotalElement.Add(taxCategoryElement);
-
-                    // Agregar el elemento TaxSubtotal al TaxTotal
-                    taxTotalElement.Add(taxSubtotalElement);
-                }
-
-                // Verificar si hay productos con IVA o sin IVA
-                if (hayProductosConIVA || hayProductosSinIVA)
-                {
-                    // Establecer el total de impuestos en el elemento TaxAmount
-                    taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(totalImpuesto.ToString("F2", CultureInfo.InvariantCulture));
-
-                    // Generar sección para productos con IVA
-                    if (hayProductosConIVA)
-                    {
-                        // Agrupar productos por porcentaje de IVA y calcular el total de impuestos por grupo
-                        var gruposIVA = listaProductos.Where(p => p.Iva > 0).GroupBy(p => p.Iva);
-                        foreach (var grupo in gruposIVA)
-                        {
-                            decimal totalImpuestoGrupo = Math.Round(grupo.Sum(p => p.IvaTotal), 2);
-                            string porcentajeIVAFormateado = grupo.Key.ToString("F2", CultureInfo.InvariantCulture);
-                            var taxSubtotalElementConIVA = GenerarElementoTaxSubtotal(xmlDoc, porcentajeIVAFormateado, grupo.ToList());
-                            taxTotalElement.Add(taxSubtotalElementConIVA);
-                        }
-                    }
-                    if (hayProductosSinIVA)
-                    {
-                        var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", listaProductos.Where(p => p.Iva == 0).ToList());
-                        taxTotalElement.Add(taxSubtotalElementSinIVA);
-                    }
-
-                }
-
-                // Eliminar la plantilla del documento XML después de haberla utilizado
-                var taxSubtotalTemplate = xmlDoc.Descendants(cac + "TaxSubtotal").FirstOrDefault();
-                taxSubtotalTemplate?.Remove();
-            }
-
+            GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos); // Calcular el total del IVA de todos los productos
 
 
             decimal retiene = movimiento.Retiene;
@@ -517,43 +447,7 @@ namespace GeneradorCufe.ViewModel
             return cadenaConexion;
         }
 
-        private static XElement GenerarElementoTaxSubtotal(XDocument xmlDoc, string porcentajeIVA, List<Productos> productos)
-        {
-            XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
-            XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
-            XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
-
-            // Crear un nuevo elemento TaxSubtotal
-            var taxSubtotalElement = new XElement(cac + "TaxSubtotal");
-
-            // Calcular el total de la base imponible para los productos dados
-            decimal totalBaseImponible = productos.Sum(p => p.Neto);
-
-            // Establecer los valores calculados en el elemento TaxSubtotal
-            taxSubtotalElement.Add(new XElement(cbc + "TaxableAmount", totalBaseImponible.ToString("F2", CultureInfo.InvariantCulture)));
-            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetAttributeValue("currencyID", "COP");
-
-            // Crear y establecer los elementos TaxAmount, Percent, ID y Name
-            taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", "0.00")); // Inicialmente establecemos el impuesto en 0.00
-            taxSubtotalElement.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
-
-            var taxCategoryElement = new XElement(cac + "TaxCategory");
-            taxCategoryElement.Add(new XElement(cbc + "Percent", porcentajeIVA));
-
-            var taxSchemeElement = new XElement(cac + "TaxScheme");
-            taxSchemeElement.Add(new XElement(cbc + "ID", "01"));
-            taxSchemeElement.Add(new XElement(cbc + "Name", "IVA"));
-
-            taxCategoryElement.Add(taxSchemeElement);
-            taxSubtotalElement.Add(taxCategoryElement);
-
-            // Calcular el TaxAmount individual para los productos con este porcentaje de IVA
-            decimal totalImpuesto = productos.Sum(p => p.IvaTotal);
-            taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(totalImpuesto.ToString("F2", CultureInfo.InvariantCulture));
-
-            // Retornar el elemento TaxSubtotal generado
-            return taxSubtotalElement;
-        }
+        
 
 
 

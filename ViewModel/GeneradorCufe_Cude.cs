@@ -9,7 +9,7 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorCufe_Cude
     {
-        public static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora)
+        public static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora, string nit)
         {
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
@@ -26,7 +26,7 @@ namespace GeneradorCufe.ViewModel
             string codigo3 = "03";
             string impuesto3 = "0.00";
             decimal total = movimiento.Valor;
-            string nitFacturador = "1004994836";
+            string nitFacturador = nit;
             string numeroIdentificacionCliente = movimiento.Nit;
             string clavetecnica = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c";
             int tipodeambiente = 2;
@@ -40,7 +40,7 @@ namespace GeneradorCufe.ViewModel
             return cadenaCUFE;
         }
 
-        public static string ConstruirCadenaCUDE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora)
+        public static string ConstruirCadenaCUDE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora, string nit)
         {
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
@@ -57,7 +57,7 @@ namespace GeneradorCufe.ViewModel
             string codigo3 = "03";
             string impuesto3 = "0.00";
             decimal total = movimiento.Valor;
-            string nitFacturador = "1004994836";
+            string nitFacturador = nit;
             string numeroIdentificacionCliente = movimiento.Nit;
             string Software_Pin = "75315";
             int tipodeambiente = 2;
