@@ -30,7 +30,7 @@ namespace GeneradorCufe.ViewModel
         public static async Task EjecutarGeneracionXML(Emisor emisor, Factura factura)
         {
             // Generar el XML y la versión base64
-            (string xmlContent, string base64Content, string cadenaConexion) = GenerateXMLAndBase64(emisor, factura);
+            (string xmlContent, string base64Content, string cadenaConexion, string cufe) = GenerateXMLAndBase64(emisor, factura);
 
             // Verificar que el contenido XML no esté vacío antes de continuar
             if (string.IsNullOrEmpty(xmlContent))
@@ -38,6 +38,7 @@ namespace GeneradorCufe.ViewModel
                 MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
                 return; // Detiene la ejecución adicional si no se generó el XML
             }
+
 
             // Directorio donde se guardarán los archivos
             string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
@@ -89,12 +90,12 @@ namespace GeneradorCufe.ViewModel
 
             // Realizar la solicitud POST y esperar la tarea
             string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
-            string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion);
+            string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe);
         }
 
         
 
-        private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion)
+        private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion, string cufe)
         {
             // Crear una instancia de la clase Respuesta_Consulta
             Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
@@ -118,7 +119,7 @@ namespace GeneradorCufe.ViewModel
                     MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
-                    ConsultarXML(emisor, factura, cadenaConexion);
+                    ConsultarXML(emisor, factura, cadenaConexion, cufe);
 
                     return response;
                 }
@@ -158,7 +159,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion)
+        private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion, string cufe)
         {
             try
             {
@@ -206,7 +207,7 @@ namespace GeneradorCufe.ViewModel
                         {
                             // Crear el PDF
                             string directorioProyecto = Directory.GetCurrentDirectory();
-                            string rutaArchivoPDF = Path.Combine(directorioProyecto, "archivo.pdf");
+                            string rutaArchivoPDF = Path.Combine(directorioProyecto, $"{cufe}.pdf");
                             GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura);
 
                             // Comprimir el PDF y el XML en un archivo ZIP en un flujo de memoria
@@ -214,10 +215,10 @@ namespace GeneradorCufe.ViewModel
                             {
                                 using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
                                 {
-                                    zip.CreateEntryFromFile(rutaArchivoPDF, "archivo.pdf");
+                                    zip.CreateEntryFromFile(rutaArchivoPDF, $"{cufe}.pdf");
 
                                     // Agregar el XML al archivo ZIP desde el flujo de memoria
-                                    var entry = zip.CreateEntry("documento.xml", CompressionLevel.Fastest);
+                                    var entry = zip.CreateEntry($"{cufe}.xml", CompressionLevel.Fastest);
                                     using (Stream entryStream = entry.Open())
                                     {
                                         xmlStream.Seek(0, SeekOrigin.Begin); // Reiniciar el flujo de memoria del XML
@@ -226,12 +227,11 @@ namespace GeneradorCufe.ViewModel
                                 }
 
                                 // Enviar el archivo ZIP por correo electrónico
-                                EnviarCorreo.Enviar("soporte3.rmsoft@gmail.com", "alacongt4@gmail.com", "Asunto del correo", "Cuerpo del mensaje", zipStream.ToArray());
+                                EnviarCorreo.Enviar("soporte3.rmsoft@gmail.com", "soporte3.rmsoft@gmail.com", "Asunto del correo", "Cuerpo del mensaje", zipStream.ToArray(), cufe);
                             }
 
                         }
 
-                        // Llamar al método para guardar la respuesta en la base de datos
                         // Crear una instancia de la clase Respuesta_Consulta
                         Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
                         respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento);
@@ -253,7 +253,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        public static string UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura) // emisor y factura
+        public static (string cadenaConexion, string CUFE) UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -471,20 +471,21 @@ namespace GeneradorCufe.ViewModel
             }
 
             // Retornar la cadena de conexión
-            return cadenaConexion;
+            return (cadenaConexion, CUFE);
         }
 
-        
 
 
 
-        public static (string xmlContent, string base64Content, string cadenaConexion) GenerateXMLAndBase64(Emisor emisor, Factura factura)
+
+        public static (string xmlContent, string base64Content, string cadenaConexion, string cufe) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
             // Define la ruta al archivo XML base
             string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string baseXmlFilePath = Path.Combine(basePath, "Plantilla", "XML.xml");
             XDocument xmlDoc;
-            string cadenaConexion = ""; // Declarar la variable fuera del bloque try
+            string cadenaConexion = "";
+            string cufe = "";
 
             try
             {
@@ -492,7 +493,7 @@ namespace GeneradorCufe.ViewModel
                 xmlDoc = XDocument.Load(baseXmlFilePath);
 
                 // Actualizar el documento XML con los datos dinámicos
-                cadenaConexion = UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
+                (cadenaConexion, cufe) = UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
             }
             catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
             {
@@ -500,7 +501,7 @@ namespace GeneradorCufe.ViewModel
                 MessageBox.Show("Error: La plantilla para generar el XML es incorrecta o nula.", "Error de Plantilla XML", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 // Devuelve una tupla vacía o con valores predeterminados para evitar más errores
-                return (string.Empty, string.Empty, string.Empty);
+                return (string.Empty, string.Empty, string.Empty, string.Empty);
             }
 
             // Convertir el XML actualizado a string
@@ -510,8 +511,11 @@ namespace GeneradorCufe.ViewModel
             byte[] bytes = Encoding.UTF8.GetBytes(xmlContent);
             string base64Encoded = Convert.ToBase64String(bytes);
 
-            return (xmlContent, base64Encoded, cadenaConexion);
+            // Devolver la tupla con todos los valores
+            return (xmlContent, base64Encoded, cadenaConexion, cufe);
         }
+
+
 
 
         private static string GenerarCUFE(string cadenaCUFE)
