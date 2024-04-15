@@ -34,7 +34,7 @@ namespace GeneradorCufe.ViewModel
             
         }
 
-        public void CrearPDF(string rutaArchivo, Emisor emisor, Factura factura)
+        public static void CrearPDF(string rutaArchivo, Emisor emisor, Factura factura)
         {
             try
             {
@@ -673,7 +673,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        public Image CrearQR(string texto)
+        public static Image CrearQR(string texto)
         {
             var qrGenerator = new QRCoder.QRCodeGenerator();
             var qrData = qrGenerator.CreateQrCode(texto, QRCoder.QRCodeGenerator.ECCLevel.Q);
@@ -692,7 +692,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        protected string montoALetras(decimal valor, string moneda)
+        public static string montoALetras(decimal valor, string moneda)
         {
             var entero = Convert.ToInt64(Math.Truncate(valor));
             var decimales = Convert.ToInt32(Math.Round((valor - entero) * 100, 2));
@@ -727,7 +727,7 @@ namespace GeneradorCufe.ViewModel
             return ret;
         }
 
-        protected string numeroALetras(double valor)
+        public static string numeroALetras(double valor)
         {
             string ret = null;
             valor = Math.Truncate(valor);

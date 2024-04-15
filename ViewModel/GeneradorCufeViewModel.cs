@@ -198,15 +198,42 @@ namespace GeneradorCufe.ViewModel
                         // Extraer el valor del parámetro 'document' (documento adjunto en base64)
                         string documentBase64 = jsonResponseObject.document;
 
-                        // Crear una instancia de la clase Respuesta_Consulta
-                        Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
+                        // Decodificar el documento base64 a un array de bytes (XML)
+                        byte[] xmlBytes = Convert.FromBase64String(documentBase64);
 
-                        GeneradorPDF generadorPDF = new GeneradorPDF();
-                        string directorioProyecto = Directory.GetCurrentDirectory();
-                        string rutaArchivoPDF = Path.Combine(directorioProyecto, "archivo.pdf");
-                        generadorPDF.CrearPDF(rutaArchivoPDF,emisor, factura);
+                        // Guardar el archivo XML en un flujo de memoria
+                        using (MemoryStream xmlStream = new MemoryStream(xmlBytes))
+                        {
+                            // Crear el PDF
+                            string directorioProyecto = Directory.GetCurrentDirectory();
+                            string rutaArchivoPDF = Path.Combine(directorioProyecto, "archivo.pdf");
+                            GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura);
+
+                            // Comprimir el PDF y el XML en un archivo ZIP en un flujo de memoria
+                            using (MemoryStream zipStream = new MemoryStream())
+                            {
+                                using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
+                                {
+                                    zip.CreateEntryFromFile(rutaArchivoPDF, "archivo.pdf");
+
+                                    // Agregar el XML al archivo ZIP desde el flujo de memoria
+                                    var entry = zip.CreateEntry("documento.xml", CompressionLevel.Fastest);
+                                    using (Stream entryStream = entry.Open())
+                                    {
+                                        xmlStream.Seek(0, SeekOrigin.Begin); // Reiniciar el flujo de memoria del XML
+                                        await xmlStream.CopyToAsync(entryStream);
+                                    }
+                                }
+
+                                // Enviar el archivo ZIP por correo electrónico
+                                EnviarCorreo.Enviar("soporte3.rmsoft@gmail.com", "alacongt4@gmail.com", "Asunto del correo", "Cuerpo del mensaje", zipStream.ToArray());
+                            }
+
+                        }
 
                         // Llamar al método para guardar la respuesta en la base de datos
+                        // Crear una instancia de la clase Respuesta_Consulta
+                        Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
                         respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento);
                         respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento);
                     }
