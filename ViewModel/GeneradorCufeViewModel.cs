@@ -55,9 +55,17 @@ namespace GeneradorCufe.ViewModel
                 Directory.CreateDirectory(xmlDirectory);
             }
 
-            // Generar el nombre del archivo ZIP usando el valor de la propiedad 'Facturas'
-            string zipFileName = $"Archivos_{factura.Facturas}.zip";
-            string zipFilePath = System.IO.Path.Combine(xmlDirectory, zipFileName);
+            // Generar el nombre del archivo ZIP
+            string zipFileName;
+            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+            {
+                zipFileName = $"NC_{factura.Recibo}.zip";
+            }
+            else
+            {
+                zipFileName = $"Archivos_{factura.Facturas}.zip";
+            }
+            string zipFilePath = Path.Combine(xmlDirectory, zipFileName);
 
             // Verificar si el archivo ZIP ya existe y eliminarlo si es necesario
             if (File.Exists(zipFilePath))
@@ -82,6 +90,7 @@ namespace GeneradorCufe.ViewModel
                     writer.Write(base64Content);
                 }
             }
+
 
             // Mostrar mensaje informativo de éxito
             //var successMessage = $"La generación de archivos XML se ha completado con éxito. Los archivos se han guardado en: {zipFilePath}";
@@ -447,6 +456,11 @@ namespace GeneradorCufe.ViewModel
                 legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(movimiento.Valor); // Total Valor Bruto más tributos
                 legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar // cufe ValTot
             }
+
+            if(factura.Recibo != "0" && !string.IsNullOrEmpty(factura.Recibo) )
+            {
+                
+            }
             
             GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos); // Llamada a la función para mapear la información de InvoiceLine
 
@@ -483,25 +497,44 @@ namespace GeneradorCufe.ViewModel
             // Define la ruta al archivo XML base
             string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string baseXmlFilePath = Path.Combine(basePath, "Plantilla", "XML.xml");
-            XDocument xmlDoc;
+            string xmlTemplatePath = ""; // Declaración fuera del bloque if
+
             string cadenaConexion = "";
             string cufe = "";
 
-            try
-            {
-                // Intenta cargar el documento XML base
-                xmlDoc = XDocument.Load(baseXmlFilePath);
+            XDocument xmlDoc; // Declarar xmlDoc fuera del bloque try
 
-                // Actualizar el documento XML con los datos dinámicos
-                (cadenaConexion, cufe) = UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
+            // Verificar la condición para determinar la plantilla y la acción a utilizar
+            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+            {
+                // Si se cumple la condición, usar la plantilla de nota de crédito
+                xmlTemplatePath = Path.Combine(basePath, "Plantilla_NC", "NC.xml");
+                xmlDoc = XDocument.Load(xmlTemplatePath); 
+
+                // Llamar a la acción para generar nota de crédito y asignar sus valores de retorno a cadenaConexion y cufe
+                (cadenaConexion, cufe) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura);
             }
-            catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
+            else
             {
-                // Muestra un diálogo de error si la plantilla XML no se puede cargar
-                MessageBox.Show("Error: La plantilla para generar el XML es incorrecta o nula.", "Error de Plantilla XML", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Si no se cumple, usar la plantilla normal
+                xmlTemplatePath = baseXmlFilePath;
 
-                // Devuelve una tupla vacía o con valores predeterminados para evitar más errores
-                return (string.Empty, string.Empty, string.Empty, string.Empty);
+                try
+                {
+                    // Intenta cargar el documento XML base
+                    xmlDoc = XDocument.Load(xmlTemplatePath);
+
+                    // Actualizar el documento XML con los datos dinámicos
+                    (cadenaConexion, cufe) = UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
+                }
+                catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
+                {
+                    // Muestra un diálogo de error si la plantilla XML no se puede cargar
+                    MessageBox.Show("Error: La plantilla para generar el XML es incorrecta o nula.", "Error de Plantilla XML", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    // Devuelve una tupla vacía o con valores predeterminados para evitar más errores
+                    return (string.Empty, string.Empty, string.Empty, string.Empty);
+                }
             }
 
             // Convertir el XML actualizado a string
@@ -514,6 +547,9 @@ namespace GeneradorCufe.ViewModel
             // Devolver la tupla con todos los valores
             return (xmlContent, base64Encoded, cadenaConexion, cufe);
         }
+
+
+
 
 
 

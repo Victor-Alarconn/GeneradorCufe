@@ -27,8 +27,7 @@ namespace GeneradorCufe.Consultas
             {
                 // Construir la cadena de conexión utilizando la IP, usuario y contraseña proporcionados
                 string connectionString = $"Database=empresas; Data Source={factura.Ip_base}; User Id={usuario}; Password={contraseña}; ConvertZeroDateTime=True;";
-
-                // Crear una nueva conexión a la base de datos utilizando la cadena de conexión construida
+       
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     // Abrir la conexión

@@ -18,6 +18,9 @@ namespace GeneradorCufe.Model
         public string? Hora_dig { get; set; }
         public decimal Retiene { get; set; }
         public decimal Ipoconsumo { get; set; }
+        public decimal Numero_bolsa { get; set; }
+        public decimal Valor_bolsa{ get; set; }
+
 
     }
 }

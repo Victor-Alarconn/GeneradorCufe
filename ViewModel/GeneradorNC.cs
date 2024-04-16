@@ -12,12 +12,12 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorNC
     {
-        public static void GeneradorNotaCredito(XDocument xmlDoc, Emisor emisor, Factura factura)
+        public static (string cadenaConexion, string CUFE) GeneradorNotaCredito(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+            string cufe = "";
 
-            
             Productos_Consulta productosConsulta = new Productos_Consulta();
             Encabezado_Consulta encabezadoConsulta = new Encabezado_Consulta();
             Codigos_Consulta codigosConsulta = new Codigos_Consulta();
@@ -191,6 +191,7 @@ namespace GeneradorCufe.ViewModel
                     partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
                 }
             }
+            return (cadenaConexion, cufe);
         }
 
 
