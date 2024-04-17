@@ -181,9 +181,7 @@ namespace GeneradorCufe.ViewModel
 
                     // Agregar TaxTotal para el impuesto a la bolsa
                     var taxTotalBolsaElement = new XElement(cac + "TaxTotal");
-                    taxTotalBolsaElement.Add(new XElement(cbc + "TaxAmount",
-                                                          new XAttribute("currencyID", "COP"),
-                                                          "0.00")); // Establecer el monto del impuesto
+                    taxTotalBolsaElement.Add(new XElement(cbc + "TaxAmount",new XAttribute("currencyID", "COP"), movimiento.Valor_bolsa.ToString("F2", CultureInfo.InvariantCulture))); // Establecer el monto del impuesto
 
                     var taxSubtotalBolsaElement = new XElement(cac + "TaxSubtotal",
                         new XElement(cbc + "TaxableAmount",
@@ -201,7 +199,7 @@ namespace GeneradorCufe.ViewModel
                         new XElement(cac + "TaxCategory",
                     new XElement(cac + "TaxScheme",
                                 new XElement(cbc + "ID", "22"), // Establecer el ID del esquema de impuestos
-                                new XElement(cbc + "Name", "Bolsas") // Establecer el nombre del esquema de impuestos
+                                new XElement(cbc + "Name", "INC Bolsas") // Establecer el nombre del esquema de impuestos
                             )
                         )
                     );

@@ -75,7 +75,6 @@ namespace GeneradorCufe.ViewModel
 
             if (hayBolsa)
             {
-                // Crear TaxTotal para productos con IPO
                 var taxTotalElementBolsa = new XElement(cac + "TaxTotal");
                 taxTotalElementBolsa.Add(new XElement(cbc + "TaxAmount", movimiento.Valor_bolsa.ToString("F2", CultureInfo.InvariantCulture)));
                 taxTotalElementBolsa.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
@@ -84,7 +83,7 @@ namespace GeneradorCufe.ViewModel
                 // Agregar TaxTotal de productos con IPO al XML
                 xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault()?.AddAfterSelf(taxTotalElementBolsa);
 
-                var taxSubtotalElementBolsa = GenerarElementoTaxSubtotal(xmlDoc, "0.00", 0, valorBolsa, "22", "Bolsas", movimiento);
+                var taxSubtotalElementBolsa = GenerarElementoTaxSubtotal(xmlDoc, "0.00", 0, valorBolsa, "22", "INC Bolsas", movimiento);
                 taxTotalElementBolsa.Add(taxSubtotalElementBolsa);
             }
 
@@ -111,9 +110,10 @@ namespace GeneradorCufe.ViewModel
             {
                 taxSubtotalElement.Add(new XElement(cbc + "BaseUnitMeasure", movimiento.Numero_bolsa.ToString("F2", CultureInfo.InvariantCulture))); // Medida base
                 taxSubtotalElement.Element(cbc + "BaseUnitMeasure")?.SetAttributeValue("unitCode", "94"); // Código de unidad
+                decimal valorBasebolsa = Math.Round(totalImpuesto / movimiento.Numero_bolsa, 2);
                 taxSubtotalElement.Add(new XElement(cbc + "PerUnitAmount",
                                       new XAttribute("currencyID", "COP"),
-                                      movimiento.Valor_bolsa.ToString("F2", CultureInfo.InvariantCulture)));
+                                      valorBasebolsa.ToString("F2", CultureInfo.InvariantCulture)));
             }
 
             // Agregar la categoría de impuesto al elemento TaxSubtotal
