@@ -113,7 +113,7 @@ namespace GeneradorCufe.ViewModel
             }
 
             // Calcular el total del IVA de todos los productos
-            GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos);
+            GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento);
 
 
             decimal retiene = movimiento.Retiene;

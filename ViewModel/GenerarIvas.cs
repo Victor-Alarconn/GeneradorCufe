@@ -112,7 +112,7 @@ namespace GeneradorCufe.ViewModel
         //    return taxSubtotalElement;
         //}
 
-        public static void GenerarIvasYAgregarElementos(XDocument xmlDoc, IEnumerable<Productos> listaProductos)
+        public static void GenerarIvasYAgregarElementos(XDocument xmlDoc, IEnumerable<Productos> listaProductos, Movimiento movimiento)
         {
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
@@ -125,6 +125,8 @@ namespace GeneradorCufe.ViewModel
             bool hayProductosConIPO = listaProductos.Any(p => p.Iva == 0 && p.Consumo > 0);
             bool hayProductosConIVA = listaProductos.Any(p => p.Iva > 0);
             bool hayProductosSinIVA = listaProductos.Any(p => p.Iva == 0 && p.Consumo == 0);
+            bool hayBolsa = movimiento.Numero_bolsa != 0;
+
 
             // Crear TaxTotal para productos con IVA
             var taxTotalElementIVA = new XElement(cac + "TaxTotal");
@@ -135,6 +137,11 @@ namespace GeneradorCufe.ViewModel
             var taxTotalElementIPO = new XElement(cac + "TaxTotal");
             taxTotalElementIPO.Add(new XElement(cbc + "TaxAmount", totalImpuestoIPO.ToString("F2", CultureInfo.InvariantCulture)));
             taxTotalElementIPO.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
+
+            // Crear TaxTotal para productos con IPO
+            var taxTotalElementBolsa = new XElement(cac + "TaxTotal");
+            taxTotalElementBolsa.Add(new XElement(cbc + "TaxAmount", movimiento.Valor_bolsa.ToString("F2", CultureInfo.InvariantCulture)));
+            taxTotalElementBolsa.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
 
             // Agregar TaxTotal de productos con IVA al XML
             xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault()?.AddAfterSelf(taxTotalElementIVA);
@@ -166,6 +173,12 @@ namespace GeneradorCufe.ViewModel
             if (hayProductosSinIVA)
             {
                 var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", totalBaseImponible, 0, "01", "IVA");
+                taxTotalElementIVA.Add(taxSubtotalElementSinIVA);
+            }
+
+            if (hayBolsa)
+            {
+                var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", 0, 0, "22", "INC BOLSA");
                 taxTotalElementIVA.Add(taxSubtotalElementSinIVA);
             }
 

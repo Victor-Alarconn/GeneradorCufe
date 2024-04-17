@@ -400,7 +400,7 @@ namespace GeneradorCufe.ViewModel
             //paymentMeansTemplate?.Remove();
 
 
-            GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos); // Calcular el total del IVA de todos los productos
+            GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento); // Calcular el total del IVA de todos los productos
 
 
             decimal retiene = movimiento.Retiene;
