@@ -170,7 +170,7 @@ namespace GeneradorCufe.ViewModel
                 legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar // cufe ValTot
             }
 
-            GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos); // Llamada a la función para mapear la información de InvoiceLine
+            GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
 
             // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
             XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";

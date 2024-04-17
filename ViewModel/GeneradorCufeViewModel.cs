@@ -334,7 +334,18 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue(nota);
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
-            xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
+            // Verificar si movimiento.Numero_bolsa tiene un valor diferente de 0
+            if (movimiento.Numero_bolsa != 0)
+            {
+                // Sumar 1 al conteo de productos si hay un valor en movimiento.Numero_bolsa
+                xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count + 1);
+            }
+            else
+            {
+                // Establecer el conteo de productos sin sumar 1 si movimiento.Numero_bolsa es 0
+                xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
+            }
+
 
             string ciudadCompleta = emisor.Nombre_municipio_emisor ?? "";
             string[] partesCiudad = ciudadCompleta.Split(',');
@@ -462,7 +473,7 @@ namespace GeneradorCufe.ViewModel
                 
             }
             
-            GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos); // Llamada a la función para mapear la información de InvoiceLine
+            GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
 
             // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
             XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
