@@ -158,7 +158,6 @@
       <cbc:BaseUnitMeasure unitCode="94">3.00</cbc:BaseUnitMeasure>
       <cbc:PerUnitAmount currencyID="COP">183.00</cbc:PerUnitAmount>
       <cac:TaxCategory>
-        <cbc:Percent>0.00</cbc:Percent>
         <cac:TaxScheme>
           <cbc:ID>22</cbc:ID>
           <cbc:Name>Bolsas</cbc:Name>
