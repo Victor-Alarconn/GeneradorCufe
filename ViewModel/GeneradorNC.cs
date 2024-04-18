@@ -23,6 +23,7 @@ namespace GeneradorCufe.ViewModel
             Codigos_Consulta codigosConsulta = new Codigos_Consulta();
             Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
             FormaPago_Consulta formaPagoConsulta = new FormaPago_Consulta();
+            string PrefijoNC = "NC" + factura.Recibo;
 
             string cadenaConexion = "";
 
@@ -39,14 +40,17 @@ namespace GeneradorCufe.ViewModel
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
 
+            DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
+            string horaformateada = horaConDesplazamiento.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
+
             // Actualizar 'CustomizationID'
-            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("7777");
+            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("20"); // 22 o sin referencia a facturas
 
             // Actualizar 'ProfileExecutionID'
-            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("77777");
+            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2"); // 1 produccion , 2 pruebas
 
             // Actualizar 'ID'
-            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("7777");
+            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(PrefijoNC);
 
             // Actualizar 'UUID'
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("7777");
@@ -54,11 +58,11 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
 
             // Actualizar 'IssueDate' y 'IssueTime'
-            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue("7777");
-            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("77777");
+            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
+            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
 
             // Actualizar 'CreditNoteTypeCode'
-            xmlDoc.Descendants(cbc + "CreditNoteTypeCode").FirstOrDefault()?.SetValue("7777");
+            xmlDoc.Descendants(cbc + "CreditNoteTypeCode").FirstOrDefault()?.SetValue("91");
 
             // Actualizar 'Note'
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("7777");
@@ -85,7 +89,7 @@ namespace GeneradorCufe.ViewModel
                 var invoiceDocumentReferenceElement = billingReferenceElement.Element(cac + "InvoiceDocumentReference");
                 if (invoiceDocumentReferenceElement != null)
                 {
-                    invoiceDocumentReferenceElement.Element(cbc + "ID")?.SetValue("SETT1");
+                    invoiceDocumentReferenceElement.Element(cbc + "ID")?.SetValue(factura.Facturas);
                     invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetValue("b5c3b4f4aa53d3a14c3be6fdbde52c9b284723880c93fd4ed10d540a5e32a3f8b1c34cbadbe0ee253d1e50e0f6f8fa44");
                     invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetAttributeValue("schemeName", "CUFE-SHA384");
                     invoiceDocumentReferenceElement.Element(cbc + "IssueDate")?.SetValue("2019-06-04");

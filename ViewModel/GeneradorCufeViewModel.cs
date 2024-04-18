@@ -214,44 +214,48 @@ namespace GeneradorCufe.ViewModel
                         // Guardar el archivo XML en un flujo de memoria
                         using (MemoryStream xmlStream = new MemoryStream(xmlBytes))
                         {
-                    
                             int añoActual = DateTime.Now.Year;
-                            // Construir el nombre del archivo PDF
                             string nombreArchivoPDF = $"fv{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.pdf";
-
-                            // Construir el nombre del archivo XML
                             string nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.xml";
 
-                            // Crear el PDF
-                            string directorioProyecto = Directory.GetCurrentDirectory();
-                            string rutaArchivoPDF = Path.Combine(directorioProyecto, nombreArchivoPDF);
-                            GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura);
-
-                            // Comprimir el PDF y el XML en un archivo ZIP en un flujo de memoria
-                            using (MemoryStream zipStream = new MemoryStream())
+                            // Crear el PDF en un flujo de memoria
+                            using (MemoryStream pdfStream = new MemoryStream())
                             {
-                                using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
+                                // Generar el PDF y escribirlo en el flujo de memoria
+                                GeneradorPDF.CrearPDF(pdfStream, emisor, factura);
+
+                                // Comprimir el PDF y el XML en un archivo ZIP en un flujo de memoria
+                                using (MemoryStream zipStream = new MemoryStream())
                                 {
-                                    zip.CreateEntryFromFile(rutaArchivoPDF, nombreArchivoPDF);
-
-                                    // Agregar el XML al archivo ZIP desde el flujo de memoria
-                                    var entry = zip.CreateEntry(nombreArchivoXML, CompressionLevel.Fastest);
-                                    using (Stream entryStream = entry.Open())
+                                    using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
                                     {
-                                        xmlStream.Seek(0, SeekOrigin.Begin); // Reiniciar el flujo de memoria del XML
-                                        await xmlStream.CopyToAsync(entryStream);
+                                        // Agregar el PDF al archivo ZIP desde el flujo de memoria
+                                        var pdfEntry = zip.CreateEntry(nombreArchivoPDF, CompressionLevel.Fastest);
+                                        using (Stream pdfEntryStream = pdfEntry.Open())
+                                        {
+                                            // Escribir el contenido del PDF en el archivo ZIP
+                                            pdfStream.Seek(0, SeekOrigin.Begin);
+                                            await pdfStream.CopyToAsync(pdfEntryStream);
+                                        }
+
+                                        // Agregar el XML al archivo ZIP desde el flujo de memoria
+                                        var xmlEntry = zip.CreateEntry(nombreArchivoXML, CompressionLevel.Fastest);
+                                        using (Stream xmlEntryStream = xmlEntry.Open())
+                                        {
+                                            // Escribir el contenido del XML en el archivo ZIP
+                                            xmlStream.Seek(0, SeekOrigin.Begin);
+                                            await xmlStream.CopyToAsync(xmlEntryStream);
+                                        }
                                     }
+
+                                    // Enviar el archivo ZIP por correo electrónico
+                                    EnviarCorreo.Enviar("soporte3.rmsoft@gmail.com", "soporte3.rmsoft@gmail.com", "Asunto del correo", "Cuerpo del mensaje", zipStream.ToArray(), nombreArchivoXML);
                                 }
-
-                                // Enviar el archivo ZIP por correo electrónico
-                                EnviarCorreo.Enviar("soporte3.rmsoft@gmail.com", "soporte3.rmsoft@gmail.com", "Asunto del correo", "Cuerpo del mensaje", zipStream.ToArray(), nombreArchivoXML);
                             }
-
-
                         }
 
-                        // Crear una instancia de la clase Respuesta_Consulta
-                        Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
+                            // Crear una instancia de la clase Respuesta_Consulta
+                            Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
                         respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento);
                         respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento);
                     }
