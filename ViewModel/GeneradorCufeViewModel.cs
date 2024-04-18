@@ -214,9 +214,17 @@ namespace GeneradorCufe.ViewModel
                         // Guardar el archivo XML en un flujo de memoria
                         using (MemoryStream xmlStream = new MemoryStream(xmlBytes))
                         {
+                    
+                            int añoActual = DateTime.Now.Year;
+                            // Construir el nombre del archivo PDF
+                            string nombreArchivoPDF = $"fv{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.pdf";
+
+                            // Construir el nombre del archivo XML
+                            string nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.xml";
+
                             // Crear el PDF
                             string directorioProyecto = Directory.GetCurrentDirectory();
-                            string rutaArchivoPDF = Path.Combine(directorioProyecto, $"{cufe}.pdf");
+                            string rutaArchivoPDF = Path.Combine(directorioProyecto, nombreArchivoPDF);
                             GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura);
 
                             // Comprimir el PDF y el XML en un archivo ZIP en un flujo de memoria
@@ -224,10 +232,10 @@ namespace GeneradorCufe.ViewModel
                             {
                                 using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
                                 {
-                                    zip.CreateEntryFromFile(rutaArchivoPDF, $"{cufe}.pdf");
+                                    zip.CreateEntryFromFile(rutaArchivoPDF, nombreArchivoPDF);
 
                                     // Agregar el XML al archivo ZIP desde el flujo de memoria
-                                    var entry = zip.CreateEntry($"{cufe}.xml", CompressionLevel.Fastest);
+                                    var entry = zip.CreateEntry(nombreArchivoXML, CompressionLevel.Fastest);
                                     using (Stream entryStream = entry.Open())
                                     {
                                         xmlStream.Seek(0, SeekOrigin.Begin); // Reiniciar el flujo de memoria del XML
@@ -236,8 +244,9 @@ namespace GeneradorCufe.ViewModel
                                 }
 
                                 // Enviar el archivo ZIP por correo electrónico
-                                EnviarCorreo.Enviar("soporte3.rmsoft@gmail.com", "soporte3.rmsoft@gmail.com", "Asunto del correo", "Cuerpo del mensaje", zipStream.ToArray(), cufe);
+                                EnviarCorreo.Enviar("soporte3.rmsoft@gmail.com", "soporte3.rmsoft@gmail.com", "Asunto del correo", "Cuerpo del mensaje", zipStream.ToArray(), nombreArchivoXML);
                             }
+
 
                         }
 

@@ -102,7 +102,17 @@ namespace GeneradorCufe.ViewModel
             // Establecer el monto imponible y el monto del impuesto en el elemento TaxSubtotal
             taxSubtotalElement.Add(new XElement(cbc + "TaxableAmount", totalBaseImponible.ToString("F2", CultureInfo.InvariantCulture)));
             taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetAttributeValue("currencyID", "COP");
-            taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", totalImpuesto.ToString("F2", CultureInfo.InvariantCulture)));
+            // Establecer el monto del impuesto en el elemento TaxSubtotal
+            if (idImpuesto == "22") // Si es el impuesto de la bolsa
+            {
+                // Usar el valor del impuesto de la bolsa
+                taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", movimiento.Valor_bolsa.ToString("F2", CultureInfo.InvariantCulture)));
+            }
+            else
+            {
+                // Usar el valor totalImpuesto proporcionado
+                taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", totalImpuesto.ToString("F2", CultureInfo.InvariantCulture)));
+            }
             taxSubtotalElement.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
 
             // Agregar campos adicionales para el impuesto de la bolsa
@@ -110,10 +120,10 @@ namespace GeneradorCufe.ViewModel
             {
                 taxSubtotalElement.Add(new XElement(cbc + "BaseUnitMeasure", movimiento.Numero_bolsa.ToString("F2", CultureInfo.InvariantCulture))); // Medida base
                 taxSubtotalElement.Element(cbc + "BaseUnitMeasure")?.SetAttributeValue("unitCode", "94"); // Código de unidad
-                decimal valorBasebolsa = Math.Round(totalImpuesto / movimiento.Numero_bolsa, 2);
+                decimal valorBasebolsa = Math.Round(totalImpuesto * movimiento.Numero_bolsa, 2);
                 taxSubtotalElement.Add(new XElement(cbc + "PerUnitAmount",
                                       new XAttribute("currencyID", "COP"),
-                                      valorBasebolsa.ToString("F2", CultureInfo.InvariantCulture)));
+                                      totalImpuesto.ToString("F2", CultureInfo.InvariantCulture)));
             }
 
             // Agregar la categoría de impuesto al elemento TaxSubtotal

@@ -40,42 +40,42 @@ namespace GeneradorCufe.ViewModel
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
 
             // Actualizar 'CustomizationID'
-            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("7777");
 
             // Actualizar 'ProfileExecutionID'
-            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("77777");
 
             // Actualizar 'ID'
-            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue("7777");
 
             // Actualizar 'UUID'
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("7777");
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeID", "2");
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
 
             // Actualizar 'IssueDate' y 'IssueTime'
-            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue("");
-            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue("7777");
+            xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue("77777");
 
             // Actualizar 'CreditNoteTypeCode'
-            xmlDoc.Descendants(cbc + "CreditNoteTypeCode").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "CreditNoteTypeCode").FirstOrDefault()?.SetValue("7777");
 
             // Actualizar 'Note'
-            xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("7777");
 
             // Actualizar 'DocumentCurrencyCode'
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
 
             // Actualizar 'LineCountNumeric'
-            xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue("");
+            xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue("7777");
 
             // Actualizar 'DiscrepancyResponse'
             var discrepancyResponseElement = xmlDoc.Descendants(cac + "DiscrepancyResponse").FirstOrDefault();
             if (discrepancyResponseElement != null)
             {
-                discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("");
-                discrepancyResponseElement.Element(cbc + "ResponseCode")?.SetValue("");
-                discrepancyResponseElement.Element(cbc + "Description")?.SetValue("");
+                discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("77777");
+                discrepancyResponseElement.Element(cbc + "ResponseCode")?.SetValue("7777");
+                discrepancyResponseElement.Element(cbc + "Description")?.SetValue("7777");
             }
 
             // Actualizar 'BillingReference'
@@ -170,30 +170,30 @@ namespace GeneradorCufe.ViewModel
                 legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar // cufe ValTot
             }
 
-            GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
+            GenerarProductos.MapCreditNoteLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
 
-            // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
-            XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
-            var dataElement = xmlDoc.Descendants(invoiceNs + "DATA").FirstOrDefault();
+            // Buscar el elemento <DATA> dentro del elemento <CreditNote> con el espacio de nombres completo
+            XNamespace creditNoteNs = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2";
+            var dataElement = xmlDoc.Descendants(creditNoteNs + "DATA").FirstOrDefault();
 
             // Verificar si se encontró el elemento <DATA>
             if (dataElement != null)
             {
                 // Modificar los elementos dentro de <DATA>
-                dataElement.Element(invoiceNs + "UBL21")?.SetValue("true");
+                dataElement.Element(creditNoteNs + "UBL21")?.SetValue("true");
 
                 // Buscar el elemento <Partnership> dentro de <DATA> con el espacio de nombres completo
-                var partnershipElement = dataElement.Descendants(invoiceNs + "Partnership").FirstOrDefault();
+                var partnershipElement = dataElement.Descendants(creditNoteNs + "Partnership").FirstOrDefault();
                 if (partnershipElement != null)
                 {
-                    partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
-                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pregunta 
-                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
+                    partnershipElement.Element(creditNoteNs + "ID")?.SetValue("900770401");
+                    partnershipElement.Element(creditNoteNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pregunta 
+                    partnershipElement.Element(creditNoteNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
                 }
             }
             return (cadenaConexion, cufe);
+
         }
 
-
+        }
     }
-}
