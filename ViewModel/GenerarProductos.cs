@@ -238,7 +238,7 @@ namespace GeneradorCufe.ViewModel
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
             // Obtener el elemento 'cac:InvoiceLine' para utilizarlo como plantilla para agregar nuevos productos
-            var invoiceLineTemplate = xmlDoc.Descendants(cac + "InvoiceLine").FirstOrDefault();
+            var invoiceLineTemplate = xmlDoc.Descendants(cac + "CreditNoteLine").FirstOrDefault();
 
             // Verificar si la plantilla existe
             if (invoiceLineTemplate != null)
@@ -255,7 +255,7 @@ namespace GeneradorCufe.ViewModel
                     // Establecer los valores del producto en el nuevo elemento
                     string cantidadformateada = producto.Cantidad.ToString("F2", CultureInfo.InvariantCulture);
                     invoiceLineElement.Element(cbc + "ID")?.SetValue(idCounter.ToString());
-                    invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(cantidadformateada);
+                    invoiceLineElement.Element(cbc + "CreditedQuantity")?.SetValue(cantidadformateada);
                     invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.Neto); // cufe  ValFac
 
                     // Establecer los valores del impuesto
@@ -370,7 +370,7 @@ namespace GeneradorCufe.ViewModel
                     }
 
                     // Agregar el nuevo elemento 'cac:InvoiceLine' al XML
-                    xmlDoc.Descendants(cac + "InvoiceLine").LastOrDefault()?.AddAfterSelf(invoiceLineElement);
+                    xmlDoc.Descendants(cac + "CreditNoteLine").LastOrDefault()?.AddAfterSelf(invoiceLineElement);
                 }
                 // Verificar si movimiento.Numero_bolsa tiene un valor diferente de 0
                 if (movimiento.Numero_bolsa != 0)
@@ -378,9 +378,9 @@ namespace GeneradorCufe.ViewModel
                     idCounter++;
                     decimal valorBolsa = Math.Round(movimiento.Valor_bolsa / movimiento.Numero_bolsa, 2);
                     // Crear un nuevo elemento 'cac:InvoiceLine' para el impuesto a la bolsa
-                    var invoiceLineBolsaElement = new XElement(cac + "InvoiceLine");
+                    var invoiceLineBolsaElement = new XElement(cac + "CreditNoteLine");
                     invoiceLineBolsaElement.Add(new XElement(cbc + "ID", idCounter.ToString())); // Establecer el ID
-                    invoiceLineBolsaElement.Add(new XElement(cbc + "InvoicedQuantity",
+                    invoiceLineBolsaElement.Add(new XElement(cbc + "CreditedQuantity",
                                         new XAttribute("unitCode", "94"),
                                         movimiento.Numero_bolsa.ToString("F2", CultureInfo.InvariantCulture)));
                     invoiceLineBolsaElement.Add(new XElement(cbc + "LineExtensionAmount",
@@ -438,7 +438,7 @@ namespace GeneradorCufe.ViewModel
                     ));
 
                     // Agregar el nuevo elemento 'cac:InvoiceLine' al XML
-                    xmlDoc.Descendants(cac + "InvoiceLine").LastOrDefault()?.AddAfterSelf(invoiceLineBolsaElement);
+                    xmlDoc.Descendants(cac + "CreditNoteLine").LastOrDefault()?.AddAfterSelf(invoiceLineBolsaElement);
                 }
 
                 invoiceLineTemplate.Remove();

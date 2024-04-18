@@ -61,25 +61,36 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
 
+            string nitCompleto = emisor.Nit_emisor ?? "";
             // Actualizar 'CreditNoteTypeCode'
             xmlDoc.Descendants(cbc + "CreditNoteTypeCode").FirstOrDefault()?.SetValue("91");
+            string nota = $"Nota Credito Emitida por {nitCompleto}-{emisor.Nombre_emisor}";
 
             // Actualizar 'Note'
-            xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue("7777");
+            xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue(nota);
 
             // Actualizar 'DocumentCurrencyCode'
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
 
-            // Actualizar 'LineCountNumeric'
-            xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue("7777");
+            // Verificar si movimiento.Numero_bolsa tiene un valor diferente de 0
+            if (movimiento.Numero_bolsa != 0)
+            {
+                // Sumar 1 al conteo de productos si hay un valor en movimiento.Numero_bolsa
+                xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count + 1);
+            }
+            else
+            {
+                // Establecer el conteo de productos sin sumar 1 si movimiento.Numero_bolsa es 0
+                xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
+            }
 
             // Actualizar 'DiscrepancyResponse'
             var discrepancyResponseElement = xmlDoc.Descendants(cac + "DiscrepancyResponse").FirstOrDefault();
             if (discrepancyResponseElement != null)
             {
-                discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("77777");
-                discrepancyResponseElement.Element(cbc + "ResponseCode")?.SetValue("7777");
-                discrepancyResponseElement.Element(cbc + "Description")?.SetValue("7777");
+                discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("Sección de la factura la cual se le aplica la correción");
+                discrepancyResponseElement.Element(cbc + "ResponseCode")?.SetValue("2"); // se puede cmabiar 
+                discrepancyResponseElement.Element(cbc + "Description")?.SetValue("Anulación de factura electrónica ");
             }
 
             // Actualizar 'BillingReference'

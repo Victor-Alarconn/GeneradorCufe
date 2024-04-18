@@ -28,18 +28,18 @@ namespace GeneradorCufe.ViewModel
 
             // Construir el cuerpo del mensaje en formato HTML
             string cuerpo = @"
-                <div style='text-align: center;'>
-                <strong>ESTIMADO/A CLIENTE,</strong><br/><br/>
-                <strong>VICTOR ALARCON ALARCON</strong><br/><br/>
-                Ha recibido una Factura o Nota Electrónica adjunta a este correo, a continuación encontrará resumen de este documento:<br/><br/>
-                <strong>Emisor:</strong> RAUL<br/>
-                <strong>Prefijo y número del documento:</strong> SETT 5159<br/>
-                <strong>Tipo de documento:</strong> FACTURA ELECTRONICA DE VENTA<br/>
-                <strong>Fecha de emisión:</strong> 2024-04-11 09:04:38<br/>
-                </div>
-                <br/>
-                En caso de tener alguna inquietud respecto a la información contenida en el documento por favor comunicarse con RAUL<br/><br/>
-                NOTA CONFIDENCIAL: La información contenida en este e-mail y en todos sus archivos anexos es confidencial de RAUL, solo para uso individual del destinatario o entidad a quienes está dirigido. Si usted no es destinatario, cualquier almacenamiento, distribución, difusión o copia de este mensaje está estrictamente prohibida y sancionada por la ley. Si por error recibe este mensaje, le ofrecemos disculpas, por favor elimínela inmediatamente y notifique de su error a la persona que la envió, absteniéndose de divulgar su contenido.";
+    <div style='text-align: center;'>
+    <strong>ESTIMADO/A CLIENTE,</strong><br/><br/>
+    <strong>VICTOR ALARCON ALARCON</strong><br/><br/>
+    Ha recibido una Factura o Nota Electrónica adjunta a este correo, a continuación encontrará resumen de este documento:<br/><br/>
+    <strong>Emisor:</strong> RAUL<br/>
+    <strong>Prefijo y número del documento:</strong> SETT 5159<br/>
+    <strong>Tipo de documento:</strong> FACTURA ELECTRONICA DE VENTA<br/>
+    <strong>Fecha de emisión:</strong> 2024-04-11 09:04:38<br/>
+    </div>
+    <br/>
+    En caso de tener alguna inquietud respecto a la información contenida en el documento por favor comunicarse con RAUL<br/><br/>
+    NOTA CONFIDENCIAL: La información contenida en este e-mail y en todos sus archivos anexos es confidencial de RAUL, solo para uso individual del destinatario o entidad a quienes está dirigido. Si usted no es destinatario, cualquier almacenamiento, distribución, difusión o copia de este mensaje está estrictamente prohibida y sancionada por la ley. Si por error recibe este mensaje, le ofrecemos disculpas, por favor elimínela inmediatamente y notifique de su error a la persona que la envió, absteniéndose de divulgar su contenido.";
 
             mensaje.Body = cuerpo;
 

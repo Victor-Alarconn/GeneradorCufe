@@ -34,12 +34,12 @@ namespace GeneradorCufe.ViewModel
             
         }
 
-        public static void CrearPDF(MemoryStream pdfStream, Emisor emisor, Factura factura)
+        public static void CrearPDF(string rutaArchivo, Emisor emisor, Factura factura)
         {
             try
             {
                 Document documento = new Document(PageSize.A4, 15, 18, 15, 18);
-                PdfWriter.GetInstance(documento, pdfStream);
+                PdfWriter.GetInstance(documento, new FileStream(rutaArchivo, FileMode.Create));
                 documento.Open();
 
                 // Encabezado
