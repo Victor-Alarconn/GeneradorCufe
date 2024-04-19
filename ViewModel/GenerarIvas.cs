@@ -20,7 +20,6 @@ namespace GeneradorCufe.ViewModel
 
             decimal totalImpuestoIVA = Math.Round(listaProductos.Where(p => p.Iva > 0).Sum(p => p.IvaTotal), 2);
             decimal totalImpuestoIPO = Math.Round(listaProductos.Where(p => p.Iva == 0 && p.Consumo > 0).Sum(p => p.Consumo), 2);
-            decimal totalBaseImponible = Math.Round(listaProductos.Where(p => p.Consumo == 0).Sum(p => p.Neto), 2);
             decimal totalBaseImponibleIPO = Math.Round(listaProductos.Where(p => p.Consumo > 0).Sum(p => p.Neto), 2);
 
             bool hayProductosConIPO = listaProductos.Any(p => p.Iva == 0 && p.Consumo > 0);
@@ -30,7 +29,6 @@ namespace GeneradorCufe.ViewModel
 
             if (hayProductosConIVA || hayProductosSinIVA)
             {
-
                 if (hayProductosConIVA)
                 {
                     // Crear TaxTotal para productos con IVA
@@ -44,15 +42,18 @@ namespace GeneradorCufe.ViewModel
                     var gruposIVA = listaProductos.Where(p => p.Iva > 0).GroupBy(p => p.Iva);
                     foreach (var grupo in gruposIVA)
                     {
+                        decimal totalNetoGrupo = Math.Round(grupo.Sum(p => p.Neto), 2);
                         decimal totalImpuestoGrupo = Math.Round(grupo.Sum(p => p.IvaTotal), 2);
                         string porcentajeIVAFormateado = grupo.Key.ToString("F2", CultureInfo.InvariantCulture);
-                        var taxSubtotalElementConIVA = GenerarElementoTaxSubtotal(xmlDoc, porcentajeIVAFormateado, totalBaseImponible, totalImpuestoGrupo, "01", "IVA", movimiento);
+                        var taxSubtotalElementConIVA = GenerarElementoTaxSubtotal(xmlDoc, porcentajeIVAFormateado, totalNetoGrupo, totalImpuestoGrupo, "01", "IVA", movimiento);
                         taxTotalElementIVA.Add(taxSubtotalElementConIVA);
                     }
+
                     // Agregar los detalles de los impuestos para productos sin IVA
                     if (hayProductosSinIVA)
                     {
-                        var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", totalBaseImponible, 0, "01", "IVA", movimiento);
+                        decimal totalBaseImponibleSinIVA = Math.Round(listaProductos.Where(p => p.Iva == 0 && p.Consumo == 0).Sum(p => p.Neto), 2);
+                        var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", totalBaseImponibleSinIVA, 0, "01", "IVA", movimiento);
                         taxTotalElementIVA.Add(taxSubtotalElementSinIVA);
                     }
                 }

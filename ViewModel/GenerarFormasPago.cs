@@ -38,7 +38,7 @@ namespace GeneradorCufe.ViewModel
                     if (formaPago.Id_forma == "00")
                     {
                         paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
-                        paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
+                        paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("  ");
                     }
                     else if (formaPago.Id_forma == "01")
                     {
