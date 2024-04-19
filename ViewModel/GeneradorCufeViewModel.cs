@@ -252,7 +252,7 @@ namespace GeneradorCufe.ViewModel
 
                         // Crear una instancia de la clase Respuesta_Consulta
                         Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
-                        respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento);
+                        respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento, cufe);
                         respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento);
                     }
                     else

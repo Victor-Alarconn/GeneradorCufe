@@ -54,7 +54,7 @@ namespace GeneradorCufe.Consultas
                                 // Mapea los datos a objetos de la clase Factura
                                 Factura factura = new Factura
                                 {
-                                    id_encabezado = Convert.ToInt32(row["id_enc"] ?? 0),
+                                    Id_encabezado = Convert.ToInt32(row["id_enc"] ?? 0),
                                     Empresa = row["empresa"]?.ToString() ?? "",
                                     Tipo_movimiento = row["tipo_mvt"]?.ToString() ?? "",
                                     Facturas = row["factura"]?.ToString() ?? "",
