@@ -364,7 +364,6 @@ namespace GeneradorCufe.ViewModel
 
             GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos);  // Información del emisor
 
-
             string nitValue = listaProductos[0].Nit;
             GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion); // Información del adquiriente
 
@@ -377,49 +376,7 @@ namespace GeneradorCufe.ViewModel
                 paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
                 paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
             }
-            //var paymentMeansElementParent = xmlDoc.Descendants(cac + "Invoice").FirstOrDefault()?.Element(cac + "PaymentMeans");
-
-            //// Crear una plantilla de PaymentMeans
-            //var paymentMeansTemplate = new XElement(cac + "PaymentMeans",
-            //    new XElement(cbc + "ID", "1")); // ID fijo
-
-            //// Agregar la plantilla al XML antes del bucle foreach
-            //paymentMeansElementParent?.Add(paymentMeansTemplate);
-
-            //if (listaFormaPago != null && listaFormaPago.Count > 0)
-            //{
-            //    foreach (var formaPago in listaFormaPago)
-            //    {
-            //        // Clonar la plantilla para cada forma de pago
-            //        var paymentMeansElement = new XElement(paymentMeansTemplate);
-
-            //        // Asignar PaymentMeansCode y PaymentID según el Id_forma de la forma de pago
-            //        if (formaPago.Id_forma == "00")
-            //        {
-            //            paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
-            //            paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
-            //        }
-            //        else if (formaPago.Id_forma == "01")
-            //        {
-            //            paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("49");
-            //            paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Tarjeta Débito");
-            //        }
-            //        else if (formaPago.Id_forma == "99")
-            //        {
-            //            paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("48");
-            //            paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Tarjeta Crédito");
-            //            paymentMeansElement.Element(cbc + "PaymentDueDate")?.SetValue(DateTime.Now.ToString("yyyy-MM-dd"));
-            //        }
-
-            //        // Agregar PaymentMeans al XML
-            //        paymentMeansElementParent?.Add(paymentMeansElement);
-            //    }
-            //}
-
-            //// Eliminar la plantilla del XML después del bucle foreach
-            //paymentMeansTemplate?.Remove();
-
-
+           
             GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento); // Calcular el total del IVA de todos los productos
 
 
