@@ -20,6 +20,7 @@ namespace GeneradorCufe.Model
         public string? Correo_emisor { get; set; }
         public decimal Tipo_emisor{ get; set; }
         public string? Telefono_emisor { get; set; }
+        public decimal  Retiene_emisor { get; set; }
 
     }
 }

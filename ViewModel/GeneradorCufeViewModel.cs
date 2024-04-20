@@ -313,7 +313,7 @@ namespace GeneradorCufe.ViewModel
             string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
             string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
 
-            string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit);
+            string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit, emisor);
             string CUFE = GenerarCUFE(construir);
 
 
@@ -382,16 +382,17 @@ namespace GeneradorCufe.ViewModel
 
             decimal retiene = movimiento.Retiene;
 
+
             // Obtener el elemento WithholdingTaxTotal si existe
             var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
 
             // Verificar si retiene es igual a 0.00 y si existe el elemento WithholdingTaxTotal
-            if (retiene == 0.00m && withholdingTaxTotalElement != null)
+            if (retiene > 0.00m && movimiento.Retiene !=3)
             {
                 // Eliminar el elemento WithholdingTaxTotal si retiene es igual a 0.00
                 withholdingTaxTotalElement.Remove();
             }
-            else if (retiene != 0.00m)
+            else if (retiene != 0.00m && movimiento.Retiene == 3)
             {
                 // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es diferente de 0.00
                 withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
@@ -424,14 +425,24 @@ namespace GeneradorCufe.ViewModel
                 }
             }
 
+            decimal Valor = 0;
+
+            if (emisor.Retiene_emisor == 2 &&  movimiento.Retiene != 0)
+            {
+                Valor = Math.Round(movimiento.Valor + movimiento.Retiene,2);
+            }
+            else
+            {
+                Valor = movimiento.Valor;
+            }
 
             var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
             if (legalMonetaryTotalElement != null)
             {
                 legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Bruto antes de tributos
                 legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Base Imponible
-                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(movimiento.Valor); // Total Valor Bruto más tributos
-                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar // cufe ValTot
+                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Valor); // Total Valor Bruto más tributos
+                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor); // Total Valor a Pagar // cufe ValTot
             }
 
             if(factura.Recibo != "0" && !string.IsNullOrEmpty(factura.Recibo) )

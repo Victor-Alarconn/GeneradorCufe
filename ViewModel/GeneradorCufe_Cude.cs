@@ -9,8 +9,20 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorCufe_Cude
     {
-        public static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora, string nit)
+        public static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora, string nit, Emisor emisor)
         {
+
+            decimal Valor = 0;
+
+            if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0)
+            {
+                Valor = Math.Round(movimiento.Valor + movimiento.Retiene, 2);
+            }
+            else
+            {
+                Valor = movimiento.Valor;
+            }
+
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
             DateTimeOffset now = DateTimeOffset.Now;
@@ -25,7 +37,7 @@ namespace GeneradorCufe.ViewModel
             decimal impuesto2 = consumo;
             string codigo3 = "03";
             string impuesto3 = "0.00";
-            decimal total = movimiento.Valor;
+            decimal total = Valor;
             string nitFacturador = nit;
             string numeroIdentificacionCliente = movimiento.Nit;
             string clavetecnica = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c";
