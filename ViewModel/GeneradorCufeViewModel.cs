@@ -341,8 +341,27 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
+                                                                                          // Crear un nuevo elemento Note para la nota adicional
+            var nuevaNotaElement = new XElement(cbc + "Note");
+
+            // Verificar si se cumple la condición para agregar una nota adicional
+            if (movimiento.Retiene > 0.00m && emisor.Retiene_emisor == 3)
+            {
+                // Agregar una nota adicional
+                string notaAdicional = " Retencion del " + movimiento.Retiene + " del % 3.5";
+
+                // Establecer el valor de la nota adicional en el nuevo elemento Note
+                nuevaNotaElement.SetValue(notaAdicional);
+
+                // Agregar el nuevo elemento Note al XML
+                xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.AddAfterSelf(nuevaNotaElement);
+            }
+
+            // Establecer la nota original
+            
             xmlDoc.Descendants(cbc + "Note").FirstOrDefault()?.SetValue(nota);
             xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
+
             // Verificar si movimiento.Numero_bolsa tiene un valor diferente de 0
             if (movimiento.Numero_bolsa != 0)
             {
@@ -386,50 +405,29 @@ namespace GeneradorCufe.ViewModel
             // Obtener el elemento WithholdingTaxTotal si existe
             var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
 
-            // Verificar si retiene es igual a 0.00 y si existe el elemento WithholdingTaxTotal
-            if (retiene > 0.00m && movimiento.Retiene ==3)
+            // Verificar si retiene es mayor que 0.00 y si el movimiento.Retiene es igual a 2
+            if (retiene > 0.00m && emisor.Retiene_emisor== 2) 
             {
-                // Eliminar el elemento WithholdingTaxTotal si retiene es igual a 0.00
-                withholdingTaxTotalElement.Remove();
-            }
-            else if (retiene != 0.00m && movimiento.Retiene != 3)
-            {
-                // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es diferente de 0.00
+                // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es mayor que 0.00
                 withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue("3.50");
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "ID")?.SetValue("06");
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "Name")?.SetValue("ReteFuente");
-
-                // Si el elemento WithholdingTaxTotal no existe, crear uno nuevo
-                if (withholdingTaxTotalElement == null)
-                {
-                    withholdingTaxTotalElement = new XElement(cac + "WithholdingTaxTotal",
-                        new XElement(cbc + "TaxAmount", retiene.ToString("F2", CultureInfo.InvariantCulture)),
-                        new XElement(cac + "TaxSubtotal",
-                            new XElement(cbc + "TaxableAmount", "3361344.00"),
-                            new XElement(cbc + "TaxAmount", "84033.60"),
-                            new XElement(cac + "TaxCategory",
-                                new XElement(cbc + "Percent", "3.50"),
-                                new XElement(cac + "TaxScheme",
-                                    new XElement(cbc + "ID", "06"),
-                                    new XElement(cbc + "Name", "ReteFuente")
-                                )
-                            )
-                        )
-                    );
-
-                    // Agregar el elemento WithholdingTaxTotal al XML
-                    xmlDoc.Root?.Add(withholdingTaxTotalElement);
-                }
             }
+            else
+            {
+                // Eliminar el elemento WithholdingTaxTotal si retiene no es mayor que 0.00 o si el movimiento.Retiene no es igual a 2
+                withholdingTaxTotalElement?.Remove();
+            }
+
 
             decimal Valor = 0;
 
-            if (emisor.Retiene_emisor == 2 &&  movimiento.Retiene != 0)
+            if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0)
             {
-                Valor = Math.Round(movimiento.Valor + movimiento.Retiene,2);
+                Valor = Math.Round(movimiento.Valor + movimiento.Retiene, 2);
             }
             else
             {
