@@ -75,7 +75,7 @@ namespace GeneradorCufe.ViewModel
             string nitFacturador = nit;
             string numeroIdentificacionCliente = movimiento.Nit;
             string Software_Pin = "75315";
-            int tipodeambiente = 2;
+            int tipodeambiente = 2; // pruebas
 
             string cadenaCUDE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{Software_Pin}{tipodeambiente}";
 
