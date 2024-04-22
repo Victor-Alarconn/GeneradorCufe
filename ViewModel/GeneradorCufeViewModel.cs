@@ -313,8 +313,8 @@ namespace GeneradorCufe.ViewModel
             string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
             string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
 
-            string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit, emisor);
-            string CUFE = GenerarCUFE(construir);
+            string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit, emisor); // se puede resumir 
+            string CUFE = GeneradorCufe_Cude.GenerarCUFE(construir);
 
 
             string nota = $"Factura de Venta Emitida por {nitCompleto}-{emisor.Nombre_emisor}";
@@ -387,12 +387,12 @@ namespace GeneradorCufe.ViewModel
             var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
 
             // Verificar si retiene es igual a 0.00 y si existe el elemento WithholdingTaxTotal
-            if (retiene > 0.00m && movimiento.Retiene !=3)
+            if (retiene > 0.00m && movimiento.Retiene ==3)
             {
                 // Eliminar el elemento WithholdingTaxTotal si retiene es igual a 0.00
                 withholdingTaxTotalElement.Remove();
             }
-            else if (retiene != 0.00m && movimiento.Retiene == 3)
+            else if (retiene != 0.00m && movimiento.Retiene != 3)
             {
                 // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es diferente de 0.00
                 withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
@@ -534,28 +534,6 @@ namespace GeneradorCufe.ViewModel
 
             // Devolver la tupla con todos los valores
             return (xmlContent, base64Encoded, cadenaConexion, cufe);
-        }
-
-
-
-
-
-
-
-        private static string GenerarCUFE(string cadenaCUFE)
-        {
-            using (SHA384 sha384 = SHA384.Create())
-            {
-                // Convertir la cadena en un array de bytes
-                byte[] bytesCadena = Encoding.UTF8.GetBytes(cadenaCUFE);
-
-                // Aplicar SHA-384
-                byte[] hashBytes = sha384.ComputeHash(bytesCadena);
-
-                // Convertir el resultado del hash en una cadena hexadecimal en minúsculas
-                string cufe = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-                return cufe;
-            }
         }
 
     }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -80,6 +81,22 @@ namespace GeneradorCufe.ViewModel
             cadenaCUDE = cadenaCUDE.Replace(',', '.');
 
             return cadenaCUDE;
+        }
+
+        public static string GenerarCUFE(string cadenaCUFE)
+        {
+            using (SHA384 sha384 = SHA384.Create())
+            {
+                // Convertir la cadena en un array de bytes
+                byte[] bytesCadena = Encoding.UTF8.GetBytes(cadenaCUFE);
+
+                // Aplicar SHA-384
+                byte[] hashBytes = sha384.ComputeHash(bytesCadena);
+
+                // Convertir el resultado del hash en una cadena hexadecimal en minúsculas
+                string cufe = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+                return cufe;
+            }
         }
     }
 }

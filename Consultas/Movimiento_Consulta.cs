@@ -23,7 +23,7 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                string query = "SELECT nit, valor, vriva, desctos, gravada, exentas, fcruce, hdigita, rfuente, consumo, nbolsa, vbolsa FROM xxxxccfc WHERE factura = @factura";
+                string query = "SELECT nit, valor, vriva, desctos, gravada, exentas, fcruce, hdigita, rfuente, consumo, nbolsa, vbolsa, dato_cufe FROM xxxxccfc WHERE factura = @factura";
 
                 using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
                 {
@@ -48,6 +48,7 @@ namespace GeneradorCufe.Consultas
                                 movimiento.Ipoconsumo = reader.GetDecimal("consumo");
                                 movimiento.Numero_bolsa = reader.GetDecimal("nbolsa");
                                 movimiento.Valor_bolsa = reader.GetDecimal("vbolsa");
+                                movimiento.Dato_Cufe = reader["dato_cufe"].ToString();
                             }
                         }
                     }

@@ -16,7 +16,7 @@ namespace GeneradorCufe.ViewModel
         {
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
-            string cufe = "";
+
 
             Productos_Consulta productosConsulta = new Productos_Consulta();
             Encabezado_Consulta encabezadoConsulta = new Encabezado_Consulta();
@@ -43,6 +43,14 @@ namespace GeneradorCufe.ViewModel
             DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
             string horaformateada = horaConDesplazamiento.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
 
+            string nitCompleto = emisor.Nit_emisor ?? "";
+            string[] partesNit = nitCompleto.Split('-');
+            string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
+            string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
+
+            string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit, emisor);
+            string cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
+
             // Actualizar 'CustomizationID'
             xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("20"); // 22 o sin referencia a facturas
 
@@ -61,7 +69,7 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
 
-            string nitCompleto = emisor.Nit_emisor ?? "";
+           
             // Actualizar 'CreditNoteTypeCode'
             xmlDoc.Descendants(cbc + "CreditNoteTypeCode").FirstOrDefault()?.SetValue("91");
             string nota = $"Nota Credito Emitida por {nitCompleto}-{emisor.Nombre_emisor}";
@@ -209,6 +217,10 @@ namespace GeneradorCufe.ViewModel
             return (cadenaConexion, cufe);
 
         }
+
+
+
+
 
         }
     }

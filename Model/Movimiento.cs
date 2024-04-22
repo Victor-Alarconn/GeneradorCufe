@@ -20,7 +20,7 @@ namespace GeneradorCufe.Model
         public decimal Ipoconsumo { get; set; }
         public decimal Numero_bolsa { get; set; }
         public decimal Valor_bolsa{ get; set; }
-
+        public string? Dato_Cufe { get; set; }
 
     }
 }
