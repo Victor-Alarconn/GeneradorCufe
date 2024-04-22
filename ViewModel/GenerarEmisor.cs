@@ -11,7 +11,7 @@ namespace GeneradorCufe.ViewModel
 {
     public class GenerarEmisor
     {
-        public static void MapearInformacionEmisor(XDocument xmlDoc, Emisor emisor, Encabezado encabezado, Codigos codigos)
+        public static void MapearInformacionEmisor(XDocument xmlDoc, Emisor emisor, Encabezado encabezado, Codigos codigos, List<Productos> listaProductos)
         {
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
@@ -126,9 +126,13 @@ namespace GeneradorCufe.ViewModel
                 }
 
                 var corporateRegistrationSchemeElement = partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme");
-                if (corporateRegistrationSchemeElement != null)
+                if (corporateRegistrationSchemeElement != null && listaProductos.First().Recibo == "" )
                 {
                     corporateRegistrationSchemeElement.Element(cbc + "ID")?.SetValue(encabezado.Prefijo);
+                }
+                else
+                {
+                    corporateRegistrationSchemeElement.Element(cbc + "ID")?.SetValue("NC");
                 }
             }
 

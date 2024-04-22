@@ -38,9 +38,10 @@ namespace GeneradorCufe.ViewModel
             // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
-            List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
+            List<Productos> listaProductos = productosConsulta.ConsultarProductosNota(factura, cadenaConexion);
 
-            DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
+            string horaProducto = listaProductos.First().Hora_Digitada; // Aquí supongo que hay un atributo "Hora" en tu objeto Producto
+            DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(horaProducto, "HH:mm:ss", CultureInfo.InvariantCulture);
             string horaformateada = horaConDesplazamiento.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
 
             string nitCompleto = emisor.Nit_emisor ?? "";
@@ -48,8 +49,28 @@ namespace GeneradorCufe.ViewModel
             string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
             string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
 
-            string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit, emisor);
-            string cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
+            string cufe;
+            string hora = "";
+            if (string.IsNullOrEmpty(movimiento.Dato_Cufe) || movimiento.Dato_Cufe == "0")
+            {
+                // Consultar los valores totales para la construcción del CUFE
+                movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
+                List<Productos> listaProductosCufe = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
+
+                DateTimeOffset horaCon = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
+                 hora = horaCon.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
+
+                // Construir el CUFE
+                string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe, factura, hora, Nit, emisor);
+                cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
+            }
+            else
+            {
+                cufe = movimiento.Dato_Cufe;
+            }
+
+            string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
+            string cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
 
             // Actualizar 'CustomizationID'
             xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("20"); // 22 o sin referencia a facturas
@@ -61,12 +82,12 @@ namespace GeneradorCufe.ViewModel
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(PrefijoNC);
 
             // Actualizar 'UUID'
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue("7777");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(cude);
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeID", "2");
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
 
             // Actualizar 'IssueDate' y 'IssueTime'
-            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
+            xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(listaProductos.FirstOrDefault().Fecha.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
 
            
@@ -98,7 +119,7 @@ namespace GeneradorCufe.ViewModel
             {
                 discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("Sección de la factura la cual se le aplica la correción");
                 discrepancyResponseElement.Element(cbc + "ResponseCode")?.SetValue("2"); // se puede cmabiar 
-                discrepancyResponseElement.Element(cbc + "Description")?.SetValue("Anulación de factura electrónica ");
+                discrepancyResponseElement.Element(cbc + "Description")?.SetValue("Anulación de factura electrónica");
             }
 
             // Actualizar 'BillingReference'
@@ -109,9 +130,9 @@ namespace GeneradorCufe.ViewModel
                 if (invoiceDocumentReferenceElement != null)
                 {
                     invoiceDocumentReferenceElement.Element(cbc + "ID")?.SetValue(factura.Facturas);
-                    invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetValue("b5c3b4f4aa53d3a14c3be6fdbde52c9b284723880c93fd4ed10d540a5e32a3f8b1c34cbadbe0ee253d1e50e0f6f8fa44");
+                    invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetValue(cufe);
                     invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetAttributeValue("schemeName", "CUFE-SHA384");
-                    invoiceDocumentReferenceElement.Element(cbc + "IssueDate")?.SetValue("2019-06-04");
+                    invoiceDocumentReferenceElement.Element(cbc + "IssueDate")?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
                 }
             }
 
@@ -121,7 +142,7 @@ namespace GeneradorCufe.ViewModel
             string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
             Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta);
 
-            GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos);
+            GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos);
 
             string nitValue = listaProductos[0].Nit;
             GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion);
@@ -141,56 +162,46 @@ namespace GeneradorCufe.ViewModel
 
             decimal retiene = movimiento.Retiene;
 
+
             // Obtener el elemento WithholdingTaxTotal si existe
             var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
 
-            // Verificar si retiene es igual a 0.00 y si existe el elemento WithholdingTaxTotal
-            if (retiene == 0.00m && withholdingTaxTotalElement != null)
+            // Verificar si retiene es mayor que 0.00 y si el movimiento.Retiene es igual a 2
+            if (retiene > 0.00m && emisor.Retiene_emisor == 2)
             {
-                // Eliminar el elemento WithholdingTaxTotal si retiene es igual a 0.00
-                withholdingTaxTotalElement.Remove();
-            }
-            else if (retiene != 0.00m)
-            {
-                // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es diferente de 0.00
+                // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es mayor que 0.00
                 withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue("3.50");
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "ID")?.SetValue("06");
                 withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "Name")?.SetValue("ReteFuente");
-
-                // Si el elemento WithholdingTaxTotal no existe, crear uno nuevo
-                if (withholdingTaxTotalElement == null)
-                {
-                    withholdingTaxTotalElement = new XElement(cac + "WithholdingTaxTotal",
-                        new XElement(cbc + "TaxAmount", retiene.ToString("F2", CultureInfo.InvariantCulture)),
-                        new XElement(cac + "TaxSubtotal",
-                            new XElement(cbc + "TaxableAmount", "3361344.00"),
-                            new XElement(cbc + "TaxAmount", "84033.60"),
-                            new XElement(cac + "TaxCategory",
-                                new XElement(cbc + "Percent", "3.50"),
-                                new XElement(cac + "TaxScheme",
-                                    new XElement(cbc + "ID", "06"),
-                                    new XElement(cbc + "Name", "ReteFuente")
-                                )
-                            )
-                        )
-                    );
-
-                    // Agregar el elemento WithholdingTaxTotal al XML
-                    xmlDoc.Root?.Add(withholdingTaxTotalElement);
-                }
+            }
+            else
+            {
+                // Eliminar el elemento WithholdingTaxTotal si retiene no es mayor que 0.00 o si el movimiento.Retiene no es igual a 2
+                withholdingTaxTotalElement?.Remove();
             }
 
+
+            decimal Valor = 0;
+
+            if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0)
+            {
+                Valor = Math.Round(movimiento.Valor + movimiento.Retiene, 2);
+            }
+            else
+            {
+                Valor = movimiento.Valor;
+            }
 
             var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
             if (legalMonetaryTotalElement != null)
             {
                 legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Bruto antes de tributos
                 legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Base Imponible
-                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(movimiento.Valor); // Total Valor Bruto más tributos
-                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(movimiento.Valor); // Total Valor a Pagar // cufe ValTot
+                legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Valor); // Total Valor Bruto más tributos
+                legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor); // Total Valor a Pagar // cufe ValTot
             }
 
             GenerarProductos.MapCreditNoteLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine

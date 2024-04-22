@@ -53,15 +53,17 @@ namespace GeneradorCufe.ViewModel
             return cadenaCUFE;
         }
 
-        public static string ConstruirCadenaCUDE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora, string nit)
+        public static string ConstruirCadenaCUDE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string horaf, string nit, Emisor emisor, string hora, string prefijo)
         {
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
+            string fechaNC = listaProductos.FirstOrDefault().Fecha.ToString("yyyy-MM-dd");
+
             DateTimeOffset now = DateTimeOffset.Now;
             // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
-            string numeroFactura = factura.Facturas;
-            string fechaFactura = movimiento.Fecha_Factura.ToString("yyyy-MM-dd");
-            string horaFactura = hora;
+            string numeroFactura = prefijo;
+            string fechaFactura = fechaNC;
+            string horaFactura = horaf;
             decimal valorSubtotal = movimiento.Valor_neto;
             string codigo = "01";
             decimal iva = Iva;

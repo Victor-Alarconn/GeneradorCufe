@@ -19,6 +19,9 @@ namespace GeneradorCufe.Model
         public decimal Iva { get; set; }
         public decimal IvaTotal { get; set; }
         public decimal Total { get; set; }
-        public decimal Consumo { get; set; }
+        public decimal Consumo { get; set; }  
+        public string? Hora_Digitada { get; set; }
+
+        public DateTime Fecha { get; set; }
     }
 }

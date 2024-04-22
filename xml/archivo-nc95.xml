@@ -1,0 +1,342 @@
+<CreditNote xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-CreditNote-2.1.xsd">
+  <cbc:CustomizationID>20</cbc:CustomizationID>
+  <!--Nota Crédito que referencia una factura electrónica -->
+  <!--Indicador del tipo de operación [1..1] tabla 6.1.5.2.-->
+  <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
+  <cbc:ID>NC19</cbc:ID>
+  <cbc:UUID schemeID="2" schemeName="CUDE-SHA384">ae35d17705e956075a5322fa28004bc6ef8eb61c01c7c8ccc63843ccff2a8a3e5b81d791ad6cb1dfe8c6383323127f2b</cbc:UUID>
+  <cbc:IssueDate>2024-04-22</cbc:IssueDate>
+  <cbc:IssueTime>14:47:28-05:00</cbc:IssueTime>
+  <cbc:CreditNoteTypeCode>91</cbc:CreditNoteTypeCode>
+  <cbc:Note>Nota Credito Emitida por 1004994836-0-PCS CORPORATIVOS</cbc:Note>
+  <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>4</cbc:LineCountNumeric>
+  <cac:DiscrepancyResponse>
+    <cbc:ReferenceID>Sección de la factura la cual se le aplica la correción</cbc:ReferenceID>
+    <cbc:ResponseCode>2</cbc:ResponseCode>
+    <cbc:Description>Anulación de factura electrónica </cbc:Description>
+  </cac:DiscrepancyResponse>
+  <cac:BillingReference>
+    <cac:InvoiceDocumentReference>
+      <cbc:ID>SETT95</cbc:ID>
+      <cbc:UUID schemeName="CUFE-SHA384">33eee73173a0f60a00f7776d3bead0ad552b535fc4bd9a6e037b60e627596e59a7cc308b116cbb10d70dcb001977332f</cbc:UUID>
+      <cbc:IssueDate>2024-04-19</cbc:IssueDate>
+    </cac:InvoiceDocumentReference>
+  </cac:BillingReference>
+  <cac:AccountingSupplierParty>
+    <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
+    <cac:Party>
+      <cac:PartyName>
+        <cbc:Name>PCS CORPORATIVOS</cbc:Name>
+      </cac:PartyName>
+      <cac:PhysicalLocation>
+        <cac:Address>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>Calle 24 # 7-29 Of 401 Pereira,Risaralda</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:Address>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
+        <cbc:RegistrationName>PCS CORPORATIVOS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1004994836</cbc:CompanyID>
+        <cbc:TaxLevelCode>O-15</cbc:TaxLevelCode>
+        <!--RégimenFiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] -->
+        <cac:RegistrationAddress>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>Calle 24 # 7-29 Of 401 Pereira,Risaralda</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>PCS CORPORATIVOS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1004994836</cbc:CompanyID>
+        <cac:CorporateRegistrationScheme>
+          <cbc:ID>SETT</cbc:ID>
+        </cac:CorporateRegistrationScheme>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Telephone>3205231618</cbc:Telephone>
+        <cbc:ElectronicMail>soporte3.rmsoft@gmail.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
+    <!-- Grupo con información que definen el Adquiriente [1..1]-->
+    <cac:Party>
+      <cac:PartyIdentification>
+        <!-- Grupo para informar el documento del adquirente [0..1]-->
+        <cbc:ID schemeName="13">222222222222</cbc:ID>
+        <!--Identificación del adquirente, @schemeName Ver lista de valores posibles en la columna “Código” del numeral 6.2.1. [1..1] -->
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>CONSUMIDOR  FINAL</cbc:Name>
+      </cac:PartyName>
+      <cac:PhysicalLocation>
+        <cac:Address>
+          <cbc:ID>05001</cbc:ID>
+          <cbc:CityName>Medellin</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>CRA  45 45</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:Address>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
+        <cbc:RegistrationName>Medellin</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="7" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">222222222222</cbc:CompanyID>
+        <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
+        <!--Régimen Fiscal: cbc:TaxLevelCode.@listName 6.2.4.,+ Responsabilidades fiscales: cbc:TaxLevelCode 6.2.7.[0..1] -->
+        <cac:RegistrationAddress>
+          <cbc:ID>05001</cbc:ID>
+          <cbc:CityName>Medellin</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>CRA  45 45</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>CONSUMIDOR  FINAL</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="7" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">222222222222</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Telephone>54454544</cbc:Telephone>
+        <cbc:ElectronicMail>soporte.rmsoft@gmail.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:ID>1</cbc:ID>
+    <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
+    <cbc:PaymentID>Efectivo</cbc:PaymentID>
+  </cac:PaymentMeans>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="COP">183.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">0.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">183.00</cbc:TaxAmount>
+      <cbc:BaseUnitMeasure unitCode="94">3.00</cbc:BaseUnitMeasure>
+      <cbc:PerUnitAmount currencyID="COP">61.00</cbc:PerUnitAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>0.00</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>22</cbc:ID>
+          <cbc:Name>INC Bolsas</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="COP">1477.88</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">23809.52</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">1190.48</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>5.00</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">1512.61</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">287.40</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>19.00</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">25000.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>0.00</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="COP">50322.13</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="COP">50322.13</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="COP">51983.00</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="COP">51983.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:CreditNoteLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:CreditedQuantity unitCode="EA">50.00</cbc:CreditedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">23809.52</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">1190.48</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">23809.52</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">1190.48</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>5.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>TORNILLO</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">0112                </cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">500.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">50.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:CreditNoteLine>
+  <cac:CreditNoteLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:CreditedQuantity unitCode="EA">3.00</cbc:CreditedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">1512.61</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">287.40</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">1512.61</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">287.40</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>19.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>TORNILLO 4</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">0115                </cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">600.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">3.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:CreditNoteLine>
+  <cac:CreditNoteLine>
+    <cbc:ID>3</cbc:ID>
+    <cbc:CreditedQuantity unitCode="EA">1.00</cbc:CreditedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">25000.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">25000.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>0.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>BROCA</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">0110                </cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">25000.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:CreditNoteLine>
+  <cac:CreditNoteLine>
+    <cbc:ID>4</cbc:ID>
+    <cbc:CreditedQuantity unitCode="94">3.00</cbc:CreditedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">0.00</cbc:LineExtensionAmount>
+    <cac:PricingReference>
+      <cac:AlternativeConditionPrice>
+        <cbc:PriceAmount currencyID="COP">61.00</cbc:PriceAmount>
+        <cbc:PriceTypeCode>03</cbc:PriceTypeCode>
+        <cbc:PriceType>Otro valor</cbc:PriceType>
+      </cac:AlternativeConditionPrice>
+    </cac:PricingReference>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">183.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">0.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">183.00</cbc:TaxAmount>
+        <cbc:BaseUnitMeasure unitCode="94">3.00</cbc:BaseUnitMeasure>
+        <cbc:PerUnitAmount currencyID="COP">61.00</cbc:PerUnitAmount>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:ID>22</cbc:ID>
+            <cbc:Name>INC Bolsas</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>IMPUESTO A LA BOLSA PLASTICA</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">3</cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">0.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="NIU">3.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:CreditNoteLine>
+  <DATA>
+    <UBL21>true</UBL21>
+    <Partnership>
+      <ID>900770401</ID>
+      <TechKey>fc8eac422eba16e22ffd8c6f94b3f40a6e38162c</TechKey>
+      <SetTestID>e84ce8bd-5bc9-434c-bc0e-4e34454a45a5</SetTestID>
+    </Partnership>
+  </DATA>
+</CreditNote>

@@ -381,7 +381,7 @@ namespace GeneradorCufe.ViewModel
             string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
             Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta); // Consulta para obtener los códigos de ciudad y departamento
 
-            GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos);  // Información del emisor
+            GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos);  // Información del emisor
 
             string nitValue = listaProductos[0].Nit;
             GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion); // Información del adquiriente
