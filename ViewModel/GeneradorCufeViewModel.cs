@@ -30,7 +30,7 @@ namespace GeneradorCufe.ViewModel
         public static async Task EjecutarGeneracionXML(Emisor emisor, Factura factura)
         {
             // Generar el XML y la versión base64
-            (string xmlContent, string base64Content, string cadenaConexion, string cufe) = GenerateXMLAndBase64(emisor, factura);
+            (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos) = GenerateXMLAndBase64(emisor, factura);
 
             // Verificar que el contenido XML no esté vacío antes de continuar
             if (string.IsNullOrEmpty(xmlContent))
@@ -99,12 +99,12 @@ namespace GeneradorCufe.ViewModel
 
             // Realizar la solicitud POST y esperar la tarea
             string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
-            string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe);
+            string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos);
         }
 
         
 
-        private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion, string cufe)
+        private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos)
         {
             // Crear una instancia de la clase Respuesta_Consulta
             Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
@@ -128,7 +128,7 @@ namespace GeneradorCufe.ViewModel
                     MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
-                    ConsultarXML(emisor, factura, cadenaConexion, cufe);
+                    ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos);
 
                     return response;
                 }
@@ -168,7 +168,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion, string cufe)
+        private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos)
         {
             try
             {
@@ -225,7 +225,7 @@ namespace GeneradorCufe.ViewModel
                             // Crear el PDF
                             string directorioProyecto = Directory.GetCurrentDirectory();
                             string rutaArchivoPDF = Path.Combine(directorioProyecto, nombreArchivoPDF);
-                            GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura);
+                            GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura, listaProductos);
 
                             // Comprimir el PDF y el XML en un archivo ZIP en un flujo de memoria
                             using (MemoryStream zipStream = new MemoryStream())
@@ -271,7 +271,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        public static (string cadenaConexion, string CUFE) UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)
+        public static (string cadenaConexion, string CUFE, List<Productos> listaProductos) UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -471,14 +471,14 @@ namespace GeneradorCufe.ViewModel
             }
 
             // Retornar la cadena de conexión
-            return (cadenaConexion, CUFE);
+            return (cadenaConexion, CUFE, listaProductos);
         }
 
 
 
 
 
-        public static (string xmlContent, string base64Content, string cadenaConexion, string cufe) GenerateXMLAndBase64(Emisor emisor, Factura factura)
+        public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
             // Define la ruta al archivo XML base
             string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -487,6 +487,7 @@ namespace GeneradorCufe.ViewModel
 
             string cadenaConexion = "";
             string cufe = "";
+            List<Productos> listaProductos = null;
 
             XDocument xmlDoc; // Declarar xmlDoc fuera del bloque try
 
@@ -511,15 +512,15 @@ namespace GeneradorCufe.ViewModel
                     xmlDoc = XDocument.Load(xmlTemplatePath);
 
                     // Actualizar el documento XML con los datos dinámicos
-                    (cadenaConexion, cufe) = UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
+                    (cadenaConexion, cufe, listaProductos) = UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
                 }
                 catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
                 {
                     // Muestra un diálogo de error si la plantilla XML no se puede cargar
                     MessageBox.Show("Error: La plantilla para generar el XML es incorrecta o nula.", "Error de Plantilla XML", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    // Devuelve una tupla vacía o con valores predeterminados para evitar más errores
-                    return (string.Empty, string.Empty, string.Empty, string.Empty);
+                    return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>());
+
                 }
             }
 
@@ -531,7 +532,7 @@ namespace GeneradorCufe.ViewModel
             string base64Encoded = Convert.ToBase64String(bytes);
 
             // Devolver la tupla con todos los valores
-            return (xmlContent, base64Encoded, cadenaConexion, cufe);
+            return (xmlContent, base64Encoded, cadenaConexion, cufe, listaProductos);
         }
 
     }

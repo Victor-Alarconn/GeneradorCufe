@@ -34,7 +34,7 @@ namespace GeneradorCufe.ViewModel
             
         }
 
-        public static void CrearPDF(string rutaArchivo, Emisor emisor, Factura factura)
+        public static void CrearPDF(string rutaArchivo, Emisor emisor, Factura factura, List<Productos> listaProductos)
         {
             try
             {
@@ -84,8 +84,8 @@ namespace GeneradorCufe.ViewModel
                 encabezado.AddCell(cEmpty15);
 
                 // Datos del emisor (ficticios)
-                string nombreEmisor = "PINTURAS PANELTON Y DISTRIBUCIONES SAS";
-                string nitEmisor = "123456789-0";
+                string nombreEmisor = emisor.Nombre_emisor;
+                string nitEmisor = emisor.Nit_emisor;
 
                 var tEmisor = new PdfPTable(1);
                 tEmisor.WidthPercentage = 100;
@@ -115,15 +115,15 @@ namespace GeneradorCufe.ViewModel
                 cRepresentante.HorizontalAlignment = Element.ALIGN_CENTER;
                 cRepresentante.VerticalAlignment = Element.ALIGN_TOP;
 
-                var cDireccionEmisor = new PdfPCell(new Phrase("Dirección : Panelton Dosquebradas Cr16#70-21 Bd1 Dosq,Rda", fnt3));
+                var cDireccionEmisor = new PdfPCell(new Phrase("Dirección :"+ emisor.Direccion_emisor , fnt3));
                 cDireccionEmisor.Border = Rectangle.NO_BORDER;
                 cDireccionEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-                var cCorreoEmisor = new PdfPCell(new Phrase("facturacionpinturaspaneltonsas@gmail.com\r\n", fnt3));
+                var cCorreoEmisor = new PdfPCell(new Phrase(emisor.Correo_emisor, fnt3));
                 cCorreoEmisor.Border = Rectangle.NO_BORDER;
                 cCorreoEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-                var cTelefonoEmisor = new PdfPCell(new Phrase("Telefono: 3131732", fnt3));
+                var cTelefonoEmisor = new PdfPCell(new Phrase("Telefono:"+ emisor.Telefono_emisor, fnt3));
                 cTelefonoEmisor.Border = Rectangle.NO_BORDER;
                 cTelefonoEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
@@ -181,7 +181,7 @@ namespace GeneradorCufe.ViewModel
                 ciTipoFactura.PaddingBottom = 5;
 
                 // Número de factura (ficticio)
-                string vNumeroFactura = "77777777";
+                string vNumeroFactura = factura.Facturas;
                 PdfPCell cNumeroFactura = new PdfPCell(new Phrase(vNumeroFactura, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                 cNumeroFactura.BackgroundColor = BaseColor.WHITE;
                 cNumeroFactura.BorderColor = BaseColor.GRAY;
