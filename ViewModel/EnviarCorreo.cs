@@ -21,10 +21,10 @@ namespace GeneradorCufe.ViewModel
             clienteSmtp.EnableSsl = true; // Habilitar SSL
 
             // Crear el mensaje
-            MailAddress direccionRemitente = new MailAddress(remitente, "RAUL OSVALDO RAMOS MELCHOR");
-            MailAddress direccionDestinatario = new MailAddress(destinatario);
+            MailAddress direccionRemitente = new MailAddress("alarcongt4@gmail.com", "RAUL OSVALDO RAMOS MELCHOR");
+            MailAddress direccionDestinatario = new MailAddress("alarcongt4@gmail.com");
             MailMessage mensaje = new MailMessage(direccionRemitente, direccionDestinatario);
-            mensaje.Subject = asunto;
+            mensaje.Subject = "75036432; RAUL; NC58; 91; RAUL"; 
             mensaje.IsBodyHtml = true; // Establecer el cuerpo del mensaje como HTML
 
             // Construir el cuerpo del mensaje en formato HTML
