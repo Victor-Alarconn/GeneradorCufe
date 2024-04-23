@@ -23,6 +23,7 @@ namespace GeneradorCufe.ViewModel
             Codigos_Consulta codigosConsulta = new Codigos_Consulta();
             Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
             FormaPago_Consulta formaPagoConsulta = new FormaPago_Consulta();
+            Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
             string PrefijoNC = "NC" + factura.Recibo;
 
             string cadenaConexion = "";
@@ -48,6 +49,8 @@ namespace GeneradorCufe.ViewModel
             string[] partesNit = nitCompleto.Split('-');
             string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
             string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
+
+           
 
             string cufe;
             string hora = "";
@@ -145,7 +148,9 @@ namespace GeneradorCufe.ViewModel
             GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos);
 
             string nitValue = listaProductos[0].Nit;
-            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion);
+
+            Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
+            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente);
 
             // Información del medio de pago
             var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
@@ -188,11 +193,11 @@ namespace GeneradorCufe.ViewModel
 
             if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0) // falta calcular el valor 
             {
-                Valor = Math.Round(movimiento.Valor + movimiento.Retiene, 2);
+                Valor = Math.Round(movimiento.Nota_credito + movimiento.Retiene, 2);
             }
             else
             {
-                Valor = movimiento.Valor;
+                Valor = movimiento.Nota_credito;
             }
 
             decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Neto), 2);

@@ -53,12 +53,25 @@ namespace GeneradorCufe.ViewModel
             return cadenaCUFE;
         }
 
+
+
         public static string ConstruirCadenaCUDE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string horaf, string nit, Emisor emisor, string hora, string prefijo)
         {
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
             decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
             string fechaNC = listaProductos.FirstOrDefault().Fecha.ToString("yyyy-MM-dd");
+
+            decimal Valor = 0;
+
+            if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0) // falta calcular el valor 
+            {
+                Valor = Math.Round(movimiento.Nota_credito + movimiento.Retiene, 2);
+            }
+            else
+            {
+                Valor = movimiento.Nota_credito;
+            }
 
             DateTimeOffset now = DateTimeOffset.Now;
             // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
@@ -72,7 +85,7 @@ namespace GeneradorCufe.ViewModel
             decimal impuesto2 = consumo;
             string codigo3 = "03";
             string impuesto3 = "0.00";
-            decimal total = movimiento.Valor;
+            decimal total = Valor;
             string nitFacturador = nit;
             string numeroIdentificacionCliente = movimiento.Nit;
             string Software_Pin = "75315";

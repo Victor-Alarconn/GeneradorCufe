@@ -11,7 +11,7 @@ namespace GeneradorCufe.ViewModel
 {
     public class GenerarAdquiriente
     {
-        public static void MapAccountingCustomerParty(XDocument xmlDoc, string Nit, string cadenaConexion) // Información del adquiriente 
+        public static void MapAccountingCustomerParty(XDocument xmlDoc, string Nit, string cadenaConexion, Adquiriente adquiriente) // Información del adquiriente 
         { // esperelo aqui
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -20,8 +20,7 @@ namespace GeneradorCufe.ViewModel
             // Namespace para elementos 'cac'
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
-            Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
-            Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(Nit, cadenaConexion);
+           
             string Tipo = (adquiriente.Tipo_p == 1) ? "13" : "31";
             string AdditionalAccountID = (adquiriente.Tipo_p == 1) ? "2" : "1";
 

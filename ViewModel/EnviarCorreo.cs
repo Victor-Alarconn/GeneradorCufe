@@ -6,12 +6,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using GeneradorCufe.Model;
 
 namespace GeneradorCufe.ViewModel
 {
     public  class EnviarCorreo
     {
-        public static void Enviar(string remitente, string destinatario, string asunto, string cuerpoMensaje, byte[] archivoAdjunto, string cufe)
+        public static void Enviar(Emisor emisor, Adquiriente adquiriente, Factura factura, byte[] archivoAdjunto, string cufe)
         {
             // Configurar el cliente SMTP
             SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com");

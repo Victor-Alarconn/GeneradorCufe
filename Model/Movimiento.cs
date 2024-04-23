@@ -21,6 +21,7 @@ namespace GeneradorCufe.Model
         public decimal Numero_bolsa { get; set; }
         public decimal Valor_bolsa{ get; set; }
         public string? Dato_Cufe { get; set; }
+        public decimal Nota_credito { get; set; }
 
     }
 }

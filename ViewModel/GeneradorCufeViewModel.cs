@@ -30,7 +30,7 @@ namespace GeneradorCufe.ViewModel
         public static async Task EjecutarGeneracionXML(Emisor emisor, Factura factura)
         {
             // Generar el XML y la versión base64
-            (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos) = GenerateXMLAndBase64(emisor, factura);
+            (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento) = GenerateXMLAndBase64(emisor, factura);
 
             // Verificar que el contenido XML no esté vacío antes de continuar
             if (string.IsNullOrEmpty(xmlContent))
@@ -99,12 +99,12 @@ namespace GeneradorCufe.ViewModel
 
             // Realizar la solicitud POST y esperar la tarea
             string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
-            string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos);
+            string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento);
         }
 
         
 
-        private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos)
+        private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento)
         {
             // Crear una instancia de la clase Respuesta_Consulta
             Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
@@ -128,7 +128,7 @@ namespace GeneradorCufe.ViewModel
                     MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
-                    ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos);
+                    ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento);
 
                     return response;
                 }
@@ -168,7 +168,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos)
+        private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento)
         {
             try
             {
@@ -225,7 +225,7 @@ namespace GeneradorCufe.ViewModel
                             // Crear el PDF
                             string directorioProyecto = Directory.GetCurrentDirectory();
                             string rutaArchivoPDF = Path.Combine(directorioProyecto, nombreArchivoPDF);
-                            GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura, listaProductos);
+                            GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura, listaProductos, cufe, adquiriente, movimiento);
 
                             // Comprimir el PDF y el XML en un archivo ZIP en un flujo de memoria
                             using (MemoryStream zipStream = new MemoryStream())
@@ -244,7 +244,7 @@ namespace GeneradorCufe.ViewModel
                                 }
 
                                 // Enviar el archivo ZIP por correo electrónico
-                                EnviarCorreo.Enviar("soporte3.rmsoft@gmail.com", "soporte3.rmsoft@gmail.com", "Asunto del correo", "Cuerpo del mensaje", zipStream.ToArray(), nombreArchivoPDF);
+                                EnviarCorreo.Enviar(emisor, adquiriente, factura, zipStream.ToArray(), nombreArchivoXML);
                             }
 
 
@@ -271,7 +271,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        public static (string cadenaConexion, string CUFE, List<Productos> listaProductos) UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)
+        public static (string cadenaConexion, string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento) UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -286,6 +286,7 @@ namespace GeneradorCufe.ViewModel
             Codigos_Consulta codigosConsulta = new Codigos_Consulta();
             Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
             FormaPago_Consulta formaPagoConsulta = new FormaPago_Consulta();
+            Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
 
             string cadenaConexion = "";
 
@@ -302,6 +303,7 @@ namespace GeneradorCufe.ViewModel
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
             List<Productos> listaProductos = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
             List<FormaPago> listaFormaPago = formaPagoConsulta.ConsultarFormaPago(factura, cadenaConexion);
+
             // Obtener la hora en formato DateTimeOffset
             DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
 
@@ -316,6 +318,7 @@ namespace GeneradorCufe.ViewModel
             string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit, emisor); // se puede resumir 
             string CUFE = GeneradorCufe_Cude.GenerarCUFE(construir);
 
+           
 
             string nota = $"Factura de Venta Emitida por {nitCompleto}-{emisor.Nombre_emisor}";
             
@@ -384,7 +387,8 @@ namespace GeneradorCufe.ViewModel
             GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos);  // Información del emisor
 
             string nitValue = listaProductos[0].Nit;
-            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion); // Información del adquiriente
+            Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
+            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente); // Información del adquiriente
 
 
             // Información del medio de pago
@@ -471,23 +475,25 @@ namespace GeneradorCufe.ViewModel
             }
 
             // Retornar la cadena de conexión
-            return (cadenaConexion, CUFE, listaProductos);
+            return (cadenaConexion, CUFE, listaProductos, adquiriente, movimiento);
         }
 
 
 
 
 
-        public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos) GenerateXMLAndBase64(Emisor emisor, Factura factura)
+        public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
             // Define la ruta al archivo XML base
             string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string baseXmlFilePath = Path.Combine(basePath, "Plantilla", "XML.xml");
             string xmlTemplatePath = ""; // Declaración fuera del bloque if
 
-            string cadenaConexion = "";
+             string cadenaConexion = "";
             string cufe = "";
             List<Productos> listaProductos = null;
+            Adquiriente adquiriente = null;
+            Movimiento movimiento = null;
 
             XDocument xmlDoc; // Declarar xmlDoc fuera del bloque try
 
@@ -512,14 +518,14 @@ namespace GeneradorCufe.ViewModel
                     xmlDoc = XDocument.Load(xmlTemplatePath);
 
                     // Actualizar el documento XML con los datos dinámicos
-                    (cadenaConexion, cufe, listaProductos) = UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
+                    (cadenaConexion, cufe, listaProductos, adquiriente, movimiento) = UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
                 }
                 catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
                 {
                     // Muestra un diálogo de error si la plantilla XML no se puede cargar
                     MessageBox.Show("Error: La plantilla para generar el XML es incorrecta o nula.", "Error de Plantilla XML", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>());
+                    return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>(), null, null);
 
                 }
             }
@@ -532,7 +538,7 @@ namespace GeneradorCufe.ViewModel
             string base64Encoded = Convert.ToBase64String(bytes);
 
             // Devolver la tupla con todos los valores
-            return (xmlContent, base64Encoded, cadenaConexion, cufe, listaProductos);
+            return (xmlContent, base64Encoded, cadenaConexion, cufe, listaProductos, adquiriente, movimiento);
         }
 
     }
