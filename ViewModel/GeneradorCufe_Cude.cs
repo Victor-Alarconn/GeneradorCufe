@@ -57,6 +57,7 @@ namespace GeneradorCufe.ViewModel
         {
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
+            decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
             string fechaNC = listaProductos.FirstOrDefault().Fecha.ToString("yyyy-MM-dd");
 
             DateTimeOffset now = DateTimeOffset.Now;
@@ -64,7 +65,7 @@ namespace GeneradorCufe.ViewModel
             string numeroFactura = prefijo;
             string fechaFactura = fechaNC;
             string horaFactura = horaf;
-            decimal valorSubtotal = movimiento.Valor_neto;
+            decimal valorSubtotal = VlrNeto;
             string codigo = "01";
             decimal iva = Iva;
             string codigo2 = "04";

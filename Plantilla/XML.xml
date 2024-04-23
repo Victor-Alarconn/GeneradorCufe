@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+  xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+  xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+  xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+  xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
+  xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1"
+  xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">
+  <ext:UBLExtensions>
+    <ext:UBLExtension>
+      <ext:ExtensionContent>
+        <sts:DianExtensions>
+          <sts:InvoiceControl>
+            <sts:InvoiceAuthorization>{InvoiceAuthorization}</sts:InvoiceAuthorization>
+            <sts:AuthorizationPeriod>
+              <cbc:StartDate>{StartDate}</cbc:StartDate>
+              <cbc:EndDate>{EndDate}</cbc:EndDate>
+            </sts:AuthorizationPeriod>
+            <sts:AuthorizedInvoices>
+              <sts:Prefix>{Prefix}</sts:Prefix>
+              <sts:From>{From}</sts:From>
+              <sts:To>{To}</sts:To>
+            </sts:AuthorizedInvoices>
+          </sts:InvoiceControl>
+        </sts:DianExtensions>
+      </ext:ExtensionContent>
+    </ext:UBLExtension>
+  </ext:UBLExtensions>
+  <cbc:CustomizationID>{CustomizationID}</cbc:CustomizationID>
+  <cbc:ProfileExecutionID>{ProfileExecutionID}</cbc:ProfileExecutionID>
+  <cbc:ID>{ID}</cbc:ID>
+  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">{UUID}</cbc:UUID>
+  <cbc:IssueDate>{IssueDate}</cbc:IssueDate>
+  <cbc:IssueTime>{IssueTime}</cbc:IssueTime>
+  <cbc:InvoiceTypeCode>{InvoiceTypeCode}</cbc:InvoiceTypeCode>
+  <cbc:Note>{Note}</cbc:Note>
+  <cbc:DocumentCurrencyCode>{DocumentCurrencyCode}</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>{LineCountNumeric}</cbc:LineCountNumeric>
+  <cac:AccountingSupplierParty>
+    <cbc:AdditionalAccountID>{AdditionalAccountID}</cbc:AdditionalAccountID>
+    <cac:Party>
+      <cac:PartyName>
+        <cbc:Name>{PartyNameName}</cbc:Name>
+      </cac:PartyName>
+      <cac:PhysicalLocation>
+        <cac:Address>
+          <cbc:ID>{PhysicalLocationID}</cbc:ID>
+          <cbc:CityName>{PhysicalLocationCity}</cbc:CityName>
+          <cbc:PostalZone>{PhysicalLocationPostalZone}</cbc:PostalZone>
+          <cbc:CountrySubentity>{PhysicalLocationCountrySubentity}</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>{PhysicalLocationCountrySubentityCode}</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>{PhysicalLocationLine}</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:Address>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
+        <cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="7" schemeName="31" schemeAgencyID="195"
+          schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+          {PartyTaxSchemeCompanyID}</cbc:CompanyID>
+        <cbc:TaxLevelCode>{TaxLevelCode}</cbc:TaxLevelCode>
+        <cac:RegistrationAddress>
+          <cbc:ID>{PartyTaxSchemeID}</cbc:ID>
+          <cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName>
+          <cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone>
+          <cbc:CountrySubentity>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>{PartyTaxSchemeLine}</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>{CountryIdentificationCode}</cbc:IdentificationCode>
+            <cbc:Name languageID="es">{CountryName}</cbc:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
+          <cbc:ID>{TaxSchemeID}</cbc:ID>
+          <cbc:Name>{TaxSchemeName}</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="7" schemeName="31" schemeAgencyID="195"
+          schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+          {PartyLegalEntityCompanyID}</cbc:CompanyID>
+        <cac:CorporateRegistrationScheme>
+          <cbc:ID>{CorporateRegistrationSchemeID}</cbc:ID>
+        </cac:CorporateRegistrationScheme>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Telephone>{Telephone}</cbc:Telephone>
+        <cbc:ElectronicMail>{ContactElectronicMail}</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cbc:AdditionalAccountID>{AdditionalAccountID}</cbc:AdditionalAccountID>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeName="13">{PartyIdentificationID}</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>{AccountingCustomerPartyName}</cbc:Name>
+      </cac:PartyName>
+      <cac:PhysicalLocation>
+        <cac:Address>
+          <cbc:ID>{AccountingCustomerPartyID}</cbc:ID>
+          <cbc:CityName>{AccountingCustomerPartyCityName}</cbc:CityName>
+          <cbc:PostalZone>{AccountingCustomerPartyPostalZone}</cbc:PostalZone>
+          <cbc:CountrySubentity>{AccountingCustomerPartyCountrySubentity}</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>{AccountingCustomerPartyCountrySubentityCode}</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>{AccountingCustomerPartyLine}</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:Address>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
+        <cbc:RegistrationName>{PartyTaxScheme}</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="7" schemeName="31" schemeAgencyID="195"
+          schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+          {PartyTaxSchemeCompanyID}</cbc:CompanyID>
+        <cbc:TaxLevelCode>{PartyTaxSchemeTaxLevelCode}</cbc:TaxLevelCode>
+        <cac:RegistrationAddress>
+          <cbc:ID>{PartyTaxSchemeID}</cbc:ID>
+          <cbc:CityName>{PartyTaxSchemeCityName}</cbc:CityName>
+          <cbc:PostalZone>{PartyTaxSchemePostalZone}</cbc:PostalZone>
+          <cbc:CountrySubentity>{PartyTaxSchemeCountrySubentity}</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>{PartyTaxSchemeCountrySubentityCode}</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>{PartyTaxSchemeLine}</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
+          <cbc:ID>{TaxSchemeID}</cbc:ID>
+          <cbc:Name>{TaxSchemeName}</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>{PartyLegalEntityRegistrationName}</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="7" schemeName="31" schemeAgencyID="195"
+          schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+          {PartyLegalEntityCompanyID}</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Telephone>{Telephone}</cbc:Telephone>
+        <cbc:ElectronicMail>{PartyLegalEntityElectronicMail}</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:ID>{PaymentMeansID}</cbc:ID>
+    <cbc:PaymentMeansCode>{PaymentMeansPaymentMeansCode}</cbc:PaymentMeansCode>
+    <cbc:PaymentID>{PaymentMeansPaymentID}</cbc:PaymentID>
+  </cac:PaymentMeans>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="COP">{TaxTotalaxAmount}</cbc:TaxAmount>
+    <!-- <cbc:RoundingAmount currencyID="COP">{RoundingAmount}</cbc:RoundingAmount>   REDONDEO  nuevo -->
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">{TaxTotalTaxableAmount}</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">{TaxTotalTaxAmount}</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>{TaxTotalPercent}</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:WithholdingTaxTotal>
+    <cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">{TaxableAmount}</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>{Percent}</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>{ID}</cbc:ID>
+          <cbc:Name>{Name}</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:WithholdingTaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="COP">{LegalMonetaryTotalLineExtensionAmount}</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="COP">{LegalMonetaryTotalTaxExclusiveAmount}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="COP">{LegalMonetaryTotalTaxInclusiveAmount}</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="COP">{LegalMonetaryTotalPayableAmount}</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>{InvoiceLineID}</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">{InvoiceLineInvoicedQuantity}</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">{InvoiceLineLineExtensionAmount}</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">{InvoiceLineTaxAmount}</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">{InvoiceLineTaxableAmount}</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">{InvoiceLineTaxAmount}</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>{InvoiceLinePercent}</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>{TaxSchemeID}</cbc:ID>
+            <cbc:Name>{TaxSchemeName}</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>{ItemDescription}</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">{ItemID}</cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">{PricePriceAmount}</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">{PriceBaseQuantity}</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <DATA>
+    <UBL21>true</UBL21>
+    <Partnership>
+      <ID>{PartnershipID}</ID>
+      <TechKey>{TechKey}</TechKey>
+      <SetTestID>{SetTestID}</SetTestID>
+    </Partnership>
+  </DATA>
+</Invoice>

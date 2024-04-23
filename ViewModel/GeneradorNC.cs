@@ -186,7 +186,7 @@ namespace GeneradorCufe.ViewModel
 
             decimal Valor = 0;
 
-            if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0)
+            if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0) // falta calcular el valor 
             {
                 Valor = Math.Round(movimiento.Valor + movimiento.Retiene, 2);
             }
@@ -195,11 +195,13 @@ namespace GeneradorCufe.ViewModel
                 Valor = movimiento.Valor;
             }
 
+            decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
+
             var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
             if (legalMonetaryTotalElement != null)
             {
-                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Bruto antes de tributos
-                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Base Imponible
+                legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(VlrNeto); // Total Valor Bruto antes de tributos
+                legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(VlrNeto); // Total Valor Base Imponible
                 legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Valor); // Total Valor Bruto más tributos
                 legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor); // Total Valor a Pagar // cufe ValTot
             }
