@@ -79,6 +79,31 @@ namespace GeneradorCufe.ViewModel
                     encabezado.AddCell(cEmpty15);
                 }
 
+                // Agregar celda vacía en la segunda columna (central)
+                encabezado.AddCell(cEmpty15);
+
+                // Crear tabla para qr y datos del emisor en la tercera columna (derecha)
+                PdfPTable table = new PdfPTable(1);
+                table.WidthPercentage = 100;
+                table.DefaultCell.Border = Rectangle.NO_BORDER;
+
+                // Añadir elementos a qrCell
+                string TextoQR = "NumFac:323200000129FecFac:2019-16-01HorFac:10:53:10-05:00NitFac:700085371DocAdq:800199436ValFac:1500000.00ValIva:285000.00ValOtroIm:0.00ValTolFac:1785000.00CUFE:e5bac48e354bc907bccff0ea7d45fbf784f0a8e7243b58337361e1fbd430489d";
+                if (string.IsNullOrEmpty(TextoQR)) TextoQR = "TextoQR"; // Use a default value if the text is null or empty
+                Image imageQr = CrearQR(TextoQR);
+                imageQr.Border = Rectangle.NO_BORDER;
+                imageQr.Alignment = Element.ALIGN_CENTER;
+                PdfPCell qrCell = new PdfPCell();
+                qrCell.AddElement(new Phrase("Factura Electrónica De Venta", FontFactory.GetFont("Helvetica", 10, Font.BOLD)));
+                qrCell.AddElement(imageQr);
+                qrCell.Border = Rectangle.NO_BORDER;
+                qrCell.PaddingBottom = 10;
+                qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
+
+                // Agregar qrCell a la tabla
+                table.AddCell(qrCell);
+
+                // Datos del emisor (ficticios)
                 string nombreEmisor = emisor.Nombre_emisor;
                 string nitEmisor = emisor.Nit_emisor;
                 string representanteEmisor = "Representante: JURIDICA - Responsable IVA";
@@ -105,59 +130,17 @@ namespace GeneradorCufe.ViewModel
                 cDatosEmisor.Border = Rectangle.NO_BORDER;
                 cDatosEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-                encabezado.AddCell(cDatosEmisor);
+                // Agregar celda de datos del emisor a la tabla
+                table.AddCell(cDatosEmisor);
+
+                // Agregar tabla de qr y datos del emisor a la tercera columna (derecha)
+                encabezado.AddCell(table);
+
+                // Agregar celda vacía en la tercera columna (derecha)
                 encabezado.AddCell(cEmpty15);
-                encabezado.AddCell(cEmpty5);
+
                 documento.Add(encabezado);
 
-                //// Espacio adicional
-                //documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
-
-                // Create a table for qr
-                PdfPTable table = new PdfPTable(2);
-                table.WidthPercentage = 100;
-                table.DefaultCell.Border = Rectangle.NO_BORDER;
-
-                // Declarar qrCell antes de establecer su altura fija
-                PdfPCell qrCell = new PdfPCell();
-
-                // Añadir elementos a qrCell
-                string TextoQR = "NumFac:323200000129FecFac:2019-16-01HorFac:10:53:10-05:00NitFac:700085371DocAdq:800199436ValFac:1500000.00ValIva:285000.00ValOtroIm:0.00ValTolFac:1785000.00CUFE:e5bac48e354bc907bccff0ea7d45fbf784f0a8e7243b58337361e1fbd430489d";
-                if (string.IsNullOrEmpty(TextoQR)) TextoQR = "TextoQR"; // Use a default value if the text is null or empty
-                Image imageQr = CrearQR(TextoQR);
-                imageQr.Border = Rectangle.NO_BORDER;
-                imageQr.Alignment = Element.ALIGN_CENTER;
-                qrCell.AddElement(new Phrase("Factura Electrónica De Venta", FontFactory.GetFont("Helvetica", 12, Font.BOLD)));
-                qrCell.AddElement(imageQr);
-                qrCell.Border = Rectangle.NO_BORDER;
-                qrCell.PaddingBottom = 10;
-                qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
-                // No establecer la altura fija de qrCell
-                // qrCell.FixedHeight = alturaCelda;
-                table.AddCell(qrCell);
-
-                // Add the general information to the second column
-                PdfPTable tInfoGeneral = new PdfPTable(1);
-                tInfoGeneral.WidthPercentage = 100;
-                tInfoGeneral.DefaultCell.Border = Rectangle.NO_BORDER;
-
-                // Tipo de factura y número de factura (ficticios)
-                string tipoYNumeroFactura = "Factura " + factura.Facturas;
-
-                // Crear la celda con el tipo de factura y número de factura combinados
-                PdfPCell cTipoYNumeroFactura = new PdfPCell(new Phrase(tipoYNumeroFactura, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
-                cTipoYNumeroFactura.BackgroundColor = BaseColor.WHITE;
-                cTipoYNumeroFactura.BorderColor = BaseColor.GRAY;
-                cTipoYNumeroFactura.Border = Rectangle.BOX;
-                cTipoYNumeroFactura.HorizontalAlignment = Element.ALIGN_CENTER;
-                cTipoYNumeroFactura.PaddingTop = 5;
-                cTipoYNumeroFactura.PaddingBottom = 7;
-
-                // Agregar la celda al PdfPTable
-                tInfoGeneral.AddCell(cTipoYNumeroFactura);
-                table.AddCell(tInfoGeneral);
-
-                documento.Add(table);
 
 
 
