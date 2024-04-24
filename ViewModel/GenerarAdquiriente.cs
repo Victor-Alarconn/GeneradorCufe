@@ -22,6 +22,7 @@ namespace GeneradorCufe.ViewModel
 
 
             string ciudadCompleta = codigos.Nombre_Municipio ?? "";
+            adquiriente.Nombre_municipio_adqui = ciudadCompleta;
             string[] partesCiudad = ciudadCompleta.Split(',');
             string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
             string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)

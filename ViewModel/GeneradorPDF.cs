@@ -79,68 +79,39 @@ namespace GeneradorCufe.ViewModel
                     encabezado.AddCell(cEmpty15);
                 }
 
-
-                // Agregar celda vacía en la tercera columna (derecha)
-                encabezado.AddCell(cEmpty15);
-
-                // Datos del emisor (ficticios)
                 string nombreEmisor = emisor.Nombre_emisor;
                 string nitEmisor = emisor.Nit_emisor;
+                string representanteEmisor = "Representante: JURIDICA - Responsable IVA";
+                string direccionEmisor = "Dirección: " + emisor.Direccion_emisor;
+                string correoEmisor = emisor.Correo_emisor;
+                string telefonoEmisor = "Teléfono: " + emisor.Telefono_emisor;
 
-                var tEmisor = new PdfPTable(1);
-                tEmisor.WidthPercentage = 100;
-                tEmisor.DefaultCell.Border = Rectangle.NO_BORDER;
-
-                var fnt1 = FontFactory.GetFont("Helvetica", 10, Font.BOLD); //f12
-                var cNombreEmisor = new PdfPCell(new Phrase(nombreEmisor, fnt1));
-                cNombreEmisor.Border = Rectangle.NO_BORDER;
-                cNombreEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
-
-                var fnt2 = FontFactory.GetFont("Helvetica", 10, Font.BOLD); //f11
-                var cNitEmisor = new PdfPCell(new Phrase("NIT: " + nitEmisor, fnt2));
-                cNitEmisor.Border = Rectangle.NO_BORDER;
-                cNitEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
-
-                var fnt3 = FontFactory.GetFont("Helvetica", 9, Font.NORMAL); //f9
-
-                // Crear tabla interna para los datos del emisor
+                // Crear tabla para los datos del emisor
                 var tDatosEmisor = new PdfPTable(1);
                 tDatosEmisor.WidthPercentage = 100;
                 tDatosEmisor.DefaultCell.Border = Rectangle.NO_BORDER;
 
-                // Aquí eliminamos la redefinición de las variables
+                var fnt = FontFactory.GetFont("Helvetica", 9, Font.NORMAL);
 
-                var cRepresentante = new PdfPCell(new Phrase("Representante : JURIDICA - Responsable IVA", fnt3));
-                cRepresentante.Border = Rectangle.NO_BORDER;
-                cRepresentante.HorizontalAlignment = Element.ALIGN_CENTER;
-                cRepresentante.VerticalAlignment = Element.ALIGN_TOP;
+                // Agregar cada dato del emisor en una sola celda
+                var cDatosEmisor = new PdfPCell(new Phrase(
+                    $"{nombreEmisor}\n" +
+                    $"NIT: {nitEmisor}\n" +
+                    $"{representanteEmisor}\n" +
+                    $"{direccionEmisor}\n" +
+                    $"{correoEmisor}\n" +
+                    $"{telefonoEmisor}", fnt));
 
-                var cDireccionEmisor = new PdfPCell(new Phrase("Dirección :"+ emisor.Direccion_emisor , fnt3));
-                cDireccionEmisor.Border = Rectangle.NO_BORDER;
-                cDireccionEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
+                cDatosEmisor.Border = Rectangle.NO_BORDER;
+                cDatosEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
 
-                var cCorreoEmisor = new PdfPCell(new Phrase(emisor.Correo_emisor, fnt3));
-                cCorreoEmisor.Border = Rectangle.NO_BORDER;
-                cCorreoEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
-
-                var cTelefonoEmisor = new PdfPCell(new Phrase("Telefono:"+ emisor.Telefono_emisor, fnt3));
-                cTelefonoEmisor.Border = Rectangle.NO_BORDER;
-                cTelefonoEmisor.HorizontalAlignment = Element.ALIGN_CENTER;
-
-                // Agregar datos del emisor en la segunda columna (central)
-                encabezado.AddCell(cEmpty5);
-                encabezado.AddCell(cNombreEmisor);
-                encabezado.AddCell(cNitEmisor);
-                encabezado.AddCell(cRepresentante);
-                encabezado.AddCell(cDireccionEmisor);
-                encabezado.AddCell(cCorreoEmisor);
-                encabezado.AddCell(cTelefonoEmisor);
-                encabezado.AddCell(cEmpty5);
+                encabezado.AddCell(cDatosEmisor);
                 encabezado.AddCell(cEmpty15);
+                encabezado.AddCell(cEmpty5);
                 documento.Add(encabezado);
 
-                // Espacio adicional
-                documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                //// Espacio adicional
+                //documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
 
                 // Create a table for qr
                 PdfPTable table = new PdfPTable(2);
@@ -150,22 +121,19 @@ namespace GeneradorCufe.ViewModel
                 // Declarar qrCell antes de establecer su altura fija
                 PdfPCell qrCell = new PdfPCell();
 
-                // Definir la altura deseada para las celdas
-                float alturaCelda = 50f;
-
                 // Añadir elementos a qrCell
                 string TextoQR = "NumFac:323200000129FecFac:2019-16-01HorFac:10:53:10-05:00NitFac:700085371DocAdq:800199436ValFac:1500000.00ValIva:285000.00ValOtroIm:0.00ValTolFac:1785000.00CUFE:e5bac48e354bc907bccff0ea7d45fbf784f0a8e7243b58337361e1fbd430489d";
                 if (string.IsNullOrEmpty(TextoQR)) TextoQR = "TextoQR"; // Use a default value if the text is null or empty
                 Image imageQr = CrearQR(TextoQR);
                 imageQr.Border = Rectangle.NO_BORDER;
                 imageQr.Alignment = Element.ALIGN_CENTER;
-                qrCell.AddElement(new Phrase("Representación Gráfica De Factura Electrónica De Venta", FontFactory.GetFont("Helvetica", 12, Font.BOLD)));
+                qrCell.AddElement(new Phrase("Factura Electrónica De Venta", FontFactory.GetFont("Helvetica", 12, Font.BOLD)));
                 qrCell.AddElement(imageQr);
                 qrCell.Border = Rectangle.NO_BORDER;
                 qrCell.PaddingBottom = 10;
                 qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
-                // Establecer la altura fija de qrCell
-                qrCell.FixedHeight = alturaCelda;
+                // No establecer la altura fija de qrCell
+                // qrCell.FixedHeight = alturaCelda;
                 table.AddCell(qrCell);
 
                 // Add the general information to the second column
@@ -173,28 +141,24 @@ namespace GeneradorCufe.ViewModel
                 tInfoGeneral.WidthPercentage = 100;
                 tInfoGeneral.DefaultCell.Border = Rectangle.NO_BORDER;
 
-                // Tipo de factura (ficticio)
-                string Tipo = "Factura Victor";
-                PdfPCell ciTipoFactura = new PdfPCell(new Phrase(Tipo, FontFactory.GetFont("Helvetica", 7, Font.NORMAL)));
-                ciTipoFactura.Border = Rectangle.NO_BORDER;
-                ciTipoFactura.HorizontalAlignment = Element.ALIGN_CENTER;
-                ciTipoFactura.PaddingBottom = 5;
+                // Tipo de factura y número de factura (ficticios)
+                string tipoYNumeroFactura = "Factura " + factura.Facturas;
 
-                // Número de factura (ficticio)
-                string vNumeroFactura = factura.Facturas;
-                PdfPCell cNumeroFactura = new PdfPCell(new Phrase(vNumeroFactura, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
-                cNumeroFactura.BackgroundColor = BaseColor.WHITE;
-                cNumeroFactura.BorderColor = BaseColor.GRAY;
-                cNumeroFactura.Border = Rectangle.BOX;
-                cNumeroFactura.HorizontalAlignment = Element.ALIGN_CENTER;
-                cNumeroFactura.PaddingTop = 5;
-                cNumeroFactura.PaddingBottom = 7;
+                // Crear la celda con el tipo de factura y número de factura combinados
+                PdfPCell cTipoYNumeroFactura = new PdfPCell(new Phrase(tipoYNumeroFactura, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                cTipoYNumeroFactura.BackgroundColor = BaseColor.WHITE;
+                cTipoYNumeroFactura.BorderColor = BaseColor.GRAY;
+                cTipoYNumeroFactura.Border = Rectangle.BOX;
+                cTipoYNumeroFactura.HorizontalAlignment = Element.ALIGN_CENTER;
+                cTipoYNumeroFactura.PaddingTop = 5;
+                cTipoYNumeroFactura.PaddingBottom = 7;
 
-                tInfoGeneral.AddCell(ciTipoFactura);
-                tInfoGeneral.AddCell(cNumeroFactura);
+                // Agregar la celda al PdfPTable
+                tInfoGeneral.AddCell(cTipoYNumeroFactura);
                 table.AddCell(tInfoGeneral);
 
                 documento.Add(table);
+
 
 
                 // Espacio adicional
@@ -214,14 +178,36 @@ namespace GeneradorCufe.ViewModel
                 string correoAdquiriente = adquiriente.Correo_adqui;
                 string telefonoAdquiriente = adquiriente.Telefono_adqui;
 
-                string iAdquiriente = "ADQUIRIENTE: " + nombreAdquiriente + "\r\n" +
-                                      "DOCUMENTO DE IDENTIFICACIÓN: " + identificacionAdquiriente + "\r\n" +
-                                      "DIRECCIÓN: " + direccionAdquiriente.ToUpper().Replace("\r\n", " ");
+                // Obtener el texto correspondiente al tipo de documento del adquiriente
+                string tipoDocumentoTexto;
+                switch (adquiriente.Tipo_doc)
+                {
+                    case "A":
+                        tipoDocumentoTexto = "NIT";
+                        break;
+                    case "C":
+                        tipoDocumentoTexto = "C.C";
+                        break;
+                    case "E":
+                        tipoDocumentoTexto = "Ced.Extranj";
+                        break;
+                    case "I":
+                        tipoDocumentoTexto = "Tarj.Ident";
+                        break;
+                    case "P":
+                        tipoDocumentoTexto = "Pasaporte";
+                        break;
+                    default:
+                        tipoDocumentoTexto = "DOCUMENTO DE IDENTIFICACIÓN";
+                        break;
+                }
 
-                if (!string.IsNullOrEmpty(correoAdquiriente))
-                    iAdquiriente += "\r\nCORREO ELECTRÓNICO: " + correoAdquiriente;
-                if (!string.IsNullOrEmpty(telefonoAdquiriente))
-                    iAdquiriente += "\r\nNÚMERO TELEFÓNICO: " + telefonoAdquiriente;
+                // Crear el texto del adquiriente con el tipo de documento y número de identificación en la misma línea
+                string iAdquiriente = "Cliente: " + nombreAdquiriente + " - " + tipoDocumentoTexto + ": " + identificacionAdquiriente + "\n" +
+                                      "DIRECCIÓN: " + direccionAdquiriente.ToUpper().Replace("\r\n", " ") +
+                                      " " + adquiriente.Nombre_municipio_adqui + "\n" +
+                                      "CORREO ELECTRÓNICO: " + correoAdquiriente + "\n" +
+                                      "NÚMERO TELEFÓNICO: " + telefonoAdquiriente;
 
                 PdfPCell cAdquiriente = new PdfPCell(new Phrase(iAdquiriente, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                 cAdquiriente.BorderColor = BaseColor.GRAY;
@@ -274,23 +260,21 @@ namespace GeneradorCufe.ViewModel
 
                 // Crear un nuevo objeto PdfPTable para el nuevo renglón
                 PdfPTable nuevoRenglon = new PdfPTable(1);
-                nuevoRenglon.HorizontalAlignment = Element.ALIGN_CENTER;
                 nuevoRenglon.WidthPercentage = 100;
 
                 // Agregar una celda con el dato deseado al nuevo objeto PdfPTable
-                string nuevoDato = "CUFE:" + cufe; // Este sería tu nuevo dato
+                string nuevoDato = "CUFE: " + cufe; // Este sería tu nuevo dato
                 PdfPCell celdaNuevoDato = new PdfPCell(new Phrase(nuevoDato, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
-                celdaNuevoDato.BorderColor = BaseColor.GRAY;
-                celdaNuevoDato.Border = Rectangle.BOX;
-                celdaNuevoDato.HorizontalAlignment = Element.ALIGN_CENTER;
-                celdaNuevoDato.VerticalAlignment = Element.ALIGN_MIDDLE;
-                celdaNuevoDato.Padding = 4;
+                celdaNuevoDato.Border = Rectangle.NO_BORDER; // Eliminar bordes
+                celdaNuevoDato.HorizontalAlignment = Element.ALIGN_LEFT; // Alinear a la izquierda
+                celdaNuevoDato.Padding = 2;
 
                 // Agregar la celda al nuevo objeto PdfPTable
                 nuevoRenglon.AddCell(celdaNuevoDato);
 
                 // Añadir el nuevo objeto PdfPTable al documento
                 documento.Add(nuevoRenglon);
+
 
 
                 // Creación de la tabla con 9 columnas
@@ -328,7 +312,7 @@ namespace GeneradorCufe.ViewModel
                     celdaCodigo.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaCodigo);
 
-                    PdfPCell celdaCantidad = new PdfPCell(new Phrase(producto.Cantidad.ToString("0.##"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaCantidad = new PdfPCell(new Phrase(producto.Cantidad.ToString("0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaCantidad.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaCantidad.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaCantidad);
@@ -360,7 +344,7 @@ namespace GeneradorCufe.ViewModel
                     celdaIvaTotal.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaIvaTotal);
 
-                    PdfPCell celdaValor = new PdfPCell(new Phrase(producto.Valor.ToString("#,###,##0.##"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaValor = new PdfPCell(new Phrase(producto.Valor.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaValor.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaValor.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaValor);
@@ -380,7 +364,7 @@ namespace GeneradorCufe.ViewModel
                 // Tabla de totales
                 var tTotales = new PdfPTable(3);
                 tTotales.WidthPercentage = 100;
-                tTotales.SetWidths(new float[] { 4.5f, 3f, 1.5f });
+                tTotales.SetWidths(new float[] { 4.5f, 1.5f, 1.5f });
 
                 // Datos ficticios
                 string TextoAdicional = "Información adicional: Lorem ipsum dolor sit amet.";
@@ -406,7 +390,7 @@ namespace GeneradorCufe.ViewModel
                 ciSubtotalPU.BorderWidthBottom = 0f;
                 ciSubtotalPU.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciSubtotalPU.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciSubtotalPU.Padding = 4;
+                ciSubtotalPU.Padding = 2;
 
                 var fnt9 = FontFactory.GetFont("Helvetica", 8, Font.NORMAL);
 
@@ -414,14 +398,14 @@ namespace GeneradorCufe.ViewModel
                 decimal descuentosDetalle = movimiento.Valor_dsto; // Valor ficticio de descuentos
                 decimal subtotalPU = movimiento.Valor_neto; // Valor ficticio del subtotal
 
-                string ivSubtotaoPU = subtotalPU.ToString("$#,###,##0.##");
-                var cvSubtotalPU = new PdfPCell(new Phrase(descuentosDetalle.ToString("$#,###,##0.##"), fnt9));
+                string ivSubtotaoPU = subtotalPU.ToString("$#,###,##0.00");
+                var cvSubtotalPU = new PdfPCell(new Phrase(descuentosDetalle.ToString("$#,###,##0.00"), fnt9));
                 cvSubtotalPU.BorderColor = BaseColor.GRAY;
                 cvSubtotalPU.Border = Rectangle.BOX;
                 cvSubtotalPU.BorderWidthBottom = 0f;
                 cvSubtotalPU.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvSubtotalPU.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvSubtotalPU.Padding = 4;
+                cvSubtotalPU.Padding = 2;
 
                 var ciDescuentosDetalle = new PdfPCell(new Phrase("Valor Exento", fnt8));
                 ciDescuentosDetalle.BorderColor = BaseColor.GRAY;
@@ -430,9 +414,9 @@ namespace GeneradorCufe.ViewModel
                 ciDescuentosDetalle.BorderWidthBottom = 0f;
                 ciDescuentosDetalle.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciDescuentosDetalle.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciDescuentosDetalle.Padding = 4;
+                ciDescuentosDetalle.Padding = 2;
 
-                var ivDescuentosDetalle = descuentosDetalle != 0 ? descuentosDetalle.ToString("$#,###,##0.##") : "0";
+                var ivDescuentosDetalle = descuentosDetalle != 0 ? descuentosDetalle.ToString("$#,###,##0.00") : "0";
                 var cvDescuentosDetalle = new PdfPCell(new Phrase(ivDescuentosDetalle, fnt9));
                 cvDescuentosDetalle.BorderColor = BaseColor.GRAY;
                 cvDescuentosDetalle.Border = Rectangle.BOX;
@@ -440,7 +424,7 @@ namespace GeneradorCufe.ViewModel
                 cvDescuentosDetalle.BorderWidthBottom = 0f;
                 cvDescuentosDetalle.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvDescuentosDetalle.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvDescuentosDetalle.Padding = 4;
+                cvDescuentosDetalle.Padding = 2;
 
                 var ciRecargosDetalle = new PdfPCell(new Phrase("Valor Gravado", fnt8));
                 ciRecargosDetalle.BorderColor = BaseColor.GRAY;
@@ -448,13 +432,13 @@ namespace GeneradorCufe.ViewModel
                 ciRecargosDetalle.BorderWidthTop = 0f;
                 ciRecargosDetalle.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciRecargosDetalle.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciRecargosDetalle.Padding = 4;
+                ciRecargosDetalle.Padding = 2;
 
                 // Simulación de valores ficticios para los recargos
-                decimal recargosDetalle = 75.0m; // Valor ficticio de recargos
+                decimal recargosDetalle = 00.00m; // Valor ficticio de recargos
 
                 // Convertir el valor de recargos a cadena
-                string iRecargosDetalle = recargosDetalle.ToString("$#,###,##0.##");
+                string iRecargosDetalle = recargosDetalle.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor de recargos
                 var cvRecargosDetalle = new PdfPCell(new Phrase(iRecargosDetalle, fnt9));
@@ -471,12 +455,12 @@ namespace GeneradorCufe.ViewModel
                 ciSubtotalNG.BorderWidthBottom = 0f;
                 ciSubtotalNG.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciSubtotalNG.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciSubtotalNG.Padding = 4;
+                ciSubtotalNG.Padding = 2;
 
                 decimal VlrIva = movimiento.Valor_iva; // Monto exclusivo de impuestos ficticio
 
                 // Convertir el subtotal no gravado a cadena
-                string iSubtotalNG = VlrIva.ToString("$#,###,##0.##");
+                string iSubtotalNG = VlrIva.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del subtotal no gravado ficticio
                 var cvSubtotalNG = new PdfPCell(new Phrase(iSubtotalNG, fnt9));
@@ -485,7 +469,7 @@ namespace GeneradorCufe.ViewModel
                 cvSubtotalNG.BorderWidthBottom = 0f;
                 cvSubtotalNG.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvSubtotalNG.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvSubtotalNG.Padding = 4;
+                cvSubtotalNG.Padding = 2;
 
                 var ciSubtotalBG = new PdfPCell(new Phrase("Impoconsumo", fnt8));
                 ciSubtotalBG.BorderColor = BaseColor.GRAY;
@@ -494,10 +478,10 @@ namespace GeneradorCufe.ViewModel
                 ciSubtotalBG.BorderWidthBottom = 0f;
                 ciSubtotalBG.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciSubtotalBG.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciSubtotalBG.Padding = 4;
+                ciSubtotalBG.Padding = 2;
 
                 // Convertir el monto exclusivo de impuestos a cadena
-                string iSubtotalBG = movimiento.Ipoconsumo.ToString("$#,###,##0.##");
+                string iSubtotalBG = movimiento.Ipoconsumo.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del monto exclusivo de impuestos ficticio
                 var cvSubtotalBG = new PdfPCell(new Phrase(iSubtotalBG, fnt9));
@@ -507,7 +491,7 @@ namespace GeneradorCufe.ViewModel
                 cvSubtotalBG.BorderWidthBottom = 0f;
                 cvSubtotalBG.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvSubtotalBG.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvSubtotalBG.Padding = 4;
+                cvSubtotalBG.Padding = 2;
 
                 var ciTotalImpuesto = new PdfPCell(new Phrase("Impto. Bolsas", fnt8));
                 ciTotalImpuesto.BorderColor = BaseColor.GRAY;
@@ -516,13 +500,13 @@ namespace GeneradorCufe.ViewModel
                 ciTotalImpuesto.BorderWidthBottom = 0f;
                 ciTotalImpuesto.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciTotalImpuesto.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciTotalImpuesto.Padding = 4;
+                ciTotalImpuesto.Padding = 2;
 
                 // Simulación de valores ficticios para el total de impuestos
                 decimal totalImpuesto = movimiento.Valor_bolsa; // Total de impuestos ficticio
 
                 // Convertir el total de impuestos a cadena
-                string iTotalImpuesto = totalImpuesto.ToString("$#,###,##0.##");
+                string iTotalImpuesto = totalImpuesto.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del total de impuestos ficticio
                 var cvTotalImpuesto = new PdfPCell(new Phrase(iTotalImpuesto, fnt9));
@@ -532,7 +516,7 @@ namespace GeneradorCufe.ViewModel
                 cvTotalImpuesto.BorderWidthBottom = 0f;
                 cvTotalImpuesto.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvTotalImpuesto.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvTotalImpuesto.Padding = 4;
+                cvTotalImpuesto.Padding = 2;
 
                 var ciTotalMI = new PdfPCell(new Phrase("TOTAL (=)", fnt8));
                 ciTotalMI.BorderColor = BaseColor.GRAY;
@@ -540,13 +524,13 @@ namespace GeneradorCufe.ViewModel
                 ciTotalMI.BorderWidthTop = 0f;
                 ciTotalMI.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciTotalMI.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciTotalMI.Padding = 4;
+                ciTotalMI.Padding = 2;
 
                 // Simulación de valor ficticio para el total más impuesto
                 decimal totalMI = movimiento.Valor; // Total más impuesto ficticio
 
                 // Convertir el total más impuesto a cadena
-                string iTotalMI = totalMI.ToString("$#,###,##0.##");
+                string iTotalMI = totalMI.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del total más impuesto ficticio
                 var cvTotalMI = new PdfPCell(new Phrase(iTotalMI, fnt9));
@@ -555,7 +539,7 @@ namespace GeneradorCufe.ViewModel
                 cvTotalMI.BorderWidthTop = 0f;
                 cvTotalMI.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvTotalMI.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvTotalMI.Padding = 4;
+                cvTotalMI.Padding = 2;
 
                 var ciDescuentoGlobal = new PdfPCell(new Phrase("Rete. Fuente", fnt8));
                 ciDescuentoGlobal.BorderColor = BaseColor.GRAY;
@@ -563,13 +547,13 @@ namespace GeneradorCufe.ViewModel
                 ciDescuentoGlobal.BorderWidthBottom = 0f;
                 ciDescuentoGlobal.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciDescuentoGlobal.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciDescuentoGlobal.Padding = 4;
+                ciDescuentoGlobal.Padding = 2;
 
                 // Simulación de valor ficticio para el descuento global
                 decimal descuentoGlobal = movimiento.Retiene; // Descuento global ficticio
 
                 // Convertir el descuento global a cadena
-                string iDescuentoGlobal = descuentoGlobal.ToString("$#,###,##0.##");
+                string iDescuentoGlobal = descuentoGlobal.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del descuento global ficticio
                 var cvDescuentoGlobal = new PdfPCell(new Phrase(iDescuentoGlobal, fnt9));
@@ -578,7 +562,7 @@ namespace GeneradorCufe.ViewModel
                 cvDescuentoGlobal.BorderWidthBottom = 0f;
                 cvDescuentoGlobal.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvDescuentoGlobal.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvDescuentoGlobal.Padding = 4;
+                cvDescuentoGlobal.Padding = 2;
 
                 var ciRecargoGlobal = new PdfPCell(new Phrase("Rete. ICA", fnt8));
                 ciRecargoGlobal.BorderColor = BaseColor.GRAY;
@@ -586,13 +570,13 @@ namespace GeneradorCufe.ViewModel
                 ciRecargoGlobal.BorderWidthTop = 0f;
                 ciRecargoGlobal.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciRecargoGlobal.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciRecargoGlobal.Padding = 4;
+                ciRecargoGlobal.Padding = 2;
 
                 // Simulación de valor ficticio para el recargo global
                 decimal recargoGlobal = 00.0m; // Recargo global ficticio
 
                 // Convertir el recargo global a cadena
-                string iRecargoGlobal = recargoGlobal.ToString("$#,###,##0.##");
+                string iRecargoGlobal = recargoGlobal.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del recargo global ficticio
                 var cvRecargoGlobal = new PdfPCell(new Phrase(iRecargoGlobal, fnt9));
@@ -601,41 +585,41 @@ namespace GeneradorCufe.ViewModel
                 cvRecargoGlobal.BorderWidthTop = 0f;
                 cvRecargoGlobal.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvRecargoGlobal.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvRecargoGlobal.Padding = 4;
+                cvRecargoGlobal.Padding = 2;
 
-                //var ciAnticipo = new PdfPCell(new Phrase("Anticipo", fnt8));
-                //ciAnticipo.BorderColor = BaseColor.GRAY;
-                //ciAnticipo.Border = Rectangle.BOX;
-                //ciAnticipo.HorizontalAlignment = Element.ALIGN_CENTER;
-                //ciAnticipo.VerticalAlignment = Element.ALIGN_MIDDLE;
-                //ciAnticipo.Padding = 4;
+                var ciAnticipo = new PdfPCell(new Phrase("Valor Excluido", fnt8));
+                ciAnticipo.BorderColor = BaseColor.GRAY;
+                ciAnticipo.Border = Rectangle.BOX;
+                ciAnticipo.HorizontalAlignment = Element.ALIGN_CENTER;
+                ciAnticipo.VerticalAlignment = Element.ALIGN_MIDDLE;
+                ciAnticipo.Padding = 4;
 
-                //// Simulación de valor ficticio para el anticipo
-                //decimal anticipo = 00.0m; // Anticipo ficticio
+                // Simulación de valor ficticio para el anticipo
+                decimal anticipo = 00.0m; // Anticipo ficticio
 
-                //// Convertir el anticipo a cadena
-                //string iAnticipo = anticipo.ToString("$#,###,##0.##");
+                // Convertir el anticipo a cadena
+                string iAnticipo = anticipo.ToString("$#,###,##0.00");
 
-                //// Crear la celda con el valor del anticipo ficticio
-                //var cvAnticipo = new PdfPCell(new Phrase(iAnticipo, fnt9));
-                //cvAnticipo.BorderColor = BaseColor.GRAY;
-                //cvAnticipo.Border = Rectangle.BOX;
-                //cvAnticipo.HorizontalAlignment = Element.ALIGN_CENTER;
-                //cvAnticipo.VerticalAlignment = Element.ALIGN_MIDDLE;
-                //cvAnticipo.Padding = 4;
+                // Crear la celda con el valor del anticipo ficticio
+                var cvAnticipo = new PdfPCell(new Phrase(iAnticipo, fnt9));
+                cvAnticipo.BorderColor = BaseColor.GRAY;
+                cvAnticipo.Border = Rectangle.BOX;
+                cvAnticipo.HorizontalAlignment = Element.ALIGN_CENTER;
+                cvAnticipo.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cvAnticipo.Padding = 2;
 
                 var ciTotalNeto = new PdfPCell(new Phrase("Total menos rete.", fnt8));
                 ciTotalNeto.BorderColor = BaseColor.GRAY;
                 ciTotalNeto.Border = Rectangle.BOX;
                 ciTotalNeto.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciTotalNeto.VerticalAlignment = Element.ALIGN_MIDDLE;
-                ciTotalNeto.Padding = 4;
+                ciTotalNeto.Padding = 2;
 
                 // Simulación de valor ficticio para el total neto
                 decimal vTotalAP = movimiento.Valor; // Total neto ficticio
 
                 // Convertir el total neto a cadena
-                string iTotalNeto = vTotalAP.ToString("$#,###,##0.##");
+                string iTotalNeto = vTotalAP.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del total neto ficticio
                 var cvTotalNeto = new PdfPCell(new Phrase(iTotalNeto, fnt8));
@@ -643,28 +627,16 @@ namespace GeneradorCufe.ViewModel
                 cvTotalNeto.Border = Rectangle.BOX;
                 cvTotalNeto.HorizontalAlignment = Element.ALIGN_CENTER;
                 cvTotalNeto.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cvTotalNeto.Padding = 4;
+                cvTotalNeto.Padding = 2;
                 string moneda = "COP";
-
-
-                // Convertir el total neto a letras
-                string iMontoLetras = montoALetras(vTotalAP, moneda).ToUpper();
-
-                // Crear la celda para el monto en letras
-                var cMontoLetras = new PdfPCell(new Phrase(iMontoLetras, fnt7));
-                cMontoLetras.BorderColor = BaseColor.GRAY;
-                cMontoLetras.Border = Rectangle.BOX;
-                cMontoLetras.HorizontalAlignment = Element.ALIGN_CENTER;
-                cMontoLetras.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cMontoLetras.Padding = 6;
-                cMontoLetras.Colspan = 3;
-
 
                 tTotales.AddCell(cDatos);
                 tTotales.AddCell(ciSubtotalPU);
                 tTotales.AddCell(cvSubtotalPU);
                 tTotales.AddCell(ciDescuentosDetalle);
                 tTotales.AddCell(cvDescuentosDetalle);
+                tTotales.AddCell(ciAnticipo);
+                tTotales.AddCell(cvAnticipo);
                 tTotales.AddCell(ciRecargosDetalle);
                 tTotales.AddCell(cvRecargosDetalle);
                 tTotales.AddCell(ciSubtotalNG);
@@ -679,19 +651,28 @@ namespace GeneradorCufe.ViewModel
                 tTotales.AddCell(cvDescuentoGlobal);
                 tTotales.AddCell(ciRecargoGlobal);
                 tTotales.AddCell(cvRecargoGlobal);
-                //tTotales.AddCell(ciAnticipo);
-                //tTotales.AddCell(cvAnticipo);
+               
                 tTotales.AddCell(ciTotalNeto);
                 tTotales.AddCell(cvTotalNeto);
-                tTotales.AddCell(cMontoLetras);
 
                 tTotales.AddCell(cDatos);
 
                 documento.Add(tTotales);
 
+                // Crear la celda para el monto en letras
+                string iMontoLetras = montoALetras(vTotalAP, moneda).ToUpper();
+                // Crear un nuevo objeto Paragraph para el monto en letras
+                Paragraph montoEnLetrasParagraph = new Paragraph("Son: " + iMontoLetras, FontFactory.GetFont("Helvetica", 8, Font.NORMAL));
+                montoEnLetrasParagraph.SpacingBefore = 5f; // Espacio antes del párrafo
+                montoEnLetrasParagraph.SpacingAfter = 5f; // Espacio después del párrafo
+                montoEnLetrasParagraph.Alignment = Element.ALIGN_LEFT; // Alinear a la izquierda
+
+                // Agregar el párrafo al documento
+                documento.Add(montoEnLetrasParagraph);
+
+
                 // Espacio adicional
                 documento.Add(new Phrase("   ", FontFactory.GetFont("Helvetica", 9, Font.NORMAL)));
-                documento.Add(new Chunk("\n"));
 
                 // Sección de firmas
                 PdfPTable seccionFirmas = new PdfPTable(2);

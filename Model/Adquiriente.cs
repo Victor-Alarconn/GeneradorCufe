@@ -24,6 +24,7 @@ namespace GeneradorCufe.Model
         public string? Correo_adqui { get; set; }
         public decimal Tipo_p { get; set; }
         public string? Telefono_adqui { get; set; }
+        public string? Tipo_doc { get; set; }
 
     }
 }
