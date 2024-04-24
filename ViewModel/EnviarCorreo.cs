@@ -21,26 +21,26 @@ namespace GeneradorCufe.ViewModel
             clienteSmtp.EnableSsl = true; // Habilitar SSL
 
             // Crear el mensaje
-            MailAddress direccionRemitente = new MailAddress("alarcongt4@gmail.com", "RAUL OSVALDO RAMOS MELCHOR");
-            MailAddress direccionDestinatario = new MailAddress("alarcongt4@gmail.com");
+            MailAddress direccionRemitente = new MailAddress( adquiriente.Correo_adqui, adquiriente.Nombre_adqu);
+            MailAddress direccionDestinatario = new MailAddress(adquiriente.Correo_adqui);
             MailMessage mensaje = new MailMessage(direccionRemitente, direccionDestinatario);
-            mensaje.Subject = "75036432; RAUL; NC58; 91; RAUL"; 
+            mensaje.Subject = $"{emisor.Nit_emisor}; {emisor.Nombre_emisor}; {factura.Facturas}; 01; {emisor.Nombre_emisor}";
             mensaje.IsBodyHtml = true; // Establecer el cuerpo del mensaje como HTML
 
             // Construir el cuerpo del mensaje en formato HTML
-            string cuerpo = @"
-    <div style='text-align: center;'>
-    <strong>ESTIMADO/A CLIENTE,</strong><br/><br/>
-    <strong>VICTOR ALARCON ALARCON</strong><br/><br/>
-    Ha recibido una Factura o Nota Electrónica adjunta a este correo, a continuación encontrará resumen de este documento:<br/><br/>
-    <strong>Emisor:</strong> RAUL<br/>
-    <strong>Prefijo y número del documento:</strong> SETT 5159<br/>
-    <strong>Tipo de documento:</strong> FACTURA ELECTRONICA DE VENTA<br/>
-    <strong>Fecha de emisión:</strong> 2024-04-11 09:04:38<br/>
-    </div>
-    <br/>
-    En caso de tener alguna inquietud respecto a la información contenida en el documento por favor comunicarse con RAUL<br/><br/>
-    NOTA CONFIDENCIAL: La información contenida en este e-mail y en todos sus archivos anexos es confidencial de RAUL, solo para uso individual del destinatario o entidad a quienes está dirigido. Si usted no es destinatario, cualquier almacenamiento, distribución, difusión o copia de este mensaje está estrictamente prohibida y sancionada por la ley. Si por error recibe este mensaje, le ofrecemos disculpas, por favor elimínela inmediatamente y notifique de su error a la persona que la envió, absteniéndose de divulgar su contenido.";
+            string cuerpo = $@"
+                     <div style='text-align: center;'>
+                     <strong>ESTIMADO/A CLIENTE,</strong><br/><br/>
+                     <strong>{adquiriente.Nombre_adqu}</strong><br/><br/>
+                     Ha recibido una Factura o Nota Electrónica adjunta a este correo, a continuación encontrará resumen de este documento:<br/><br/>
+                     <strong>Emisor:</strong> {emisor.Nombre_emisor}<br/>
+                     <strong>Prefijo y número del documento:</strong> {factura.Facturas}<br/>
+                     <strong>Tipo de documento:</strong> FACTURA ELECTRONICA DE VENTA<br/>
+                     <strong>Fecha de emisión:</strong> {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}<br/>
+                     </div>
+                     <br/>
+                     En caso de tener alguna inquietud respecto a la información contenida en el documento por favor comunicarse con {emisor.Nombre_emisor}<br/><br/>
+                     NOTA CONFIDENCIAL: La información contenida en este e-mail y en todos sus archivos anexos es confidencial de {emisor.Nombre_emisor}, solo para uso individual del destinatario o entidad a quienes está dirigido. Si usted no es destinatario, cualquier almacenamiento, distribución, difusión o copia de este mensaje está estrictamente prohibida y sancionada por la ley. Si por error recibe este mensaje, le ofrecemos disculpas, por favor elimínela inmediatamente y notifique de su error a la persona que la envió, absteniéndose de divulgar su contenido.";
 
             mensaje.Body = cuerpo;
 

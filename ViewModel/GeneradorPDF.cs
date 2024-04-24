@@ -271,6 +271,28 @@ namespace GeneradorCufe.ViewModel
 
                 documento.Add(encabezado2);
 
+
+                // Crear un nuevo objeto PdfPTable para el nuevo renglón
+                PdfPTable nuevoRenglon = new PdfPTable(1);
+                nuevoRenglon.HorizontalAlignment = Element.ALIGN_CENTER;
+                nuevoRenglon.WidthPercentage = 100;
+
+                // Agregar una celda con el dato deseado al nuevo objeto PdfPTable
+                string nuevoDato = "CUFE:" + cufe; // Este sería tu nuevo dato
+                PdfPCell celdaNuevoDato = new PdfPCell(new Phrase(nuevoDato, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                celdaNuevoDato.BorderColor = BaseColor.GRAY;
+                celdaNuevoDato.Border = Rectangle.BOX;
+                celdaNuevoDato.HorizontalAlignment = Element.ALIGN_CENTER;
+                celdaNuevoDato.VerticalAlignment = Element.ALIGN_MIDDLE;
+                celdaNuevoDato.Padding = 4;
+
+                // Agregar la celda al nuevo objeto PdfPTable
+                nuevoRenglon.AddCell(celdaNuevoDato);
+
+                // Añadir el nuevo objeto PdfPTable al documento
+                documento.Add(nuevoRenglon);
+
+
                 // Creación de la tabla con 9 columnas
                 PdfPTable tabla = new PdfPTable(9);
                 tabla.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -280,7 +302,7 @@ namespace GeneradorCufe.ViewModel
                 tabla.SpacingBefore = 10;
 
                 // Encabezados de la tabla
-                string[] encabezados = { "Nro.", "Artículo", "Cantidad", "Descripción", "U/M", "Precio.Uni", "IVA", "Vl.IVA", "Vr. Parcial" };
+                string[] encabezados = { "Nro.", "Artículo", "Cantidad", "Descripción", "U/M", "Precio.Uni", "IVA %", "Vl.IVA", "Vr. Parcial" };
                 foreach (string encabezadoTabla in encabezados) // Cambiar el nombre de la variable para evitar el conflicto de nombres
                 {
                     PdfPCell celdaEncabezado = new PdfPCell(new Phrase(encabezadoTabla, FontFactory.GetFont("Helvetica", 8, Font.BOLD)));
@@ -338,7 +360,7 @@ namespace GeneradorCufe.ViewModel
                     celdaIvaTotal.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaIvaTotal);
 
-                    PdfPCell celdaValor = new PdfPCell(new Phrase(producto.Valor.ToString("0.##"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaValor = new PdfPCell(new Phrase(producto.Valor.ToString("#,###,##0.##"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaValor.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaValor.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaValor);
@@ -393,7 +415,7 @@ namespace GeneradorCufe.ViewModel
                 decimal subtotalPU = movimiento.Valor_neto; // Valor ficticio del subtotal
 
                 string ivSubtotaoPU = subtotalPU.ToString("$#,###,##0.##");
-                var cvSubtotalPU = new PdfPCell(new Phrase(ivSubtotaoPU, fnt9));
+                var cvSubtotalPU = new PdfPCell(new Phrase(descuentosDetalle.ToString("$#,###,##0.##"), fnt9));
                 cvSubtotalPU.BorderColor = BaseColor.GRAY;
                 cvSubtotalPU.Border = Rectangle.BOX;
                 cvSubtotalPU.BorderWidthBottom = 0f;
