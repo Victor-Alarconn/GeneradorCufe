@@ -10,5 +10,6 @@ namespace GeneradorCufe.Model
     {
         public string Codigo_Municipio { get; set; }
         public string Codigo_Departamento { get; set; }
+        public string Nombre_Municipio { get; set; }
     }
 }

@@ -24,6 +24,19 @@ namespace GeneradorCufe.ViewModel
                 Valor = movimiento.Valor;
             }
 
+            int ambiente;
+
+            // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
+            if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
+            {
+                ambiente = 1;
+            }
+            else
+            {
+                ambiente = 2;
+            }
+
+
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
             DateTimeOffset now = DateTimeOffset.Now;
@@ -42,7 +55,7 @@ namespace GeneradorCufe.ViewModel
             string nitFacturador = nit;
             string numeroIdentificacionCliente = movimiento.Nit;
             string clavetecnica = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c";
-            int tipodeambiente = 2;
+            int tipodeambiente = ambiente;
 
             // Construir la cadena CUFE
             string cadenaCUFE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{clavetecnica}{tipodeambiente}";
@@ -73,6 +86,18 @@ namespace GeneradorCufe.ViewModel
                 Valor = movimiento.Nota_credito;
             }
 
+            int ambiente;
+
+            // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
+            if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
+            {
+                ambiente = 1;
+            }
+            else
+            {
+                ambiente = 2;
+            }
+
             DateTimeOffset now = DateTimeOffset.Now;
             // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
             string numeroFactura = prefijo;
@@ -89,7 +114,7 @@ namespace GeneradorCufe.ViewModel
             string nitFacturador = nit;
             string numeroIdentificacionCliente = movimiento.Nit;
             string Software_Pin = "75315";
-            int tipodeambiente = 2; // pruebas
+            int tipodeambiente = ambiente; // pruebas
 
             string cadenaCUDE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{Software_Pin}{tipodeambiente}";
 

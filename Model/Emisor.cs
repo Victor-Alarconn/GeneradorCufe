@@ -21,6 +21,8 @@ namespace GeneradorCufe.Model
         public decimal Tipo_emisor{ get; set; }
         public string? Telefono_emisor { get; set; }
         public decimal  Retiene_emisor { get; set; }
+        public string? Url_emisor { get; set; }
+        public string? Ciudad_emisor { get; set; }
 
     }
 }

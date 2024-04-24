@@ -34,7 +34,7 @@ namespace GeneradorCufe.Consultas
                     connection.Open();
 
                     // Define tu consulta SQL para seleccionar los campos deseados de la tabla empresas
-                    string query = $"SELECT emprnombr, emprnit, emprtipo, emprdirec, emprciuda, empregim_x, emprperson, empremail, emprtelef, empretiene FROM empresas WHERE emprobra = @empresa";
+                    string query = $"SELECT emprnombr, emprnit, emprtipo, emprdirec, emprciuda, empregim_x, emprperson, empremail, emprtelef, empretiene, empr_urlx, emprcity FROM empresas WHERE emprobra = @empresa";
 
                     // Crear un nuevo comando SQL con la consulta y la conexión
                     using (MySqlCommand command = new MySqlCommand(query, connection))
@@ -61,7 +61,9 @@ namespace GeneradorCufe.Consultas
                                     Tipo_emisor = Convert.ToDecimal(row["emprperson"] ?? 0),
                                     Correo_emisor = row["empremail"].ToString() ?? "",
                                     Telefono_emisor = row["emprtelef"].ToString() ?? "",
-                                    Retiene_emisor = Convert.ToDecimal(row["empretiene"] ?? 0)
+                                    Retiene_emisor = Convert.ToDecimal(row["empretiene"] ?? 0),
+                                    Url_emisor = row["empr_urlx"].ToString() ?? "",
+                                    Ciudad_emisor = row["emprcity"].ToString() ?? ""
                                 };
 
                                 // Llamada al método desde dentro del bucle

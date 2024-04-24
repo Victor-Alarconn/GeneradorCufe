@@ -23,7 +23,7 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                string query = "SELECT citycodigo, citydepto FROM xxxxcity WHERE citynomb = @ciudad";
+                string query = "SELECT citycodigo, citydepto, citynomb FROM xxxxcity WHERE citycodigo = @ciudad";
 
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
@@ -39,6 +39,7 @@ namespace GeneradorCufe.Consultas
                             {
                                 codigo.Codigo_Municipio = reader["citycodigo"].ToString();
                                 codigo.Codigo_Departamento = reader["citydepto"].ToString();
+                                codigo.Nombre_Municipio = reader["citynomb"].ToString();
                             }
                         }
                     }

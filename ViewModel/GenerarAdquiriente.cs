@@ -11,7 +11,7 @@ namespace GeneradorCufe.ViewModel
 {
     public class GenerarAdquiriente
     {
-        public static void MapAccountingCustomerParty(XDocument xmlDoc, string Nit, string cadenaConexion, Adquiriente adquiriente) // Información del adquiriente 
+        public static void MapAccountingCustomerParty(XDocument xmlDoc, string Nit, string cadenaConexion, Adquiriente adquiriente, Codigos codigos) // Información del adquiriente 
         { // esperelo aqui
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -20,7 +20,12 @@ namespace GeneradorCufe.ViewModel
             // Namespace para elementos 'cac'
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
-           
+
+            string ciudadCompleta = codigos.Nombre_Municipio ?? "";
+            string[] partesCiudad = ciudadCompleta.Split(',');
+            string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
+            string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
+
             string Tipo = (adquiriente.Tipo_p == 1) ? "13" : "31";
             string AdditionalAccountID = (adquiriente.Tipo_p == 1) ? "2" : "1";
 
@@ -53,11 +58,11 @@ namespace GeneradorCufe.ViewModel
                             var physicalLocationElement = partyElement.Element(cac + "PhysicalLocation");
                             if (physicalLocationElement != null)
                             {
-                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "ID")?.SetValue(adquiriente.Codigo_municipio_adqui);
-                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CityName")?.SetValue(adquiriente.Nombre_municipio_adqui);
+                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "ID")?.SetValue(codigos.Codigo_Municipio);
+                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CityName")?.SetValue(Municipio);
                                 physicalLocationElement.Element(cac + "Address")?.Element(cbc + "PostalZone")?.SetValue("660001");
-                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentity")?.SetValue(adquiriente.Nombre_departamento_adqui);
-                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentityCode")?.SetValue(adquiriente.Codigo_departamento_adqui);
+                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentity")?.SetValue(codigos.Codigo_Departamento);
+                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentityCode")?.SetValue(Departamento);
                                 physicalLocationElement.Element(cac + "Address")?.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
                                 physicalLocationElement.Element(cac + "Address")?.Element(cac + "Country")?.Element(cbc + "Name")?.SetValue("Colombia");
                                 physicalLocationElement.Element(cac + "Address")?.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue(adquiriente.Direccion_adqui);
@@ -68,7 +73,7 @@ namespace GeneradorCufe.ViewModel
                             if (partyTaxSchemeElement != null)
                             {
                                 // Establecer el nombre de registro
-                                partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue(adquiriente.Nombre_municipio_adqui);
+                                partyTaxSchemeElement.Element(cbc + "RegistrationName")?.SetValue(adquiriente.Nombre_adqu);
 
                                 // Establecer el ID de la compañía
                                 var companyIDElement = partyTaxSchemeElement.Element(cbc + "CompanyID");
@@ -88,11 +93,11 @@ namespace GeneradorCufe.ViewModel
                                 var registrationAddressElement = partyTaxSchemeElement.Element(cac + "RegistrationAddress");
                                 if (registrationAddressElement != null)
                                 {
-                                    registrationAddressElement.Element(cbc + "ID")?.SetValue(adquiriente.Codigo_municipio_adqui);
-                                    registrationAddressElement.Element(cbc + "CityName")?.SetValue(adquiriente.Nombre_municipio_adqui);
+                                    registrationAddressElement.Element(cbc + "ID")?.SetValue(codigos.Codigo_Municipio);
+                                    registrationAddressElement.Element(cbc + "CityName")?.SetValue(Municipio);
                                     registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("660001");
-                                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(adquiriente.Nombre_departamento_adqui);
-                                    registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue(adquiriente.Codigo_departamento_adqui);
+                                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(codigos.Codigo_Departamento);
+                                    registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue(Departamento);
                                     registrationAddressElement.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
                                     registrationAddressElement.Element(cac + "Country")?.Element(cbc + "Name")?.SetValue("Colombia");
                                     registrationAddressElement.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue(adquiriente.Direccion_adqui);

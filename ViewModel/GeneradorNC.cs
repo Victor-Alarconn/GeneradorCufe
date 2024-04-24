@@ -150,7 +150,7 @@ namespace GeneradorCufe.ViewModel
             string nitValue = listaProductos[0].Nit;
 
             Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
-            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente);
+            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos);
 
             // Información del medio de pago
             var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();

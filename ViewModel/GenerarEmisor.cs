@@ -20,7 +20,7 @@ namespace GeneradorCufe.ViewModel
             string TipoA = (emisor.Tipo_emisor == 1) ? "2" : "1";
             string Identificador = (emisor.Tipo_emisor == 1) ? "13" : "31";
 
-            string ciudadCompleta = emisor.Nombre_municipio_emisor ?? "";
+            string ciudadCompleta = codigos.Nombre_Municipio ?? "";
             string[] partesCiudad = ciudadCompleta.Split(',');
             string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
             string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)

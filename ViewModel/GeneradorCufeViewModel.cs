@@ -97,8 +97,19 @@ namespace GeneradorCufe.ViewModel
             //await Task.Delay(3000);
             //MessageBox.Show(successMessage);
 
-            // Realizar la solicitud POST y esperar la tarea
-            string url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
+            string url;
+
+            // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
+            if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
+            {
+                // Si es "docum", utilizar la primera URL
+                url = "https://apivp.efacturacadena.com/v1/vp/documentos/proceso/alianzas";
+            }
+            else
+            {
+                // Si no es "docum", utilizar la segunda URL
+                url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
+            }
             string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento);
         }
 
@@ -112,8 +123,15 @@ namespace GeneradorCufe.ViewModel
             {
                using (WebClient client = new WebClient())
                 {
-                    // Establecer el encabezado efacturaAuthorizationToken
-                    client.Headers["efacturaAuthorizationToken"] = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
+                    if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Si es "docum", establecer el encabezado efacturaAuthorizationToken para "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K"
+                        client.Headers["efacturaAuthorizationToken"] = "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K";
+                    }
+                    else
+                    {
+                        client.Headers["efacturaAuthorizationToken"] = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
+                    }
 
                     // Convertir el contenido base64 en bytes
                     byte[] bytes = Encoding.UTF8.GetBytes(base64Content);
@@ -337,7 +355,12 @@ namespace GeneradorCufe.ViewModel
             }
             DateTimeOffset now = DateTimeOffset.Now;
             xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("10"); // Indicador del tipo de operación (10 para facturación electrónica)
-            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2"); // Tipo de ambiente (2 para pruebas)
+                                                                                          // Obtener el valor del perfil de ejecución del XML
+            string perfilEjecucionID = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase) ? "1" : "2";
+
+            // Actualizar el valor del perfil de ejecución en el XML
+            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue(perfilEjecucionID);
+
 
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(factura.Facturas);
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(CUFE);
@@ -378,17 +401,16 @@ namespace GeneradorCufe.ViewModel
             }
 
 
-            string ciudadCompleta = emisor.Nombre_municipio_emisor ?? "";
+            string ciudadCompleta = emisor.Ciudad_emisor ?? ""; // se cambia por el codigo de la ciudad
             string[] partesCiudad = ciudadCompleta.Split(',');
-            string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
-            string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
+ 
             Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta); // Consulta para obtener los códigos de ciudad y departamento
 
             GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos);  // Información del emisor
 
             string nitValue = listaProductos[0].Nit;
             Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
-            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente); // Información del adquiriente
+            GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos); // Información del adquiriente
 
 
             // Información del medio de pago
@@ -459,6 +481,7 @@ namespace GeneradorCufe.ViewModel
             var dataElement = xmlDoc.Descendants(invoiceNs + "DATA").FirstOrDefault();
 
             // Verificar si se encontró el elemento <DATA>
+            // Verificar si se encontró el elemento <DATA>
             if (dataElement != null)
             {
                 // Modificar los elementos dentro de <DATA>
@@ -469,10 +492,23 @@ namespace GeneradorCufe.ViewModel
                 if (partnershipElement != null)
                 {
                     partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
-                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pruebas
-                    partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pruebas
+                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
+
+                    // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
+                    if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Eliminar la línea que establece el valor de TechKey si emisor.Url_emisor es igual a "docum"
+                        partnershipElement.Element(invoiceNs + "SetTestID")?.Remove();
+                    }
+                    else
+                    {
+                        partnershipElement.Element(invoiceNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5");
+                    }
+
+                    
                 }
             }
+
 
             // Retornar la cadena de conexión
             return (cadenaConexion, CUFE, listaProductos, adquiriente, movimiento);
