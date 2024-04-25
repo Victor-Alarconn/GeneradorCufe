@@ -12,7 +12,7 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorNC
     {
-        public static (string cadenaConexion, string CUFE) GeneradorNotaCredito(XDocument xmlDoc, Emisor emisor, Factura factura)
+        public static (string cadenaConexion, string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GeneradorNotaCredito(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
@@ -139,7 +139,7 @@ namespace GeneradorCufe.ViewModel
                 }
             }
 
-            string ciudadCompleta = emisor.Nombre_municipio_emisor ?? "";
+            string ciudadCompleta = emisor.Ciudad_emisor ?? "";
             string[] partesCiudad = ciudadCompleta.Split(',');
             string Municipio = partesCiudad.Length > 0 ? partesCiudad[0].Trim() : ""; // Obtiene el municipio (primer elemento después de dividir)
             string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
@@ -232,13 +232,9 @@ namespace GeneradorCufe.ViewModel
                     partnershipElement.Element(creditNoteNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
                 }
             }
-            return (cadenaConexion, cufe);
+            return (cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
 
         }
-
-
-
-
 
         }
     }

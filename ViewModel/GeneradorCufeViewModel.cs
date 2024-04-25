@@ -542,7 +542,7 @@ namespace GeneradorCufe.ViewModel
                 xmlDoc = XDocument.Load(xmlTemplatePath); 
 
                 // Llamar a la acción para generar nota de crédito y asignar sus valores de retorno a cadenaConexion y cufe
-                (cadenaConexion, cufe) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura);
+                (cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura);
             }
             else
             {
