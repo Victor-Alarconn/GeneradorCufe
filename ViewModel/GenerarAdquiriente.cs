@@ -62,8 +62,8 @@ namespace GeneradorCufe.ViewModel
                                 physicalLocationElement.Element(cac + "Address")?.Element(cbc + "ID")?.SetValue(codigos.Codigo_Municipio);
                                 physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CityName")?.SetValue(Municipio);
                                 physicalLocationElement.Element(cac + "Address")?.Element(cbc + "PostalZone")?.SetValue("660001");
-                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentity")?.SetValue(codigos.Codigo_Departamento);
-                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentityCode")?.SetValue(Departamento);
+                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentity")?.SetValue(Departamento);
+                                physicalLocationElement.Element(cac + "Address")?.Element(cbc + "CountrySubentityCode")?.SetValue(codigos.Codigo_Departamento);
                                 physicalLocationElement.Element(cac + "Address")?.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
                                 physicalLocationElement.Element(cac + "Address")?.Element(cac + "Country")?.Element(cbc + "Name")?.SetValue("Colombia");
                                 physicalLocationElement.Element(cac + "Address")?.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue(adquiriente.Direccion_adqui);
@@ -97,8 +97,8 @@ namespace GeneradorCufe.ViewModel
                                     registrationAddressElement.Element(cbc + "ID")?.SetValue(codigos.Codigo_Municipio);
                                     registrationAddressElement.Element(cbc + "CityName")?.SetValue(Municipio);
                                     registrationAddressElement.Element(cbc + "PostalZone")?.SetValue("660001");
-                                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(codigos.Codigo_Departamento);
-                                    registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue(Departamento);
+                                    registrationAddressElement.Element(cbc + "CountrySubentity")?.SetValue(Departamento);
+                                    registrationAddressElement.Element(cbc + "CountrySubentityCode")?.SetValue(codigos.Codigo_Departamento);
                                     registrationAddressElement.Element(cac + "Country")?.Element(cbc + "IdentificationCode")?.SetValue("CO");
                                     registrationAddressElement.Element(cac + "Country")?.Element(cbc + "Name")?.SetValue("Colombia");
                                     registrationAddressElement.Element(cac + "AddressLine")?.Element(cbc + "Line")?.SetValue(adquiriente.Direccion_adqui);

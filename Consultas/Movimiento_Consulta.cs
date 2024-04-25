@@ -37,19 +37,19 @@ namespace GeneradorCufe.Consultas
                             if (reader.Read())
                             {
                                 movimiento.Nit = reader["nit"].ToString();
-                                movimiento.Valor = reader.GetDecimal("valor");
-                                movimiento.Valor_iva = reader.GetDecimal("vriva");
-                                movimiento.Valor_dsto = reader.GetDecimal("desctos");
-                                movimiento.Valor_neto = reader.GetDecimal("gravada");
-                                movimiento.Exentas = reader.GetDecimal("exentas");
-                                movimiento.Fecha_Factura = reader.GetDateTime("fcruce");
+                                movimiento.Valor = reader.IsDBNull(reader.GetOrdinal("valor")) ? 0 : reader.GetDecimal(reader.GetOrdinal("valor"));
+                                movimiento.Valor_iva = reader.IsDBNull(reader.GetOrdinal("vriva")) ? 0 : reader.GetDecimal(reader.GetOrdinal("vriva"));
+                                movimiento.Valor_dsto = reader.IsDBNull(reader.GetOrdinal("desctos")) ? 0 : reader.GetDecimal(reader.GetOrdinal("desctos"));
+                                movimiento.Valor_neto = reader.IsDBNull(reader.GetOrdinal("gravada")) ? 0 : reader.GetDecimal(reader.GetOrdinal("gravada"));
+                                movimiento.Exentas = reader.IsDBNull(reader.GetOrdinal("exentas")) ? 0 : reader.GetDecimal(reader.GetOrdinal("exentas"));
+                                movimiento.Fecha_Factura = reader.GetDateTime(reader.GetOrdinal("fcruce"));
                                 movimiento.Hora_dig = reader["hdigita"].ToString();
-                                movimiento.Retiene = reader.GetDecimal("rfuente");
-                                movimiento.Ipoconsumo = reader.GetDecimal("consumo");
-                                movimiento.Numero_bolsa = reader.GetDecimal("nbolsa");
-                                movimiento.Valor_bolsa = reader.GetDecimal("vbolsa");
+                                movimiento.Retiene = reader.IsDBNull(reader.GetOrdinal("rfuente")) ? 0 : reader.GetDecimal(reader.GetOrdinal("rfuente"));
+                                movimiento.Ipoconsumo = reader.IsDBNull(reader.GetOrdinal("consumo")) ? 0 : reader.GetDecimal(reader.GetOrdinal("consumo"));
+                                movimiento.Numero_bolsa = reader.IsDBNull(reader.GetOrdinal("nbolsa")) ? 0 : reader.GetDecimal(reader.GetOrdinal("nbolsa"));
+                                movimiento.Valor_bolsa = reader.IsDBNull(reader.GetOrdinal("vbolsa")) ? 0 : reader.GetDecimal(reader.GetOrdinal("vbolsa"));
                                 movimiento.Dato_Cufe = reader["dato_cufe"].ToString();
-                                movimiento.Nota_credito = reader.GetDecimal("ncre");
+                                movimiento.Nota_credito = reader.IsDBNull(reader.GetOrdinal("ncre")) ? 0 : reader.GetDecimal(reader.GetOrdinal("ncre"));
                             }
                         }
                     }

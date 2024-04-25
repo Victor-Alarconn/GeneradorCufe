@@ -1,6 +1,7 @@
 ﻿using GeneradorCufe.Model;
 using MySqlConnector;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,27 @@ namespace GeneradorCufe.Consultas
                 // Convertir el XML a formato JSON
                 string jsonContent = JsonConvert.SerializeXNode(XDocument.Parse(xmlContent), Formatting.Indented);
 
-                // Encontrar la posición del inicio del JSON deseado
-                int startIndex = jsonContent.IndexOf("\"cbc:UBLVersionID\": \"UBL 2.1\"");
+                // Parsear el JSON completo a un objeto JObject
+                JObject jsonObject = JObject.Parse(jsonContent);
+
+                JObject parteDeseada = new JObject(
+             new JProperty("cbc:UBLVersionID", jsonObject["cbc:UBLVersionID"]),
+             new JProperty("cbc:CustomizationID", jsonObject["cbc:CustomizationID"]),
+             new JProperty("cbc:ProfileID", jsonObject["cbc:ProfileID"]),
+             new JProperty("cbc:ProfileExecutionID", jsonObject["cbc:ProfileExecutionID"]),
+             new JProperty("cbc:ID", jsonObject["cbc:ID"]),
+             new JProperty("cbc:IssueDate", jsonObject["cbc:IssueDate"]),
+             new JProperty("cbc:IssueTime", jsonObject["cbc:IssueTime"]),
+             new JProperty("cbc:DocumentType", jsonObject["cbc:DocumentType"]),
+             new JProperty("cbc:ParentDocumentID", jsonObject["cbc:ParentDocumentID"]),
+             new JProperty("cac:SenderParty", jsonObject["cac:SenderParty"]),
+             new JProperty("cac:ReceiverParty", jsonObject["cac:ReceiverParty"]),
+             new JProperty("cac:Attachment", jsonObject["cac:Attachment"]),
+             new JProperty("cac:ParentDocumentLineReference", jsonObject["cac:ParentDocumentLineReference"])
+         );
+
+                // Convertir el objeto JObject de la parte deseada de vuelta a JSON
+                string jsonParteDeseada = parteDeseada.ToString();
 
                 using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
                 {
@@ -44,7 +64,7 @@ namespace GeneradorCufe.Consultas
                     using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                     {
                         // Asignar los valores de los parámetros DocumentoJson, Factura y CUFE
-                        updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonContent);
+                        updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonParteDeseada);
                         updateCommand.Parameters.AddWithValue("@Cufe", cufe);
                         updateCommand.Parameters.AddWithValue("@Factura", factura);
 

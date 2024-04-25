@@ -71,12 +71,12 @@ namespace GeneradorCufe.Consultas
                                 if (factura.Ip_base == "200.118.190.213")
                                 {
                                     // Realiza la acción específica para la primera IP
-                                    emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "**LiLo89**");
+                                    emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "*LiLo89*");
                                 }
                                 else if (factura.Ip_base == "200.118.190.167")
                                 {
                                     // Realiza la acción específica para la segunda IP
-                                    emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "**LiLo89**");
+                                    emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "*LiLo89*");
                                 }
                                 else if (factura.Ip_base == "192.190.42.191")
                                 {

@@ -39,7 +39,6 @@ namespace GeneradorCufe.ViewModel
 
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
-            DateTimeOffset now = DateTimeOffset.Now;
             // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
             string numeroFactura = factura.Facturas;
             string fechaFactura = movimiento.Fecha_Factura.ToString("yyyy-MM-dd");

@@ -23,7 +23,7 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                string query = "SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0 FROM xxxxterm WHERE terminal = @Terminal";
+                string query = "SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0, resolucion, notas, NOTA_FIN FROM xxxxterm WHERE terminal = @Terminal";
 
                 using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
                 {
@@ -42,6 +42,9 @@ namespace GeneradorCufe.Consultas
                                 encabezado.R_inicio = reader.GetInt32("r_inicio");
                                 encabezado.R_termina = reader.GetInt32("r_termina");
                                 encabezado.Prefijo = reader.GetString("prefijo0");
+                                encabezado.Resolucion = reader.GetString("resolucion");
+                                encabezado.Notas = reader.GetString("notas");
+                                encabezado.Nota_fin = reader.GetString("NOTA_FIN");
                             }
                         }
                     }
