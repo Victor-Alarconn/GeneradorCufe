@@ -74,6 +74,7 @@ namespace GeneradorCufe.ViewModel
 
             string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
             string cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
+            emisor.Codigo_municipio_emisor = cude;
 
             // Actualizar 'CustomizationID'
             xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("20"); // 22 o sin referencia a facturas
@@ -193,7 +194,7 @@ namespace GeneradorCufe.ViewModel
 
             if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0) // falta calcular el valor 
             {
-                Valor = Math.Round(movimiento.Nota_credito + movimiento.Retiene, 2);
+                Valor = Math.Round(movimiento.Nota_credito + 0, 2);
             }
             else
             {

@@ -78,7 +78,7 @@ namespace GeneradorCufe.ViewModel
 
             if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0) // falta calcular el valor 
             {
-                Valor = Math.Round(movimiento.Nota_credito + movimiento.Retiene, 2);
+                Valor = Math.Round(movimiento.Nota_credito + 0, 2);
             }
             else
             {

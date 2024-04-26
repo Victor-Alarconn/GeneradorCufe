@@ -39,7 +39,13 @@ namespace GeneradorCufe.ViewModel
         {
             try
             {
-                Document documento = new Document(PageSize.A4, 15, 18, 15, 18);
+                string PrefijoNC = "";
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                {
+                    PrefijoNC = "NC" + factura.Recibo;
+                }
+
+                    Document documento = new Document(PageSize.A4, 15, 18, 15, 18);
                 PdfWriter.GetInstance(documento, new FileStream(rutaArchivo, FileMode.Create));
                 documento.Open();
 
@@ -80,7 +86,17 @@ namespace GeneradorCufe.ViewModel
                 string direccionEmisor = "Dirección: " + emisor.Direccion_emisor;
                 string correoEmisor = emisor.Correo_emisor;
                 string telefonoEmisor = "Teléfono: " + emisor.Telefono_emisor;
-                string factura1 = "Nro. Doc: " + factura.Facturas;
+                string factura1;
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                {
+                    PrefijoNC = "NC" + factura.Recibo;
+                    factura1 = "Nro. Doc: " + PrefijoNC;
+                }
+                else
+                {
+                    factura1 = "Nro. Doc: " + factura.Facturas;
+                }
+
 
                 // Crear tabla para los datos del emisor
                 var tDatosEmisor = new PdfPTable(1);
@@ -121,18 +137,36 @@ namespace GeneradorCufe.ViewModel
                 string horaformateada = horaConDesplazamiento.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
                 string fechaFac = movimiento.Fecha_Factura.ToString("yyyy-MM-dd");
 
-
                 // Construir el texto del código QR
-                string TextoQR = $"NumFac:{factura.Facturas}" +
-                                 $"FecFac:{fechaFac}" +
-                                 $"HorFac:{horaformateada}" +
-                                 $"NitFac:{NitFact}" +
-                                 $"DocAdq:{adquiriente.Nit_adqui}" +
-                                 $"ValFac:{movimiento.Valor_neto}" +
-                                 $"ValIva:{movimiento.Valor_iva}" +
-                                 $"ValOtroIm:0.00" +
-                                 $"ValTolFac:{movimiento.Valor}" +
-                                 $"CUFE:{cufe}";
+                string TextoQR;
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                {
+                    PrefijoNC = "NC" + factura.Recibo;
+                    TextoQR = $"PrefijoNC:{PrefijoNC}" +
+                              $"FecFac:{fechaFac}" +
+                              $"HorFac:{horaformateada}" +
+                              $"NitFac:{NitFact}" +
+                              $"DocAdq:{adquiriente.Nit_adqui}" +
+                              $"ValFac:{movimiento.Valor_neto}" +
+                              $"ValIva:{movimiento.Valor_iva}" +
+                              $"ValOtroIm:0.00" +
+                              $"ValTolFac:{movimiento.Valor}" +
+                              $"CUDE:{emisor.Codigo_municipio_emisor}";
+                }
+                else
+                {
+                    TextoQR = $"NumFac:{factura.Facturas}" +
+                              $"FecFac:{fechaFac}" +
+                              $"HorFac:{horaformateada}" +
+                              $"NitFac:{NitFact}" +
+                              $"DocAdq:{adquiriente.Nit_adqui}" +
+                              $"ValFac:{movimiento.Valor_neto}" +
+                              $"ValIva:{movimiento.Valor_iva}" +
+                              $"ValOtroIm:0.00" +
+                              $"ValTolFac:{movimiento.Valor}" +
+                              $"CUFE:{cufe}";
+                }
+
 
                 if (string.IsNullOrEmpty(TextoQR)) TextoQR = "TextoQR"; // Use a default value if the text is null or empty
                 Image imageQr = CrearQR(TextoQR);
@@ -140,7 +174,15 @@ namespace GeneradorCufe.ViewModel
                 imageQr.Alignment = Element.ALIGN_CENTER;
                 imageQr.ScaleToFit(85, 85);
                 PdfPCell qrCell = new PdfPCell();
-                qrCell.AddElement(new Phrase("Factura Electrónica De Venta", FontFactory.GetFont("Helvetica", 9, Font.BOLD)));
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                {
+                    qrCell.AddElement(new Phrase("Nota Crédito", FontFactory.GetFont("Helvetica", 9, Font.BOLD)));
+                    qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                }
+                else
+                {
+                    qrCell.AddElement(new Phrase("Factura Electrónica De Venta", FontFactory.GetFont("Helvetica", 9, Font.BOLD)));
+                }
                 qrCell.AddElement(imageQr);
                 qrCell.Border = Rectangle.NO_BORDER;
                 qrCell.PaddingBottom = 1;
@@ -168,6 +210,7 @@ namespace GeneradorCufe.ViewModel
                 string direccionAdquiriente = adquiriente.Direccion_adqui;
                 string correoAdquiriente = adquiriente.Correo_adqui;
                 string telefonoAdquiriente = adquiriente.Telefono_adqui;
+                string Orden = "Orden de Compra: " + movimiento.Numero;
 
                 // Obtener el texto correspondiente al tipo de documento del adquiriente
                 string tipoDocumentoTexto;
@@ -199,7 +242,8 @@ namespace GeneradorCufe.ViewModel
                                       " " + adquiriente.Nombre_municipio_adqui + "                         " +
                                        "Forma de pago: Efectivo\n" +
                                       "CORREO: " + correoAdquiriente + "\n" +
-                                      "Telefono: " + telefonoAdquiriente;
+                                      "Telefono: " + telefonoAdquiriente +"\n" +
+                                      Orden;
 
 
 
@@ -257,7 +301,26 @@ namespace GeneradorCufe.ViewModel
                 // Añadir el nuevo objeto PdfPTable al documento
                 documento.Add(nuevoRenglon);
 
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                {
 
+                    // Crear un nuevo objeto PdfPTable para el renglón CUFE
+                    PdfPTable nuevoRenglonCUDE = new PdfPTable(1);
+                    nuevoRenglonCUDE.WidthPercentage = 100;
+
+                    // Agregar una celda con el texto CUFE al nuevo objeto PdfPTable
+                    string nuevoDatoCUDE = "CUDE: " + emisor.Codigo_municipio_emisor;
+                    PdfPCell celdaNuevoDatoCUDE = new PdfPCell(new Phrase(nuevoDatoCUDE, FontFactory.GetFont("Helvetica", 9, Font.NORMAL)));
+                    celdaNuevoDatoCUDE.Border = Rectangle.NO_BORDER; // Eliminar bordes
+                    celdaNuevoDatoCUDE.HorizontalAlignment = Element.ALIGN_LEFT; // Alinear a la izquierda
+                    celdaNuevoDatoCUDE.Padding = 2;
+
+                    // Agregar la celda al nuevo objeto PdfPTable
+                    nuevoRenglonCUDE.AddCell(celdaNuevoDatoCUDE);
+
+                    // Añadir el nuevo objeto PdfPTable al documento
+                    documento.Add(nuevoRenglonCUDE);
+                }
 
                 // Creación de la tabla con 9 columnas
                 PdfPTable tabla = new PdfPTable(9);

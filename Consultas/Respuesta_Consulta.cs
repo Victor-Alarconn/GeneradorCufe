@@ -21,50 +21,35 @@ namespace GeneradorCufe.Consultas
             _data = data;
         }
 
-        public void GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe)
+        public void GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe, string recibo)
         {
             try
             {
-                // Decodificar el documento base64 a formato XML
-                byte[] documentBytes = Convert.FromBase64String(documentoBase64);
-                string xmlContent = Encoding.UTF8.GetString(documentBytes);
-
-                // Convertir el XML a formato JSON
-                string jsonContent = JsonConvert.SerializeXNode(XDocument.Parse(xmlContent), Formatting.Indented);
-
-                // Parsear el JSON completo a un objeto JObject
-                JObject jsonObject = JObject.Parse(jsonContent);
-
-                JObject parteDeseada = new JObject(
-             new JProperty("cbc:UBLVersionID", jsonObject["cbc:UBLVersionID"]),
-             new JProperty("cbc:CustomizationID", jsonObject["cbc:CustomizationID"]),
-             new JProperty("cbc:ProfileID", jsonObject["cbc:ProfileID"]),
-             new JProperty("cbc:ProfileExecutionID", jsonObject["cbc:ProfileExecutionID"]),
-             new JProperty("cbc:ID", jsonObject["cbc:ID"]),
-             new JProperty("cbc:IssueDate", jsonObject["cbc:IssueDate"]),
-             new JProperty("cbc:IssueTime", jsonObject["cbc:IssueTime"]),
-             new JProperty("cbc:DocumentType", jsonObject["cbc:DocumentType"]),
-             new JProperty("cbc:ParentDocumentID", jsonObject["cbc:ParentDocumentID"]),
-             new JProperty("cac:SenderParty", jsonObject["cac:SenderParty"]),
-             new JProperty("cac:ReceiverParty", jsonObject["cac:ReceiverParty"]),
-             new JProperty("cac:Attachment", jsonObject["cac:Attachment"]),
-             new JProperty("cac:ParentDocumentLineReference", jsonObject["cac:ParentDocumentLineReference"])
-         );
-
-                // Convertir el objeto JObject de la parte deseada de vuelta a JSON
-                string jsonParteDeseada = parteDeseada.ToString();
+                string detalle = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                string jsonRespuesta = $"[{{\"factura\":\"{recibo}\",\"cufe\":\"{cufe}\",\"estado\":{{\"codigo\":\"Enviado Adquiriente\"}},\"detalle\":\"{detalle}\"}}]";
 
                 using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
                 {
                     connection.Open();
 
-                    // Definir la consulta SQL para actualizar la tabla xxxxccfc solo cuando el valor de factura coincida
-                    string updateQuery = "UPDATE xxxxccfc SET estado_fe = 3, dato_qr = @DocumentoJson, dato_cufe = @Cufe WHERE factura = @Factura";
+                    string updateQuery = string.Empty;
+
+                    // Verificar si la condición se cumple
+                    if (!string.IsNullOrEmpty(recibo) && recibo != "0")
+                    {
+                        // Si la condición se cumple, actualizar la tabla "xxxxcmbt"
+                        updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura";
+                    }
+                    else
+                    {
+                        // Si la condición no se cumple, actualizar la tabla "xxxxccfc"
+                        updateQuery = "UPDATE xxxxccfc SET estado_fe = 3, dato_qr = @DocumentoJson, dato_cufe = @Cufe WHERE factura = @Factura";
+                    }
 
                     using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                     {
                         // Asignar los valores de los parámetros DocumentoJson, Factura y CUFE
-                        updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonParteDeseada);
+                        updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonRespuesta);
                         updateCommand.Parameters.AddWithValue("@Cufe", cufe);
                         updateCommand.Parameters.AddWithValue("@Factura", factura);
 
@@ -89,7 +74,8 @@ namespace GeneradorCufe.Consultas
         }
 
 
-        public void BorrarEnBD(string cadenaConexion, string factura)
+
+        public void BorrarEnBD(string cadenaConexion, string factura, string recibo)
         {
             try
             {
@@ -107,13 +93,29 @@ namespace GeneradorCufe.Consultas
                 {
                     connection.Open();
 
-                    // Definir la consulta SQL para borrar el archivo en la tabla fac donde factura sea igual al valor proporcionado
-                    string deleteQuery = "DELETE FROM fac WHERE factura = @Factura";
+                    // Definir la consulta SQL para borrar el archivo en la tabla fac
+                    string deleteQuery;
+                    if (!string.IsNullOrEmpty(recibo) && recibo != "0")
+                    {
+                        // Si es una nota de crédito, buscar por el valor de recibo en lugar de factura
+                        deleteQuery = "DELETE FROM fac WHERE recibo = @Recibo";
+                    }
+                    else
+                    {
+                        deleteQuery = "DELETE FROM fac WHERE factura = @Factura";
+                    }
 
                     using (MySqlCommand deleteCommand = new MySqlCommand(deleteQuery, connection))
                     {
-                        // Asignar el valor del parámetro Factura
-                        deleteCommand.Parameters.AddWithValue("@Factura", factura);
+                        // Asignar el valor del parámetro correspondiente
+                        if (!string.IsNullOrEmpty(recibo) && recibo != "0")
+                        {
+                            deleteCommand.Parameters.AddWithValue("@Recibo", recibo);
+                        }
+                        else
+                        {
+                            deleteCommand.Parameters.AddWithValue("@Factura", factura);
+                        }
 
                         // Ejecutar la consulta para borrar el archivo
                         int rowsAffected = deleteCommand.ExecuteNonQuery();
@@ -124,7 +126,7 @@ namespace GeneradorCufe.Consultas
                         }
                         else
                         {
-                            Console.WriteLine("No se encontró ningún archivo con la factura especificada en la base de datos.");
+                            Console.WriteLine("No se encontró ningún archivo con la factura/recibo especificada en la base de datos.");
                         }
                     }
                 }
@@ -134,6 +136,7 @@ namespace GeneradorCufe.Consultas
                 Console.WriteLine($"Error al borrar el archivo de la base de datos: {ex.Message}");
             }
         }
+
 
         public void GuardarErrorEnBD(string cadenaConexion, HttpStatusCode status, string mensaje, Factura factura)
         {
@@ -146,14 +149,25 @@ namespace GeneradorCufe.Consultas
                 {
                     connection.Open();
 
-                    // Definir la consulta SQL para actualizar la tabla xxxxccfc donde Facturas sea igual a factura.Facturas
-                    string updateQuery = "UPDATE xxxxccfc SET dato_qr = @EstadoMensaje WHERE factura = @factura";
+                    string updateQuery = string.Empty;
+
+                    // Verificar si la condición se cumple
+                    if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                    {
+                        // Si la condición se cumple, actualizar la tabla "xxxxcmbt"
+                        updateQuery = "UPDATE xxxxcmbt SET dato_qr = @EstadoMensaje WHERE factura = @Factura";
+                    }
+                    else
+                    {
+                        // Si la condición no se cumple, actualizar la tabla "xxxxccfc"
+                        updateQuery = "UPDATE xxxxccfc SET dato_qr = @EstadoMensaje WHERE factura = @Factura";
+                    }
 
                     using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                     {
                         // Asignar los valores de los parámetros EstadoMensaje y Factura
                         updateCommand.Parameters.AddWithValue("@EstadoMensaje", estadoMensaje);
-                        updateCommand.Parameters.AddWithValue("@factura", factura.Facturas);
+                        updateCommand.Parameters.AddWithValue("@Factura", factura.Facturas);
 
                         // Ejecutar la actualización
                         int rowsAffected = updateCommand.ExecuteNonQuery();
@@ -174,6 +188,7 @@ namespace GeneradorCufe.Consultas
                 Console.WriteLine($"Error al guardar la respuesta de consulta en la base de datos: {ex.Message}");
             }
         }
+
 
 
         public void ConsultarFacturaEnBD(string cadenaConexion, string factura)

@@ -191,12 +191,26 @@ namespace GeneradorCufe.ViewModel
             try
             {
                 string nit = emisor.Nit_emisor?.Replace("-0", "");
-                // Construir la URL completa con los parámetros necesarios
                 string url = "https://apivp.efacturacadena.com/staging/vp/consulta/documentos";
                 string partnershipId = "900770401";
                 string nitEmisor = nit;
-                string idDocumento = factura.Facturas;
-                string codigoTipoDocumento = "01";
+                string idDocumento;
+                string codigoTipoDocumento;
+                string PrefijoNC = "";
+                string recibo = "0";
+
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                {
+                    PrefijoNC = "NC" + factura.Recibo;
+                    idDocumento = PrefijoNC;
+                    codigoTipoDocumento = "91";
+                    recibo = factura.Recibo;
+                }
+                else
+                {
+                    idDocumento = factura.Facturas;
+                    codigoTipoDocumento = "01";
+                }
 
                 // Construir los parámetros de la URL
                 string parametros = $"?nit_emisor={nitEmisor}&id_documento={idDocumento}&codigo_tipo_documento={codigoTipoDocumento}";
@@ -235,10 +249,27 @@ namespace GeneradorCufe.ViewModel
                     
                             int añoActual = DateTime.Now.Year;
                             // Construir el nombre del archivo PDF
-                            string nombreArchivoPDF = $"fv{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.pdf";
+                            string nombreArchivoPDF;
+                            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                            {
+                                nombreArchivoPDF = $"nc{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.pdf";
+                            }
+                            else
+                            {
+                                nombreArchivoPDF = $"fv{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.pdf";
+                            }
 
                             // Construir el nombre del archivo XML
-                            string nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.xml";
+                            string nombreArchivoXML;
+                            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                            {
+                                nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.xml";
+                            }
+                            else
+                            {
+                                nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.xml";
+                            }
+
 
                             // Crear el PDF
                             string directorioProyecto = Directory.GetCurrentDirectory();
@@ -270,8 +301,8 @@ namespace GeneradorCufe.ViewModel
 
                         // Crear una instancia de la clase Respuesta_Consulta
                         Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
-                        respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, idDocumento, cufe);
-                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento);
+                        respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, recibo , cufe, idDocumento);
+                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo);
                     }
                     else
                     {

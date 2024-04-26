@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using GeneradorCufe.Model;
+using iTextSharp.text;
 
 namespace GeneradorCufe.ViewModel
 {
@@ -20,11 +21,35 @@ namespace GeneradorCufe.ViewModel
             clienteSmtp.Credentials = new NetworkCredential("sistemas.rmsoft@gmail.com", "ektq xifn kjsc mwoy");
             clienteSmtp.EnableSsl = true; // Habilitar SSL
 
+            string nitCompleto = emisor.Nit_emisor ?? "";
+            string[] partesNit = nitCompleto.Split('-');
+            string Nit = partesNit.Length > 0 ? partesNit[0] : "";
+
+            string PrefijoNC = "";
+            string Documento = "";
+            string tipo_documento = "FACTURA ELECTRONICA DE VENTA";
+            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+            {
+                PrefijoNC = "NC" + factura.Recibo;
+            }
+
             // Crear el mensaje
             MailAddress direccionRemitente = new MailAddress( adquiriente.Correo_adqui, adquiriente.Nombre_adqu);
             MailAddress direccionDestinatario = new MailAddress(adquiriente.Correo_adqui);
             MailMessage mensaje = new MailMessage(direccionRemitente, direccionDestinatario);
-            mensaje.Subject = $"{emisor.Nit_emisor}; {emisor.Nombre_emisor}; {factura.Facturas}; 01; {emisor.Nombre_emisor}";
+            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+            {
+                mensaje.Subject = $"{Nit}; {emisor.Nombre_emisor}; {PrefijoNC}; 91; {emisor.Nombre_emisor}";
+                Documento = PrefijoNC;
+                tipo_documento = "NOTA CREDITO";
+            }
+            else
+            {
+                mensaje.Subject = $"{Nit}; {emisor.Nombre_emisor}; {factura.Facturas}; 01; {emisor.Nombre_emisor}";
+                Documento = factura.Facturas;
+            }
+
+
             mensaje.IsBodyHtml = true; // Establecer el cuerpo del mensaje como HTML
 
             // Construir el cuerpo del mensaje en formato HTML
@@ -34,8 +59,8 @@ namespace GeneradorCufe.ViewModel
                      <strong>{adquiriente.Nombre_adqu}</strong><br/><br/>
                      Ha recibido una Factura o Nota Electrónica adjunta a este correo, a continuación encontrará resumen de este documento:<br/><br/>
                      <strong>Emisor:</strong> {emisor.Nombre_emisor}<br/>
-                     <strong>Prefijo y número del documento:</strong> {factura.Facturas}<br/>
-                     <strong>Tipo de documento:</strong> FACTURA ELECTRONICA DE VENTA<br/>
+                     <strong>Prefijo y número del documento:</strong> {Documento}<br/>
+                     <strong>Tipo de documento:</strong> {tipo_documento}<br/>
                      <strong>Fecha de emisión:</strong> {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}<br/>
                      </div>
                      <br/>
