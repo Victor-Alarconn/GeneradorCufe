@@ -38,7 +38,7 @@ namespace GeneradorCufe.ViewModel
                     if (formaPago.Id_forma == "00")
                     {
                         paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
-                        paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("  ");
+                        paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
                     }
                     else if (formaPago.Id_forma == "01")
                     {
@@ -49,6 +49,12 @@ namespace GeneradorCufe.ViewModel
                     {
                         paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("48");
                         paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Tarjeta Crédito");
+                        paymentMeansElement.Element(cbc + "PaymentDueDate")?.SetValue(DateTime.Now.ToString("yyyy-MM-dd"));
+                    }
+                    else if (formaPago.Id_forma == "03")
+                    {
+                        paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("47");
+                        paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Transferencia Débito Bancaria");
                         paymentMeansElement.Element(cbc + "PaymentDueDate")?.SetValue(DateTime.Now.ToString("yyyy-MM-dd"));
                     }
 
