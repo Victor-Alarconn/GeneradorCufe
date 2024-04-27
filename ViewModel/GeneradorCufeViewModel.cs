@@ -444,14 +444,15 @@ namespace GeneradorCufe.ViewModel
             GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos); // Información del adquiriente
 
 
-            // Información del medio de pago
-            var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
-            if (paymentMeansElement != null)
-            {
-                paymentMeansElement.Element(cbc + "ID")?.SetValue("1");
-                paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
-                paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
-            }
+            //// Información del medio de pago
+            //var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
+            //if (paymentMeansElement != null)
+            //{
+            //    paymentMeansElement.Element(cbc + "ID")?.SetValue("1");
+            //    paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
+            //    paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
+            //}
+            GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago); // Información de las formas de pago
            
             GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento); // Calcular el total del IVA de todos los productos
 

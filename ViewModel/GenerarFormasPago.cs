@@ -12,7 +12,7 @@ namespace GeneradorCufe.ViewModel
     public class GenerarFormasPago
     {
 
-        public void GenerarFormaPagos(XDocument xmlDoc, List<FormaPago> listaFormaPago)
+        public static void GenerarFormaPagos(XDocument xmlDoc, List<FormaPago> listaFormaPago)
         {
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
