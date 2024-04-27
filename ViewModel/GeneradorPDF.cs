@@ -241,7 +241,8 @@ namespace GeneradorCufe.ViewModel
                                       "DIRECCIÓN: " + direccionAdquiriente.ToUpper().Replace("\r\n", " ") +
                                       " " + adquiriente.Nombre_municipio_adqui + "                         " +
                                        "Forma de pago: Efectivo\n" +
-                                      "CORREO: " + correoAdquiriente + "\n" +
+                                      "CORREO: " + correoAdquiriente + "                                  " +
+                                      "Vendedor:" + movimiento.Vendedor + "\n" +
                                       "Telefono: " + telefonoAdquiriente +"\n" +
                                       Orden;
 
@@ -499,7 +500,7 @@ namespace GeneradorCufe.ViewModel
                 ciRecargosDetalle.Padding = 3;
 
                 // Simulación de valores ficticios para los recargos
-                decimal recargosDetalle = 00.00m; // Valor ficticio de recargos
+                decimal recargosDetalle = movimiento.Valor_neto; // Valor ficticio de recargos
 
                 // Convertir el valor de recargos a cadena
                 string iRecargosDetalle = recargosDetalle.ToString("$#,###,##0.00");
@@ -668,7 +669,7 @@ namespace GeneradorCufe.ViewModel
                 ciAnticipo.Padding = 3;
 
                 // Simulación de valor ficticio para el anticipo
-                decimal anticipo = 00.0m; // Anticipo ficticio
+                decimal anticipo = movimiento.Exentas; // Anticipo ficticio
 
                 // Convertir el anticipo a cadena
                 string iAnticipo = anticipo.ToString("$#,###,##0.00");

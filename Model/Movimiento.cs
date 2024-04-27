@@ -23,6 +23,7 @@ namespace GeneradorCufe.Model
         public string? Dato_Cufe { get; set; }
         public decimal Nota_credito { get; set; }
         public string? Numero { get; set; }
+        public string? Vendedor { get; set; }
 
     }
 }

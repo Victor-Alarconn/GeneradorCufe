@@ -66,7 +66,9 @@ namespace GeneradorCufe.ViewModel
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyID", "195");
                 partyTaxSchemeElement.Element(cbc + "CompanyID")?.SetAttributeValue("schemeAgencyName", "CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)");
 
-                partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue("O-15");
+                string valorTaxLevelCode = emisor.Retiene_emisor == 3 ? "O-15" : "R-99-PN";
+                partyTaxSchemeElement.Element(cbc + "TaxLevelCode")?.SetValue(valorTaxLevelCode);
+
 
                 var registrationAddressElement = partyTaxSchemeElement.Element(cac + "RegistrationAddress");
                 if (registrationAddressElement != null)

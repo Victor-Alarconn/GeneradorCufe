@@ -26,7 +26,7 @@ namespace GeneradorCufe.Consultas
             try
             {
                 string detalle = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                string jsonRespuesta = $"[{{\"factura\":\"{recibo}\",\"cufe\":\"{cufe}\",\"estado\":{{\"codigo\":\"Enviado Adquiriente\"}},\"detalle\":\"{detalle}\"}}]";
+                string jsonRespuesta = $"[{{\"factura\":\"{recibo}\",\"cufe/cude\":\"{cufe}\",\"estado\":{{\"codigo\":\"Enviado Adquiriente\"}},\"detalle\":\"{detalle}\"}}]";
 
                 using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
                 {
