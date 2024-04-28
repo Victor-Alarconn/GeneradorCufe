@@ -246,7 +246,7 @@ namespace GeneradorCufe.ViewModel
                         // Guardar el archivo XML en un flujo de memoria
                         using (MemoryStream xmlStream = new MemoryStream(xmlBytes))
                         {
-                    
+
                             int añoActual = DateTime.Now.Year;
                             // Construir el nombre del archivo PDF
                             string nombreArchivoPDF;
@@ -293,16 +293,37 @@ namespace GeneradorCufe.ViewModel
                                 }
 
                                 // Enviar el archivo ZIP por correo electrónico
-                                EnviarCorreo.Enviar(emisor, adquiriente, factura, zipStream.ToArray(), nombreArchivoXML);
+                                bool correoEnviado = await EnviarCorreo.Enviar(emisor, adquiriente, factura, zipStream.ToArray(), nombreArchivoXML);
+
+
+                                if (correoEnviado)
+                                {
+                                    // Crear una instancia de la clase Respuesta_Consulta
+                                    Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
+
+                                    // Guardar la respuesta en la base de datos
+                                    bool respuestaGuardada = respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, recibo, cufe, idDocumento);
+
+                                    // Verificar si la respuesta se guardó correctamente en la base de datos
+                                    if (respuestaGuardada)
+                                    {
+                                        // Borrar la respuesta de la base de datos solo si se guardó correctamente
+                                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo);
+                                    }
+                                    else
+                                    {
+                                        // Si la respuesta no se guardó correctamente, mostrar un mensaje de error o manejar la situación según sea necesario
+                                        Console.WriteLine("Error: La respuesta no se guardó correctamente en la base de datos.");
+                                    }
+                                }
+                                else
+                                {
+                                    // Si el correo no se envió correctamente, puedes mostrar un mensaje de error o manejar la situación según sea necesario
+                                    Console.WriteLine("Error: El correo no se envió correctamente.");
+                                }
+
                             }
-
-
                         }
-
-                        // Crear una instancia de la clase Respuesta_Consulta
-                        Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
-                        respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, recibo , cufe, idDocumento);
-                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo);
                     }
                     else
                     {
@@ -318,6 +339,7 @@ namespace GeneradorCufe.ViewModel
                 MessageBox.Show("Error al enviar la solicitud GET:\n\n" + ex.Message, "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
         public static (string cadenaConexion, string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)

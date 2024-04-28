@@ -21,7 +21,7 @@ namespace GeneradorCufe.Consultas
             _data = data;
         }
 
-        public void GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe, string recibo)
+        public bool GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe, string recibo)
         {
             try
             {
@@ -66,10 +66,12 @@ namespace GeneradorCufe.Consultas
                         }
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al guardar la respuesta de consulta en la base de datos: {ex.Message}");
+                return false;
             }
         }
 

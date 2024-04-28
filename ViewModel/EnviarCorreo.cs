@@ -13,7 +13,7 @@ namespace GeneradorCufe.ViewModel
 {
     public  class EnviarCorreo
     {
-        public static void Enviar(Emisor emisor, Adquiriente adquiriente, Factura factura, byte[] archivoAdjunto, string cufe)
+        public static async Task<bool> Enviar(Emisor emisor, Adquiriente adquiriente, Factura factura, byte[] archivoAdjunto, string cufe)
         {
             // Configurar el cliente SMTP
             SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com");
@@ -77,11 +77,12 @@ namespace GeneradorCufe.ViewModel
             {
                 // Enviar el mensaje
                 clienteSmtp.Send(mensaje);
-                Console.WriteLine("¡Correo electrónico enviado correctamente!");
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error al enviar el correo electrónico: " + ex.Message);
+                return false;
             }
             finally
             {
@@ -89,6 +90,8 @@ namespace GeneradorCufe.ViewModel
                 mensaje.Dispose();
                 clienteSmtp.Dispose();
             }
+
+            
         }
 
 

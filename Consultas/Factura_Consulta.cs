@@ -36,10 +36,8 @@ namespace GeneradorCufe.Consultas
             {
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
-                    // Abre la conexión
                     connection.Open();
 
-                    // Define tu consulta SQL con las columnas específicas
                     string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, terminal, ip_base FROM fac";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
@@ -49,9 +47,10 @@ namespace GeneradorCufe.Consultas
                             DataTable dataTable = new DataTable();
                             adapter.Fill(dataTable);
 
+                            Emisor_Consulta emisorConsulta = new Emisor_Consulta();
+
                             foreach (DataRow row in dataTable.Rows)
                             {
-                                // Mapea los datos a objetos de la clase Factura
                                 Factura factura = new Factura
                                 {
                                     Id_encabezado = Convert.ToInt32(row["id_enc"] ?? 0),
@@ -65,42 +64,36 @@ namespace GeneradorCufe.Consultas
                                     Terminal = row["terminal"]?.ToString() ?? "",
                                     Ip_base = row["ip_base"]?.ToString() ?? ""
                                 };
-                                // Crear una instancia de la clase Emisor_Consulta
-                                Emisor_Consulta emisorConsulta = new Emisor_Consulta();
-                                // Verifica la IP base y ejecuta la acción correspondiente
-                                if (factura.Ip_base == "200.118.190.213")
+
+                                // Ejecuta la acción correspondiente según la IP base
+                                if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
                                 {
-                                    // Realiza la acción específica para la primera IP
-                                    emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "*LiLo89*");
-                                }
-                                else if (factura.Ip_base == "200.118.190.167")
-                                {
-                                    // Realiza la acción específica para la segunda IP
                                     emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "*LiLo89*");
                                 }
                                 else if (factura.Ip_base == "192.190.42.191")
                                 {
-                                    // Realiza la acción específica para la tercera IP
                                     emisorConsulta.EjecutarAccionParaIP(factura, "root", "**qwerty**");
                                 }
-
-
+                                else
+                                {
+                                    // Maneja el caso de IP base no reconocida
+                                    Console.WriteLine($"IP base no reconocida: {factura.Ip_base}");
+                                }
                             }
 
-                        };
-                            
                             Console.WriteLine("Consulta a la base de datos completada exitosamente.");
+                        }
                     }
-                  // Cierra la conexión
+
                     connection.Close();
                 }
             }
             catch (Exception ex)
             {
-                // Maneja cualquier excepción que pueda ocurrir durante la consulta
                 Console.WriteLine("Error al consultar la base de datos: " + ex.Message);
             }
         }
+
 
     }
 }

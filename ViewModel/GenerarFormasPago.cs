@@ -57,7 +57,7 @@ namespace GeneradorCufe.ViewModel
                         {
                             paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("47");
                             paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Transferencia Débito Bancaria");
-                            paymentMeansElementCloned.Add(new XElement(cbc + "PaymentDueDate", DateTime.Now.ToString("yyyy-MM-dd")));
+                          //  paymentMeansElementCloned.Add(new XElement(cbc + "PaymentDueDate", DateTime.Now.ToString("yyyy-MM-dd")));
                         }
 
                         // Agregar PaymentMeans al XML después de la plantilla existente
