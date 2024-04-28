@@ -13,11 +13,9 @@ namespace GeneradorCufe.ViewModel
     {
         public static void MapInvoiceLine(XDocument xmlDoc, List<Productos> listaProductos, Movimiento movimiento) // Productos
         {
-            // Namespace específico para los elementos bajo 'sts'
+
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
-            // Namespace para elementos 'cbc'
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
-            // Namespace para elementos 'cac'
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
             // Obtener el elemento 'cac:InvoiceLine' para utilizarlo como plantilla para agregar nuevos productos

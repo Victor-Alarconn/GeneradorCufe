@@ -444,7 +444,7 @@ namespace GeneradorCufe.ViewModel
             GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos); // Información del adquiriente
 
 
-            //// Información del medio de pago
+            // Información del medio de pago
             //var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
             //if (paymentMeansElement != null)
             //{
