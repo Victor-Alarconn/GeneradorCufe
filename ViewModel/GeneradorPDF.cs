@@ -56,7 +56,7 @@ namespace GeneradorCufe.ViewModel
                 encabezado.SetWidths(new float[] { 2, 4, 2 });
                 encabezado.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
 
-                string RutaLogo = "C:\\Users\\Programacion01\\source\\repos\\RepoVictor\\GeneradorCufe\\xml\\Logo_ADEZ.png";
+                string RutaLogo = "C:\\Users\\Programacion01\\source\\repos\\RepoVictor\\GeneradorCufe\\xml\\logo.png";
                 if (File.Exists(RutaLogo))
                 {
                     Image logo = Image.GetInstance(RutaLogo);
@@ -239,8 +239,8 @@ namespace GeneradorCufe.ViewModel
                 string iAdquiriente = "Cliente: " + nombreAdquiriente + " - " + tipoDocumentoTexto + ": " + identificacionAdquiriente + "             " +
                                       "Medio de pago: Contado\n" +
                                       "DIRECCIÓN: " + direccionAdquiriente.ToUpper().Replace("\r\n", " ") +
-                                      " " + adquiriente.Nombre_municipio_adqui + "                         " +
-                                       "Forma de pago: Efectivo\n" +
+                                      " " + adquiriente.Nombre_municipio_adqui + "                 " +
+                                       "Forma de pago: Transferencia Débito Bancaria\n" +
                                       "CORREO: " + correoAdquiriente + "                                  " +
                                       "Vendedor:" + movimiento.Vendedor + "\n" +
                                       "Telefono: " + telefonoAdquiriente +"\n" +

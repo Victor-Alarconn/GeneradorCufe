@@ -53,7 +53,7 @@ namespace GeneradorCufe.ViewModel
             decimal total = Valor;
             string nitFacturador = nit;
             string numeroIdentificacionCliente = movimiento.Nit;
-            string clavetecnica = "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c";
+            string clavetecnica = "62916e20d861f4c027c53a96accdbeb2d3915d9d65946b44427490d4b94c5f52";
             int tipodeambiente = ambiente;
 
             // Construir la cadena CUFE

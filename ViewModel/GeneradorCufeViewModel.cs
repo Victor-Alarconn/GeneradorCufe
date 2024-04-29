@@ -417,6 +417,7 @@ namespace GeneradorCufe.ViewModel
 
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(factura.Facturas);
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(CUFE);
+            xmlDoc.Descendants(cbc + "UUID").Attributes("schemeID").FirstOrDefault()?.SetValue("1");
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
@@ -546,7 +547,7 @@ namespace GeneradorCufe.ViewModel
                 if (partnershipElement != null)
                 {
                     partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
-                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
+                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("62916e20d861f4c027c53a96accdbeb2d3915d9d65946b44427490d4b94c5f52");
 
                     // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
                     if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
