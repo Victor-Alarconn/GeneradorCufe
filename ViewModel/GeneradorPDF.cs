@@ -239,7 +239,7 @@ namespace GeneradorCufe.ViewModel
                 string iAdquiriente = "Cliente: " + nombreAdquiriente + " - " + tipoDocumentoTexto + ": " + identificacionAdquiriente + "             " +
                                       "Medio de pago: Contado\n" +
                                       "DIRECCIÓN: " + direccionAdquiriente.ToUpper().Replace("\r\n", " ") +
-                                      " " + adquiriente.Nombre_municipio_adqui + "                 " +
+                                      " " + adquiriente.Nombre_municipio_adqui + "     " +
                                        "Forma de pago: Transferencia Débito Bancaria\n" +
                                       "CORREO: " + correoAdquiriente + "                                  " +
                                       "Vendedor:" + movimiento.Vendedor + "\n" +
@@ -406,7 +406,7 @@ namespace GeneradorCufe.ViewModel
                 int cantidadProductos = listaProductos.Count;
 
                 // Calcula la cantidad de saltos de línea que deseas dejar al final de la tabla
-                int cantidadSaltosLinea = Math.Max(32 - cantidadProductos, 1); // Deja al menos un salto de línea
+                int cantidadSaltosLinea = Math.Max(28 - cantidadProductos, 1); // Deja al menos un salto de línea
 
                 // Agrega la cantidad de saltos de línea necesarios al final de la tabla
                 for (int i = 0; i < cantidadSaltosLinea; i++)

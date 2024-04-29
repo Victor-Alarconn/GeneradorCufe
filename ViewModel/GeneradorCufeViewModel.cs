@@ -191,9 +191,9 @@ namespace GeneradorCufe.ViewModel
             try
             {
                 string nit = emisor.Nit_emisor?.Replace("-0", "");
-                string url = "https://apivp.efacturacadena.com/staging/vp/consulta/documentos";
+                string url = "https://apivp.efacturacadena.com/v1/vp/consulta/documentos";
                 string partnershipId = "900770401";
-                string nitEmisor = nit;
+                string nitEmisor = "75036432";
                 string idDocumento;
                 string codigoTipoDocumento;
                 string PrefijoNC = "";
@@ -223,7 +223,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     // Establecer los encabezados de la solicitud
                     client.DefaultRequestHeaders.Add("Partnership-Id", partnershipId);
-                    client.DefaultRequestHeaders.Add("efacturaAuthorizationToken", "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV");
+                    client.DefaultRequestHeaders.Add("efacturaAuthorizationToken", "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K");
 
                     // Realizar la solicitud GET y obtener la respuesta
                     HttpResponseMessage response = await client.GetAsync(url);
@@ -475,8 +475,8 @@ namespace GeneradorCufe.ViewModel
             //    paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
             //    paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
             //}
-            GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago); // Información de las formas de pago
-           
+            string formasPagoConcatenadas = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
+
             GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento); // Calcular el total del IVA de todos los productos
 
 

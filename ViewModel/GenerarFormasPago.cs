@@ -12,8 +12,10 @@ namespace GeneradorCufe.ViewModel
     public class GenerarFormasPago
     {
 
-        public static void GenerarFormaPagos(XDocument xmlDoc, List<FormaPago> listaFormaPago)
+        public static string GenerarFormaPagos(XDocument xmlDoc, List<FormaPago> listaFormaPago)
         {
+            string Pagos = ""; // Variable para almacenar los métodos de pago
+
             try
             {
                 XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
@@ -57,11 +59,20 @@ namespace GeneradorCufe.ViewModel
                         {
                             paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("47");
                             paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Transferencia Débito Bancaria");
-                          //  paymentMeansElementCloned.Add(new XElement(cbc + "PaymentDueDate", DateTime.Now.ToString("yyyy-MM-dd")));
                         }
 
                         // Agregar PaymentMeans al XML después de la plantilla existente
                         paymentMeansTemplate.AddAfterSelf(paymentMeansElementCloned);
+
+                        // Concatenar el método de pago a la variable Pagos
+                        if (Pagos == "")
+                        {
+                            Pagos = paymentMeansElementCloned.Element(cbc + "PaymentID")?.Value;
+                        }
+                        else
+                        {
+                            Pagos += ", " + paymentMeansElementCloned.Element(cbc + "PaymentID")?.Value;
+                        }
                     }
 
                     // Eliminar la plantilla de PaymentMeans después de agregar los nuevos métodos de pago
@@ -77,7 +88,11 @@ namespace GeneradorCufe.ViewModel
                 // Manejar la excepción
                 Console.WriteLine("Error al generar formas de pago: " + ex.Message);
             }
+
+            // Retornar la variable Pagos que contiene los métodos de pago concatenados
+            return Pagos;
         }
+
 
 
 
