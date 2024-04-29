@@ -10,7 +10,7 @@ namespace GeneradorCufe.Conexion
 {
     public class Data
     {
-        private readonly string _connectionString;
+        public readonly string _connectionString;
 
         public Data(string nombreBaseDatos = "MySqlConnectionString")
         {

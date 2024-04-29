@@ -14,7 +14,7 @@ namespace GeneradorCufe.Consultas
 {
     public class Respuesta_Consulta
     {
-        private readonly Conexion.Data _data;
+        public readonly Conexion.Data _data;
 
         public Respuesta_Consulta(Conexion.Data data)
         {
@@ -81,17 +81,8 @@ namespace GeneradorCufe.Consultas
         {
             try
             {
-                // Crear un constructor de cadena de conexión MySQL para analizar la cadena de conexión existente
-                MySqlConnectionStringBuilder connectionStringBuilder = new MySqlConnectionStringBuilder(cadenaConexion);
-
-                // Cambiar el nombre de la base de datos en la cadena de conexión
-                connectionStringBuilder.Database = "facturas";
-
-                // Obtener la cadena de conexión modificada
-                string nuevaCadenaConexion = connectionStringBuilder.ConnectionString;
-
-                // Abrir una nueva conexión utilizando la cadena de conexión modificada
-                using (MySqlConnection connection = new MySqlConnection(nuevaCadenaConexion))
+                // Abrir una nueva conexión utilizando la cadena de conexión definida en la clase
+                using (MySqlConnection connection = new MySqlConnection(_data._connectionString))
                 {
                     connection.Open();
 
@@ -138,9 +129,11 @@ namespace GeneradorCufe.Consultas
                 Console.WriteLine($"Error al borrar el archivo de la base de datos: {ex.Message}");
             }
         }
+    
 
 
-        public void GuardarErrorEnBD(string cadenaConexion, HttpStatusCode status, string mensaje, Factura factura)
+
+    public void GuardarErrorEnBD(string cadenaConexion, HttpStatusCode status, string mensaje, Factura factura)
         {
             try
             {
