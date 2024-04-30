@@ -43,7 +43,6 @@ namespace GeneradorCufe.ViewModel
                 MailAddress direccionDestinatarioSecundario = new MailAddress(adquiriente.Correo2);
                 mensaje.To.Add(direccionDestinatarioSecundario);
             }
-
             if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
             {
                 mensaje.Subject = $"{Nit}; {emisor.Nombre_emisor}; {PrefijoNC}; 91; {emisor.Nombre_emisor}";
