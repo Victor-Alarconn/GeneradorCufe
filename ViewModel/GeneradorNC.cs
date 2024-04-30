@@ -51,8 +51,6 @@ namespace GeneradorCufe.ViewModel
             string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
             string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
 
-           
-
             string cufe;
             string hora = "";
             if (string.IsNullOrEmpty(movimiento.Dato_Cufe) || movimiento.Dato_Cufe == "0")
@@ -80,15 +78,17 @@ namespace GeneradorCufe.ViewModel
             // Actualizar 'CustomizationID'
             xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("20"); // 22 o sin referencia a facturas
 
+            string perfilEjecucionID = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase) ? "1" : "2";
+
             // Actualizar 'ProfileExecutionID'
-            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue("2"); // 1 produccion , 2 pruebas
+            xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue(perfilEjecucionID); // 1 produccion , 2 pruebas
 
             // Actualizar 'ID'
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(PrefijoNC);
 
             // Actualizar 'UUID'
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(cude);
-            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeID", "2");
+            xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeID", perfilEjecucionID);
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
 
             // Actualizar 'IssueDate' y 'IssueTime'
@@ -154,8 +154,7 @@ namespace GeneradorCufe.ViewModel
             Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
             GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos);
 
-            // Información del medio de pago
-            GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
+            emisor.Codigo_municipio_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
 
             // Calcular el total del IVA de todos los productos
             GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento);
@@ -213,10 +212,8 @@ namespace GeneradorCufe.ViewModel
             XNamespace creditNoteNs = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2";
             var dataElement = xmlDoc.Descendants(creditNoteNs + "DATA").FirstOrDefault();
 
-            // Verificar si se encontró el elemento <DATA>
             if (dataElement != null)
             {
-                // Modificar los elementos dentro de <DATA>
                 dataElement.Element(creditNoteNs + "UBL21")?.SetValue("true");
 
                 // Buscar el elemento <Partnership> dentro de <DATA> con el espacio de nombres completo
@@ -224,8 +221,15 @@ namespace GeneradorCufe.ViewModel
                 if (partnershipElement != null)
                 {
                     partnershipElement.Element(creditNoteNs + "ID")?.SetValue("900770401");
-                    partnershipElement.Element(creditNoteNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); // pregunta 
-                    partnershipElement.Element(creditNoteNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5"); // pregunta 
+                    partnershipElement.Element(creditNoteNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"); 
+                    if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
+                    {
+                        partnershipElement.Element(creditNoteNs + "SetTestID")?.Remove();
+                    }
+                    else
+                    {
+                        partnershipElement.Element(creditNoteNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5");
+                    }
                 }
             }
             return (cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);

@@ -198,10 +198,10 @@ namespace GeneradorCufe.ViewModel
 
 
                 // Segundo encabezado (Información del adquiriente)
-                PdfPTable encabezado2 = new PdfPTable(3);
+                PdfPTable encabezado2 = new PdfPTable(4);
                 encabezado2.HorizontalAlignment = Element.ALIGN_LEFT;
                 encabezado2.WidthPercentage = 100;
-                encabezado2.SetWidths(new float[] { 4f, 1f, 1f });
+                encabezado2.SetWidths(new float[] { 3f, 2f, 1f, 1f });
                 encabezado2.SpacingAfter = 3;
 
                 // Datos del adquiriente (ficticios)
@@ -236,16 +236,11 @@ namespace GeneradorCufe.ViewModel
                         break;
                 }
                 // Crear el texto del adquiriente con el tipo de documento y número de identificación en la misma línea
-                string iAdquiriente = "Cliente: " + nombreAdquiriente + " - " + tipoDocumentoTexto + ": " + identificacionAdquiriente + "             " +
-                                      "Medio de pago: Contado\n" +
+                string iAdquiriente = "Cliente: " + nombreAdquiriente + " - " + tipoDocumentoTexto + ": " + identificacionAdquiriente + "\n" +
                                       "DIRECCIÓN: " + direccionAdquiriente.ToUpper().Replace("\r\n", " ") +
-                                      " " + adquiriente.Nombre_municipio_adqui + "     " +
-                                       "Forma de pago: Transferencia Débito Bancaria\n" +
-                                      "CORREO: " + correoAdquiriente + "                                  " +
-                                      "Vendedor:" + movimiento.Vendedor + "\n" +
-                                      "Telefono: " + telefonoAdquiriente +"\n" +
-                                      Orden;
-
+                                      " " + adquiriente.Nombre_municipio_adqui + "\n" +
+                                      "CORREO: " + correoAdquiriente + "\n" +
+                                      "Telefono: " + telefonoAdquiriente;
 
 
                 PdfPCell cAdquiriente = new PdfPCell(new Phrase(iAdquiriente, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
@@ -257,6 +252,19 @@ namespace GeneradorCufe.ViewModel
                 cAdquiriente.PaddingRight = 1;
                 cAdquiriente.PaddingLeft = 3;
                 cAdquiriente.Rowspan = 1;
+
+                // Crear la cuarta columna
+                string iOtrosDatos = "Medio de pago: Contado\r\n" +
+                                     "Forma de pago: "+ emisor.Codigo_municipio_emisor + "\r\n" +
+                                     "Vendedor: " + movimiento.Vendedor + "\r\n" +
+                                     Orden;
+                PdfPCell cOtrosDatos = new PdfPCell(new Phrase(iOtrosDatos, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                cOtrosDatos.BorderColor = BaseColor.GRAY;
+                cOtrosDatos.Border = Rectangle.BOX;
+                cOtrosDatos.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cOtrosDatos.Padding = 2;
+                cOtrosDatos.PaddingRight = 1;
+                cOtrosDatos.PaddingLeft = 3;
 
                 // Fecha de emisión (ficticia)
                 DateTime fechaEmision = DateTime.Now;
@@ -280,6 +288,7 @@ namespace GeneradorCufe.ViewModel
                 cVenciFactura.Padding = 1;
 
                 encabezado2.AddCell(cAdquiriente);
+                encabezado2.AddCell(cOtrosDatos);
                 encabezado2.AddCell(cEmisionFactura);
                 encabezado2.AddCell(cVenciFactura);
                 documento.Add(encabezado2);
@@ -290,7 +299,7 @@ namespace GeneradorCufe.ViewModel
                 nuevoRenglon.WidthPercentage = 100;
 
                 // Agregar una celda con el dato deseado al nuevo objeto PdfPTable
-                string nuevoDato = "CUFE: " + cufe; // Este sería tu nuevo dato
+                string nuevoDato = "CUFE: " + cufe; 
                 PdfPCell celdaNuevoDato = new PdfPCell(new Phrase(nuevoDato, FontFactory.GetFont("Helvetica", 9, Font.NORMAL)));
                 celdaNuevoDato.Border = Rectangle.NO_BORDER; // Eliminar bordes
                 celdaNuevoDato.HorizontalAlignment = Element.ALIGN_LEFT; // Alinear a la izquierda
@@ -327,12 +336,12 @@ namespace GeneradorCufe.ViewModel
                 PdfPTable tabla = new PdfPTable(9);
                 tabla.HorizontalAlignment = Element.ALIGN_CENTER;
                 tabla.WidthPercentage = 100;
-                float[] anchosColumnas = new float[] { 1, 1, 2, 3, 1, 2, 1, 2, 2 }; // Anchuras de las columnas en porcentaje
+                float[] anchosColumnas = new float[] { 0.6f, 1.2f, 1.5f, 5, 0.8f, 2, 0.8f, 2, 2 }; // Anchuras de las columnas en porcentaje
                 tabla.SetWidths(anchosColumnas);
                 tabla.SpacingBefore = 10;
 
                 // Encabezados de la tabla
-                string[] encabezados = { "Nro.", "Artículo", "Cantidad", "Descripción", "U/M", "Precio.Uni", "IVA %", "Vl.IVA", "Vr. Parcial" };
+                string[] encabezados = { "Nro.", "Artículo", "Cantidad", "Descripción", "U/M", "Precio.Uni", "IVA %", "VL.IVA", "Vr. Parcial" };
                 foreach (string encabezadoTabla in encabezados) // Cambiar el nombre de la variable para evitar el conflicto de nombres
                 {
                     PdfPCell celdaEncabezado = new PdfPCell(new Phrase(encabezadoTabla, FontFactory.GetFont("Helvetica", 8, Font.BOLD)));
@@ -406,7 +415,7 @@ namespace GeneradorCufe.ViewModel
                 int cantidadProductos = listaProductos.Count;
 
                 // Calcula la cantidad de saltos de línea que deseas dejar al final de la tabla
-                int cantidadSaltosLinea = Math.Max(28 - cantidadProductos, 1); // Deja al menos un salto de línea
+                int cantidadSaltosLinea = Math.Max(31 - cantidadProductos, 1); // Deja al menos un salto de línea
 
                 // Agrega la cantidad de saltos de línea necesarios al final de la tabla
                 for (int i = 0; i < cantidadSaltosLinea; i++)

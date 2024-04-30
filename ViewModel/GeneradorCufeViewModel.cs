@@ -438,7 +438,7 @@ namespace GeneradorCufe.ViewModel
 
             xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(factura.Facturas);
             xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(CUFE);
-            xmlDoc.Descendants(cbc + "UUID").Attributes("schemeID").FirstOrDefault()?.SetValue("1");
+            xmlDoc.Descendants(cbc + "UUID").Attributes("schemeID").FirstOrDefault()?.SetValue(perfilEjecucionID);
             xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
             xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
             xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
@@ -496,8 +496,8 @@ namespace GeneradorCufe.ViewModel
             //    paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
             //    paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
             //}
-            string formasPagoConcatenadas = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
 
+            emisor.Codigo_municipio_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
             GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento); // Calcular el total del IVA de todos los productos
 
 
@@ -552,12 +552,10 @@ namespace GeneradorCufe.ViewModel
             
             GenerarProductos.MapInvoiceLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
 
-            // Buscar el elemento <DATA> dentro del elemento <Invoice> con el espacio de nombres completo
+
             XNamespace invoiceNs = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2";
             var dataElement = xmlDoc.Descendants(invoiceNs + "DATA").FirstOrDefault();
 
-            // Verificar si se encontró el elemento <DATA>
-            // Verificar si se encontró el elemento <DATA>
             if (dataElement != null)
             {
                 // Modificar los elementos dentro de <DATA>
@@ -568,12 +566,9 @@ namespace GeneradorCufe.ViewModel
                 if (partnershipElement != null)
                 {
                     partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
-                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("62916e20d861f4c027c53a96accdbeb2d3915d9d65946b44427490d4b94c5f52");
-
-                    // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
+                    partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
                     if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Eliminar la línea que establece el valor de TechKey si emisor.Url_emisor es igual a "docum"
                         partnershipElement.Element(invoiceNs + "SetTestID")?.Remove();
                     }
                     else
