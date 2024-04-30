@@ -21,7 +21,7 @@ namespace GeneradorCufe.Consultas
             _data = data;
         }
 
-        public bool GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe, string recibo)
+        public bool GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe, string recibo, bool nota)
         {
             try
             {
@@ -35,10 +35,11 @@ namespace GeneradorCufe.Consultas
                     string updateQuery = string.Empty;
 
                     // Verificar si la condición se cumple
-                    if (!string.IsNullOrEmpty(recibo) && recibo != "0")
+                    if (nota == true)
                     {
                         // Si la condición se cumple, actualizar la tabla "xxxxcmbt"
-                        updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura";
+                       updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura";
+                        
                     }
                     else
                     {
@@ -77,7 +78,7 @@ namespace GeneradorCufe.Consultas
 
 
 
-        public void BorrarEnBD(string cadenaConexion, string factura, string recibo)
+        public void BorrarEnBD(string cadenaConexion, string factura, string recibo, bool nota)
         {
             try
             {
@@ -88,7 +89,7 @@ namespace GeneradorCufe.Consultas
 
                     // Definir la consulta SQL para borrar el archivo en la tabla fac
                     string deleteQuery;
-                    if (!string.IsNullOrEmpty(recibo) && recibo != "0")
+                    if (nota == true)
                     {
                         // Si es una nota de crédito, buscar por el valor de recibo en lugar de factura
                         deleteQuery = "DELETE FROM fac WHERE recibo = @Recibo";
@@ -101,7 +102,7 @@ namespace GeneradorCufe.Consultas
                     using (MySqlCommand deleteCommand = new MySqlCommand(deleteQuery, connection))
                     {
                         // Asignar el valor del parámetro correspondiente
-                        if (!string.IsNullOrEmpty(recibo) && recibo != "0")
+                        if (nota == true)
                         {
                             deleteCommand.Parameters.AddWithValue("@Recibo", recibo);
                         }

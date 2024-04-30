@@ -1,6 +1,7 @@
 ﻿using GeneradorCufe.Consultas;
 using GeneradorCufe.Model;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -167,7 +168,7 @@ namespace GeneradorCufe.ViewModel
                         using (var reader = new StreamReader(stream))
                         {
                             string errorResponse = reader.ReadToEnd();
-                            MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                          MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
 
                             // Guardar el error en la base de datos
                             respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
@@ -190,14 +191,30 @@ namespace GeneradorCufe.ViewModel
         {
             try
             {
-                string nit = emisor.Nit_emisor?.Replace("-0", "");
-                string url = "https://apivp.efacturacadena.com/v1/vp/consulta/documentos";
+
+                string nitCompleto = emisor.Nit_emisor ?? "";
+                string[] partesNit = nitCompleto.Split('-');
+                string Nit = partesNit.Length > 0 ? partesNit[0] : "";
+                string url = "";
+                string token= "";
                 string partnershipId = "900770401";
-                string nitEmisor = "75036432";
+                string nitEmisor = Nit;
                 string idDocumento;
                 string codigoTipoDocumento;
                 string PrefijoNC = "";
-                string recibo = "0";
+                string recibo = "";
+                bool Nota_credito;
+
+                if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
+                {
+                    url = "https://apivp.efacturacadena.com/v1/vp/consulta/documentos";
+                    token = "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K";
+                }
+                else
+                {
+                    url = "https://apivp.efacturacadena.com/staging/vp/consulta/documentos";
+                    token = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
+                }
 
                 if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
                 {
@@ -205,11 +222,15 @@ namespace GeneradorCufe.ViewModel
                     idDocumento = PrefijoNC;
                     codigoTipoDocumento = "91";
                     recibo = factura.Recibo;
+                    Nota_credito = true;
+
                 }
                 else
                 {
                     idDocumento = factura.Facturas;
+                    recibo = factura.Facturas;
                     codigoTipoDocumento = "01";
+                    Nota_credito = false;
                 }
 
                 // Construir los parámetros de la URL
@@ -223,7 +244,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     // Establecer los encabezados de la solicitud
                     client.DefaultRequestHeaders.Add("Partnership-Id", partnershipId);
-                    client.DefaultRequestHeaders.Add("efacturaAuthorizationToken", "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K");
+                    client.DefaultRequestHeaders.Add("efacturaAuthorizationToken", token);
 
                     // Realizar la solicitud GET y obtener la respuesta
                     HttpResponseMessage response = await client.GetAsync(url);
@@ -295,20 +316,19 @@ namespace GeneradorCufe.ViewModel
                                 // Enviar el archivo ZIP por correo electrónico
                                 bool correoEnviado = await EnviarCorreo.Enviar(emisor, adquiriente, factura, zipStream.ToArray(), nombreArchivoXML);
 
-
                                 if (correoEnviado)
                                 {
                                     // Crear una instancia de la clase Respuesta_Consulta
                                     Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
 
                                     // Guardar la respuesta en la base de datos
-                                    bool respuestaGuardada = respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, recibo, cufe, idDocumento);
+                                    bool respuestaGuardada = respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, recibo, cufe, idDocumento, Nota_credito);
 
                                     // Verificar si la respuesta se guardó correctamente en la base de datos
                                     if (respuestaGuardada)
                                     {
                                         // Borrar la respuesta de la base de datos solo si se guardó correctamente
-                                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo);
+                                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito);
                                     }
                                     else
                                     {
@@ -363,12 +383,13 @@ namespace GeneradorCufe.ViewModel
 
             if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
             {
-                cadenaConexion = $"Database={factura.Empresa}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=*LiLo89*; ConvertZeroDateTime=True;";
+                cadenaConexion = $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=*LiLo89*; ConvertZeroDateTime=True;";
             }
             else if (factura.Ip_base == "192.190.42.191")
             {
-                cadenaConexion = $"Database={factura.Empresa}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
+                cadenaConexion = $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
             }
+
             // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);

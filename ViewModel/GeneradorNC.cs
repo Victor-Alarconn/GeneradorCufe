@@ -30,11 +30,11 @@ namespace GeneradorCufe.ViewModel
 
             if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
             {
-                cadenaConexion = $"Database={factura.Empresa}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=**LiLo89**; ConvertZeroDateTime=True;";
+                cadenaConexion = $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=*LiLo89*; ConvertZeroDateTime=True;";
             }
             else if (factura.Ip_base == "192.190.42.191")
             {
-                cadenaConexion = $"Database={factura.Empresa}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
+                cadenaConexion = $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
             }
             // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);

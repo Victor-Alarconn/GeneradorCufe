@@ -37,6 +37,13 @@ namespace GeneradorCufe.ViewModel
             MailAddress direccionRemitente = new MailAddress( adquiriente.Correo_adqui, adquiriente.Nombre_adqu);
             MailAddress direccionDestinatario = new MailAddress(adquiriente.Correo_adqui);
             MailMessage mensaje = new MailMessage(direccionRemitente, direccionDestinatario);
+
+            if (!string.IsNullOrEmpty(adquiriente.Correo2))
+            {
+                MailAddress direccionDestinatarioSecundario = new MailAddress(adquiriente.Correo2);
+                mensaje.To.Add(direccionDestinatarioSecundario);
+            }
+
             if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
             {
                 mensaje.Subject = $"{Nit}; {emisor.Nombre_emisor}; {PrefijoNC}; 91; {emisor.Nombre_emisor}";
