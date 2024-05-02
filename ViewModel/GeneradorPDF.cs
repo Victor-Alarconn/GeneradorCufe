@@ -261,7 +261,7 @@ namespace GeneradorCufe.ViewModel
                 PdfPCell cOtrosDatos = new PdfPCell(new Phrase(iOtrosDatos, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                 cOtrosDatos.BorderColor = BaseColor.GRAY;
                 cOtrosDatos.Border = Rectangle.BOX;
-                cOtrosDatos.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cOtrosDatos.VerticalAlignment = Element.ALIGN_TOP;
                 cOtrosDatos.Padding = 2;
                 cOtrosDatos.PaddingRight = 1;
                 cOtrosDatos.PaddingLeft = 3;
@@ -367,7 +367,7 @@ namespace GeneradorCufe.ViewModel
                     celdaCodigo.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaCodigo);
 
-                    PdfPCell celdaCantidad = new PdfPCell(new Phrase(producto.Cantidad.ToString("0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaCantidad = new PdfPCell(new Phrase(producto.Cantidad.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaCantidad.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaCantidad.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaCantidad);
@@ -384,17 +384,17 @@ namespace GeneradorCufe.ViewModel
                     tabla.AddCell(celdaUM);
 
                     // Añade las celdas restantes del producto (Neto, Iva, IvaTotal, Valor)
-                    PdfPCell celdaNeto = new PdfPCell(new Phrase(producto.Neto.ToString(), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaNeto = new PdfPCell(new Phrase(producto.Neto.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaNeto.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaNeto.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaNeto);
 
-                    PdfPCell celdaIva = new PdfPCell(new Phrase(producto.Iva.ToString(), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaIva = new PdfPCell(new Phrase(producto.Iva.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaIva.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaIva.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaIva);
 
-                    PdfPCell celdaIvaTotal = new PdfPCell(new Phrase(producto.IvaTotal.ToString(), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaIvaTotal = new PdfPCell(new Phrase(producto.IvaTotal.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaIvaTotal.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaIvaTotal.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaIvaTotal);
