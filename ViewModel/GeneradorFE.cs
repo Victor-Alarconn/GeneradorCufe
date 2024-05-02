@@ -13,7 +13,7 @@ namespace GeneradorCufe.ViewModel
     public class GeneradorFE
     {
 
-        public static (string cadenaConexion, string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura)
+        public static (string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) UpdateXmlWithViewModelData(XDocument xmlDoc, Emisor emisor, Factura factura, string cadenaConexion)
         {
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
@@ -29,17 +29,6 @@ namespace GeneradorCufe.ViewModel
             Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
             FormaPago_Consulta formaPagoConsulta = new FormaPago_Consulta();
             Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
-
-            string cadenaConexion = "";
-
-            if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
-            {
-                cadenaConexion = $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=*LiLo89*; ConvertZeroDateTime=True;";
-            }
-            else if (factura.Ip_base == "192.190.42.191")
-            {
-                cadenaConexion = $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
-            }
 
             // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
@@ -231,9 +220,8 @@ namespace GeneradorCufe.ViewModel
                 }
             }
 
-
             // Retornar la cadena de conexión
-            return (cadenaConexion, CUFE, listaProductos, adquiriente, movimiento, encabezado);
+            return (CUFE, listaProductos, adquiriente, movimiento, encabezado);
         }
     }
 }

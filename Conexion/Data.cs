@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using GeneradorCufe.Model;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -32,6 +33,19 @@ namespace GeneradorCufe.Conexion
         public MySqlConnection CreateConnection()
         {
             return new MySqlConnection(_connectionString);
+        }
+
+        public static string ConstruirCadenaConexion(Factura factura)
+        {
+            if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
+            {
+                return $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=*LiLo89*; ConvertZeroDateTime=True;";
+            }
+            else if (factura.Ip_base == "192.190.42.191")
+            {
+                return $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
+            }
+            return "";
         }
     }
 }

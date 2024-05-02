@@ -1,4 +1,5 @@
-﻿using GeneradorCufe.Consultas;
+﻿using GeneradorCufe.Conexion;
+using GeneradorCufe.Consultas;
 using GeneradorCufe.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -108,7 +109,7 @@ namespace GeneradorCufe.ViewModel
             string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
         }
 
-        
+
 
         private static async Task<string> SendPostRequest(string url, string base64Content, Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado)
         {
@@ -116,7 +117,7 @@ namespace GeneradorCufe.ViewModel
             Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
             try
             {
-               using (WebClient client = new WebClient())
+                using (WebClient client = new WebClient())
                 {
                     if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
                     {
@@ -162,7 +163,7 @@ namespace GeneradorCufe.ViewModel
                         using (var reader = new StreamReader(stream))
                         {
                             string errorResponse = reader.ReadToEnd();
-                          MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
 
                             // Guardar el error en la base de datos
                             respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
@@ -190,7 +191,7 @@ namespace GeneradorCufe.ViewModel
                 string[] partesNit = nitCompleto.Split('-');
                 string Nit = partesNit.Length > 0 ? partesNit[0] : "";
                 string url = "";
-                string token= "";
+                string token = "";
                 string partnershipId = "900770401";
                 string nitEmisor = Nit;
                 string idDocumento;
@@ -362,7 +363,7 @@ namespace GeneradorCufe.ViewModel
             string baseXmlFilePath = Path.Combine(basePath, "Plantilla", "XML.xml");
             string xmlTemplatePath = ""; // Declaración fuera del bloque if
 
-             string cadenaConexion = "";
+            string cadenaConexion = Data.ConstruirCadenaConexion(factura);
             string cufe = "";
             List<Productos> listaProductos = null;
             Adquiriente adquiriente = null;
@@ -376,10 +377,10 @@ namespace GeneradorCufe.ViewModel
             {
                 // Si se cumple la condición, usar la plantilla de nota de crédito
                 xmlTemplatePath = Path.Combine(basePath, "Plantilla_NC", "NC.xml");
-                xmlDoc = XDocument.Load(xmlTemplatePath); 
+                xmlDoc = XDocument.Load(xmlTemplatePath);
 
                 // Llamar a la acción para generar nota de crédito y asignar sus valores de retorno a cadenaConexion y cufe
-                (cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura);
+                (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura, cadenaConexion);
             }
             else
             {
@@ -392,7 +393,7 @@ namespace GeneradorCufe.ViewModel
                     xmlDoc = XDocument.Load(xmlTemplatePath);
 
                     // Actualizar el documento XML con los datos dinámicos
-                    (cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorFE.UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
+                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorFE.UpdateXmlWithViewModelData(xmlDoc, emisor, factura, cadenaConexion);
                 }
                 catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
                 {

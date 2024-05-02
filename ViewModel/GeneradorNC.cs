@@ -12,7 +12,7 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorNC
     {
-        public static (string cadenaConexion, string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GeneradorNotaCredito(XDocument xmlDoc, Emisor emisor, Factura factura)
+        public static (string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GeneradorNotaCredito(XDocument xmlDoc, Emisor emisor, Factura factura, string cadenaConexion)
         {
             XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
             XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
@@ -26,16 +26,7 @@ namespace GeneradorCufe.ViewModel
             Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
             string PrefijoNC = "NC" + factura.Recibo;
 
-            string cadenaConexion = "";
 
-            if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
-            {
-                cadenaConexion = $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=RmSoft20X;Password=*LiLo89*; ConvertZeroDateTime=True;";
-            }
-            else if (factura.Ip_base == "192.190.42.191")
-            {
-                cadenaConexion = $"Database={factura.Empresa.ToLower()}; Data Source={factura.Ip_base}; User Id=root;Password=**qwerty**; ConvertZeroDateTime=True;";
-            }
             // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
             Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
             Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
@@ -232,7 +223,7 @@ namespace GeneradorCufe.ViewModel
                     }
                 }
             }
-            return (cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
+            return (cufe, listaProductos, adquiriente, movimiento, encabezado);
 
         }
 
