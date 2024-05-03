@@ -78,8 +78,8 @@ namespace GeneradorCufe.Consultas
             }
             catch (Exception ex)
             {
-                // Manejar la excepción
-                Console.WriteLine("Error en la consulta de valores totales: " + ex.Message);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
 
             return movimiento;

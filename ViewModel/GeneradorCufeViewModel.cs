@@ -31,82 +31,90 @@ namespace GeneradorCufe.ViewModel
 
         public static async Task EjecutarGeneracionXML(Emisor emisor, Factura factura)
         {
-            // Generar el XML y la versión base64
-            (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) = GenerateXMLAndBase64(emisor, factura);
-
-            // Verificar que el contenido XML no esté vacío antes de continuar
-            if (string.IsNullOrEmpty(xmlContent))
+            try
             {
-                MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
-                return; // Detiene la ejecución adicional si no se generó el XML
-            }
+                // Generar el XML y la versión base64
+                (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) = GenerateXMLAndBase64(emisor, factura);
 
-
-            // Directorio donde se guardarán los archivos
-            string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
-
-            if (string.IsNullOrEmpty(xmlDirectory))
-            {
-                MessageBox.Show("Error al obtener el directorio para guardar los archivos XML.", "Error de Directorio", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            // Asegurarte de que el directorio 'xml' existe
-            if (!Directory.Exists(xmlDirectory))
-            {
-                Directory.CreateDirectory(xmlDirectory);
-            }
-
-            // Generar el nombre del archivo ZIP
-            string zipFileName;
-            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
-            {
-                zipFileName = $"NC_{factura.Recibo}.zip";
-            }
-            else
-            {
-                zipFileName = $"Archivos_{factura.Facturas}.zip";
-            }
-            string zipFilePath = Path.Combine(xmlDirectory, zipFileName);
-
-            // Verificar si el archivo ZIP ya existe y eliminarlo si es necesario
-            if (File.Exists(zipFilePath))
-            {
-                File.Delete(zipFilePath);
-            }
-
-            // Crear un archivo ZIP y agregar los archivos XML y base64
-            using (var zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
-            {
-                // Agregar el archivo XML
-                var xmlEntry = zipArchive.CreateEntry("archivo.xml");
-                using (var writer = new StreamWriter(xmlEntry.Open()))
+                // Verificar que el contenido XML no esté vacío antes de continuar
+                if (string.IsNullOrEmpty(xmlContent))
                 {
-                    writer.Write(xmlContent);
+                    MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return; // Detiene la ejecución adicional si no se generó el XML
                 }
 
-                // Agregar el archivo base64
-                var base64Entry = zipArchive.CreateEntry("base64.txt");
-                using (var writer = new StreamWriter(base64Entry.Open()))
+
+                // Directorio donde se guardarán los archivos
+                string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
+
+                if (string.IsNullOrEmpty(xmlDirectory))
                 {
-                    writer.Write(base64Content);
+                    MessageBox.Show("Error al obtener el directorio para guardar los archivos XML.", "Error de Directorio", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
-            }
 
-            string url;
+                // Asegurarte de que el directorio 'xml' existe
+                if (!Directory.Exists(xmlDirectory))
+                {
+                    Directory.CreateDirectory(xmlDirectory);
+                }
 
-            // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
-            if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
-            {
-                // Si es "docum", utilizar la primera URL
-                url = "https://apivp.efacturacadena.com/v1/vp/documentos/proceso/alianzas";
+                // Generar el nombre del archivo ZIP
+                string zipFileName;
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                {
+                    zipFileName = $"NC_{factura.Recibo}.zip";
+                }
+                else
+                {
+                    zipFileName = $"Archivos_{factura.Facturas}.zip";
+                }
+                string zipFilePath = Path.Combine(xmlDirectory, zipFileName);
+
+                // Verificar si el archivo ZIP ya existe y eliminarlo si es necesario
+                if (File.Exists(zipFilePath))
+                {
+                    File.Delete(zipFilePath);
+                }
+
+                // Crear un archivo ZIP y agregar los archivos XML y base64
+                using (var zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
+                {
+                    // Agregar el archivo XML
+                    var xmlEntry = zipArchive.CreateEntry("archivo.xml");
+                    using (var writer = new StreamWriter(xmlEntry.Open()))
+                    {
+                        writer.Write(xmlContent);
+                    }
+
+                    // Agregar el archivo base64
+                    var base64Entry = zipArchive.CreateEntry("base64.txt");
+                    using (var writer = new StreamWriter(base64Entry.Open()))
+                    {
+                        writer.Write(base64Content);
+                    }
+                }
+
+                string url;
+
+                // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
+                if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Si es "docum", utilizar la primera URL
+                    url = "https://apivp.efacturacadena.com/v1/vp/documentos/proceso/alianzas";
+                }
+                else
+                {
+                    // Si no es "docum", utilizar la segunda URL
+                    url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
+                }
+                string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
             }
-            else
+            catch (Exception ex)
             {
-                // Si no es "docum", utilizar la segunda URL
-                url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
-            string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
         }
 
 
@@ -139,7 +147,7 @@ namespace GeneradorCufe.ViewModel
                     string response = Encoding.UTF8.GetString(responseBytes);
 
                     // Mostrar un mensaje de éxito con el código de estado
-                    MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                  //  MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
@@ -151,6 +159,8 @@ namespace GeneradorCufe.ViewModel
             {
                 // Manejar cualquier error de la solicitud POST
                 MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
                 return "";
             }
             catch (WebException webEx)
@@ -167,6 +177,8 @@ namespace GeneradorCufe.ViewModel
 
                             // Guardar el error en la base de datos
                             respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
+                            Factura_Consulta facturaConsulta = new Factura_Consulta();
+                            facturaConsulta.MarcarComoConError(factura, webEx);
 
                             return "";
                         }
@@ -182,7 +194,7 @@ namespace GeneradorCufe.ViewModel
         }
 
 
-        private static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado)
+        public static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado)
         {
             try
             {
@@ -286,8 +298,6 @@ namespace GeneradorCufe.ViewModel
                                 nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.xml";
                             }
 
-
-                            // Crear el PDF
                             string directorioProyecto = Directory.GetCurrentDirectory();
                             string rutaArchivoPDF = Path.Combine(directorioProyecto, nombreArchivoPDF);
                             GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura, listaProductos, cufe, adquiriente, movimiento, encabezado);
@@ -317,13 +327,13 @@ namespace GeneradorCufe.ViewModel
                                     Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
 
                                     // Guardar la respuesta en la base de datos
-                                    bool respuestaGuardada = respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, recibo, cufe, idDocumento, Nota_credito);
+                                    bool respuestaGuardada = respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, recibo, cufe, idDocumento, Nota_credito, factura);
 
                                     // Verificar si la respuesta se guardó correctamente en la base de datos
                                     if (respuestaGuardada)
                                     {
                                         // Borrar la respuesta de la base de datos solo si se guardó correctamente
-                                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito);
+                                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
                                     }
                                     else
                                     {
@@ -343,22 +353,23 @@ namespace GeneradorCufe.ViewModel
                     else
                     {
                         // Mostrar un mensaje de error si la solicitud no fue exitosa
-                        MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
+                      //  MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Factura_Consulta facturaConsulta = new Factura_Consulta();
+                        facturaConsulta.ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
                     }
 
                 }
             }
             catch (Exception ex)
             {
-                // Manejar cualquier otra excepción
-                MessageBox.Show("Error al enviar la solicitud GET:\n\n" + ex.Message, "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
 
 
         public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
-            // Define la ruta al archivo XML base
             string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string baseXmlFilePath = Path.Combine(basePath, "Plantilla", "XML.xml");
             string xmlTemplatePath = ""; // Declaración fuera del bloque if
@@ -397,8 +408,8 @@ namespace GeneradorCufe.ViewModel
                 }
                 catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
                 {
-                    // Muestra un diálogo de error si la plantilla XML no se puede cargar
-                    MessageBox.Show("Error: La plantilla para generar el XML es incorrecta o nula.", "Error de Plantilla XML", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Factura_Consulta facturaConsulta = new Factura_Consulta();
+                    facturaConsulta.MarcarComoConError(factura, ex);
 
                     return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>(), null, null, null);
 

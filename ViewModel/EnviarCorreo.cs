@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.IO;
 using GeneradorCufe.Model;
 using iTextSharp.text;
+using GeneradorCufe.Consultas;
 
 namespace GeneradorCufe.ViewModel
 {
@@ -87,7 +88,8 @@ namespace GeneradorCufe.ViewModel
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error al enviar el correo electrónico: " + ex.Message);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
                 return false;
             }
             finally

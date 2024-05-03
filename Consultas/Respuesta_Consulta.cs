@@ -21,7 +21,7 @@ namespace GeneradorCufe.Consultas
             _data = data;
         }
 
-        public bool GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe, string recibo, bool nota)
+        public bool GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe, string recibo, bool nota, Factura factura1)
         {
             try
             {
@@ -71,14 +71,15 @@ namespace GeneradorCufe.Consultas
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al guardar la respuesta de consulta en la base de datos: {ex.Message}");
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura1, ex);
                 return false;
             }
         }
 
 
 
-        public void BorrarEnBD(string cadenaConexion, string factura, string recibo, bool nota)
+        public void BorrarEnBD(string cadenaConexion, string factura, string recibo, bool nota, Factura factura1)
         {
             try
             {
@@ -116,18 +117,18 @@ namespace GeneradorCufe.Consultas
 
                         if (rowsAffected > 0)
                         {
-                            Console.WriteLine("El archivo se borró correctamente de la base de datos.");
+                            // Si se eliminó correctamente el registro de la base de datos, también lo eliminamos de la colección
+                            Factura_Consulta facturaConsulta = new Factura_Consulta();
+                            facturaConsulta.MarcarComoProcesado(factura1.Id_encabezado.Value);
                         }
-                        else
-                        {
-                            Console.WriteLine("No se encontró ningún archivo con la factura/recibo especificada en la base de datos.");
-                        }
+
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al borrar el archivo de la base de datos: {ex.Message}");
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura1, ex);
             }
         }
     
@@ -181,7 +182,8 @@ namespace GeneradorCufe.Consultas
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al guardar la respuesta de consulta en la base de datos: {ex.Message}");
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
 

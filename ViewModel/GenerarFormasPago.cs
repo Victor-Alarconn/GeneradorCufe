@@ -1,4 +1,5 @@
-﻿using GeneradorCufe.Model;
+﻿using GeneradorCufe.Consultas;
+using GeneradorCufe.Model;
 using Org.BouncyCastle.Crypto.Macs;
 using System;
 using System.Collections.Generic;
@@ -85,8 +86,8 @@ namespace GeneradorCufe.ViewModel
             }
             catch (Exception ex)
             {
-                // Manejar la excepción
-                Console.WriteLine("Error al generar formas de pago: " + ex.Message);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
 
             // Retornar la variable Pagos que contiene los métodos de pago concatenados

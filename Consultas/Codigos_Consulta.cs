@@ -47,8 +47,8 @@ namespace GeneradorCufe.Consultas
             }
             catch (Exception ex)
             {
-                // Manejar la excepción
-                Console.WriteLine("Error en la consulta de códigos: " + ex.Message);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
 
             return codigo;

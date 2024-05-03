@@ -23,6 +23,7 @@ using Image = iTextSharp.text.Image;
 using System.Drawing.Imaging;
 using GeneradorCufe.Model;
 using System.Globalization;
+using GeneradorCufe.Consultas;
 
 
 namespace GeneradorCufe.ViewModel
@@ -777,8 +778,8 @@ namespace GeneradorCufe.ViewModel
             }
             catch (Exception ex)
             {
-                // Manejar cualquier excepción que pueda ocurrir
-                Console.WriteLine("Error al crear el PDF: " + ex.ToString());
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
 

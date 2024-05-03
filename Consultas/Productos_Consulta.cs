@@ -67,8 +67,8 @@ namespace GeneradorCufe.Consultas
             }
             catch (MySqlException ex)
             {
-                // Manejar excepciones de MySQL
-                Console.WriteLine("Error al consultar productos: " + ex.Message);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
 
             return productos;
@@ -126,8 +126,8 @@ namespace GeneradorCufe.Consultas
             }
             catch (MySqlException ex)
             {
-                // Manejar excepciones de MySQL
-                Console.WriteLine("Error al consultar productos: " + ex.Message);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
 
             return productos;
