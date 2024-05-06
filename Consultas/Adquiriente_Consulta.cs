@@ -56,7 +56,7 @@ namespace GeneradorCufe.Consultas
             catch (Exception ex)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
-                facturaConsulta.MarcarComoConError(factura, ex);
+              //  facturaConsulta.MarcarComoConError(factura, ex);
             }
 
             return adquiriente;

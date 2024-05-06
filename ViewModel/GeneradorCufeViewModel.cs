@@ -158,7 +158,7 @@ namespace GeneradorCufe.ViewModel
             catch (HttpRequestException ex)
             {
                 // Manejar cualquier error de la solicitud POST
-                MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+             //   MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
                 facturaConsulta.MarcarComoConError(factura, ex);
                 return "";
@@ -173,7 +173,7 @@ namespace GeneradorCufe.ViewModel
                         using (var reader = new StreamReader(stream))
                         {
                             string errorResponse = reader.ReadToEnd();
-                            MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                         //   MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
 
                             // Guardar el error en la base de datos
                             respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
@@ -198,6 +198,7 @@ namespace GeneradorCufe.ViewModel
         {
             try
             {
+                await Task.Delay(4000);
 
                 string nitCompleto = emisor.Nit_emisor ?? "";
                 string[] partesNit = nitCompleto.Split('-');
@@ -318,9 +319,37 @@ namespace GeneradorCufe.ViewModel
                                     }
                                 }
 
-                                // Enviar el archivo ZIP por correo electrónico
-                                bool correoEnviado = await EnviarCorreo.Enviar(emisor, adquiriente, factura, zipStream.ToArray(), nombreArchivoXML);
+                                Dictionary<int, EstadoProcesamiento> registroProcesando;
 
+                                using (StreamReader reader = new StreamReader("registro_procesando.txt"))
+                                {
+                                    string json = reader.ReadToEnd();
+                                    registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                                }
+                                int idEncabezado = factura.Id_encabezado.Value;
+                                bool correoEnviado = false;
+                                // Comprobar si se ha enviado un correo electrónico para esta factura
+                                if (registroProcesando.ContainsKey(idEncabezado) && registroProcesando[idEncabezado].Envio == 0)
+                                {
+                                    // Enviar el archivo ZIP por correo electrónico
+                                    correoEnviado = await EnviarCorreo.Enviar(emisor, adquiriente, factura, zipStream.ToArray(), nombreArchivoXML);
+
+                                    if (correoEnviado)
+                                    {
+                                        // Actualizar el estado de "Envio" en el diccionario
+                                        registroProcesando[idEncabezado].Envio = 1;
+
+                                        // Guardar el diccionario actualizado en el archivo temporal
+                                        string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
+                                        File.WriteAllText("registro_procesando.txt", jsonOutput);
+
+                                    }
+                                }
+                                else
+                                {
+                                    // Ya se ha enviado un correo electrónico para esta factura, no es necesario enviar otro.
+                                    correoEnviado = true;
+                                }
                                 if (correoEnviado)
                                 {
                                     // Crear una instancia de la clase Respuesta_Consulta
@@ -335,18 +364,8 @@ namespace GeneradorCufe.ViewModel
                                         // Borrar la respuesta de la base de datos solo si se guardó correctamente
                                         respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
                                     }
-                                    else
-                                    {
-                                        // Si la respuesta no se guardó correctamente, mostrar un mensaje de error o manejar la situación según sea necesario
-                                        Console.WriteLine("Error: La respuesta no se guardó correctamente en la base de datos.");
-                                    }
+                                    
                                 }
-                                else
-                                {
-                                    // Si el correo no se envió correctamente, puedes mostrar un mensaje de error o manejar la situación según sea necesario
-                                    Console.WriteLine("Error: El correo no se envió correctamente.");
-                                }
-
                             }
                         }
                     }

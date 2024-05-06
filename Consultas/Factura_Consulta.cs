@@ -26,7 +26,7 @@ namespace GeneradorCufe.Consultas
         {
             _data = new Data();
             _timer = new System.Timers.Timer();
-            _timer.Interval = 30000; // Intervalo en milisegundos (15 segundos)
+            _timer.Interval = 10000; // Intervalo en milisegundos (10 segundos)
             _timer.Elapsed += TimerElapsed; // Método que se ejecutará cuando el temporizador expire
             _timer.Start(); // Iniciar el temporizador
             _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
@@ -40,12 +40,11 @@ namespace GeneradorCufe.Consultas
 
         private void ConsultarBaseDatos()
         {
-            Dictionary<int, EstadoProcesamiento> registroProcesando;
-
             try
             {
-                
-                // Cargar el diccionario desde el archivo temporal, si existe
+                Dictionary<int, EstadoProcesamiento> registroProcesando;
+
+                // Leer el archivo temporal si existe
                 if (File.Exists("registro_procesando.txt"))
                 {
                     using (StreamReader reader = new StreamReader("registro_procesando.txt"))
@@ -80,15 +79,17 @@ namespace GeneradorCufe.Consultas
                                 int idEncabezado = Convert.ToInt32(row["id_enc"]);
 
                                 // Verificar si el registro está en proceso
-                                if (registroProcesando == null || !registroProcesando.ContainsKey(idEncabezado) || !registroProcesando[idEncabezado].Procesando)
+                                if (!registroProcesando.ContainsKey(idEncabezado) || !registroProcesando[idEncabezado].Procesando)
                                 {
-                                    // Iniciar el procesamiento del registro
-                                    if (registroProcesando == null)
-                                    {
-                                        registroProcesando = new Dictionary<int, EstadoProcesamiento>();
-                                    }
-                                    registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0 };
-                                    ProcesarRegistro(row, emisorConsulta); // Llamada a método para procesar el registro
+                                    // Marcar el registro como en proceso
+                                    registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
+
+                                    // Serializar y guardar el diccionario actualizado
+                                    string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
+                                    File.WriteAllText("registro_procesando.txt", jsonOutput);
+
+                                    // Procesar el registro
+                                    ProcesarRegistro(row, emisorConsulta);
                                 }
                             }
                         }
@@ -96,10 +97,6 @@ namespace GeneradorCufe.Consultas
 
                     connection.Close();
                 }
-
-                // Guardar el diccionario actualizado en el archivo temporal
-                string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
-                File.WriteAllText("registro_procesando.txt", jsonOutput);
             }
             catch (Exception ex)
             {
@@ -176,7 +173,7 @@ namespace GeneradorCufe.Consultas
                     int intentos = registroProcesandoActualizado[idEncabezado].Intentos;
 
                     // Definir el límite máximo de intentos
-                    int maxIntentos = 5;
+                    int maxIntentos = 3;
 
                     if (intentos <= maxIntentos)
                     {
@@ -197,7 +194,7 @@ namespace GeneradorCufe.Consultas
                             catch (Exception innerEx)
                             {
                                 // Si hay un error al volver a intentar la acción, manejarlo
-                                await ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
+                               // await ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
                             }
                             finally
                             {
