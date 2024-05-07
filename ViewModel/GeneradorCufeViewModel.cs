@@ -328,6 +328,7 @@ namespace GeneradorCufe.ViewModel
                                 }
                                 int idEncabezado = factura.Id_encabezado.Value;
                                 bool correoEnviado = false;
+
                                 // Comprobar si se ha enviado un correo electrónico para esta factura
                                 if (registroProcesando.ContainsKey(idEncabezado) && registroProcesando[idEncabezado].Envio == 0)
                                 {
@@ -342,7 +343,6 @@ namespace GeneradorCufe.ViewModel
                                         // Guardar el diccionario actualizado en el archivo temporal
                                         string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
                                         File.WriteAllText("registro_procesando.txt", jsonOutput);
-
                                     }
                                 }
                                 else
@@ -350,6 +350,8 @@ namespace GeneradorCufe.ViewModel
                                     // Ya se ha enviado un correo electrónico para esta factura, no es necesario enviar otro.
                                     correoEnviado = true;
                                 }
+
+                                // Realizar otras operaciones solo si se envió correctamente el correo electrónico
                                 if (correoEnviado)
                                 {
                                     // Crear una instancia de la clase Respuesta_Consulta
@@ -364,8 +366,8 @@ namespace GeneradorCufe.ViewModel
                                         // Borrar la respuesta de la base de datos solo si se guardó correctamente
                                         respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
                                     }
-                                    
                                 }
+
                             }
                         }
                     }

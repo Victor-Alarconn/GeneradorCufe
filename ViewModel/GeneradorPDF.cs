@@ -143,28 +143,28 @@ namespace GeneradorCufe.ViewModel
                 if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
                 {
                     PrefijoNC = "NC" + factura.Recibo;
-                    TextoQR = $"PrefijoNC:{PrefijoNC}" +
-                              $"FecFac:{fechaFac}" +
-                              $"HorFac:{horaformateada}" +
-                              $"NitFac:{NitFact}" +
-                              $"DocAdq:{adquiriente.Nit_adqui}" +
-                              $"ValFac:{movimiento.Valor_neto}" +
-                              $"ValIva:{movimiento.Valor_iva}" +
-                              $"ValOtroIm:0.00" +
-                              $"ValTolFac:{movimiento.Valor}" +
+                    TextoQR = $"PrefijoNC:{PrefijoNC}\n" +
+                              $"FecFac:{fechaFac}\n" +
+                              $"HorFac:{horaformateada} \n" +
+                              $"NitFac:{NitFact} \n" +
+                              $"DocAdq:{adquiriente.Nit_adqui}\n" +
+                              $"ValFac:{movimiento.Valor_neto} \n" +
+                              $"ValIva:{movimiento.Valor_iva}\n" +
+                              $"ValOtroIm:0.00\n" +
+                              $"ValTolFac:{movimiento.Valor} \n" +
                               $"CUDE:{emisor.Codigo_municipio_emisor}";
                 }
                 else
                 {
-                    TextoQR = $"NumFac:{factura.Facturas}" +
-                              $"FecFac:{fechaFac}" +
-                              $"HorFac:{horaformateada}" +
-                              $"NitFac:{NitFact}" +
-                              $"DocAdq:{adquiriente.Nit_adqui}" +
-                              $"ValFac:{movimiento.Valor_neto}" +
-                              $"ValIva:{movimiento.Valor_iva}" +
-                              $"ValOtroIm:0.00" +
-                              $"ValTolFac:{movimiento.Valor}" +
+                    TextoQR = $"NumFac:{factura.Facturas} \n" +
+                              $"FecFac:{fechaFac}\n" +
+                              $"HorFac:{horaformateada}  \n" +
+                              $"NitFac:{NitFact}\n" +
+                              $"DocAdq:{adquiriente.Nit_adqui} \n" +
+                              $"ValFac:{movimiento.Valor_neto}\n" +
+                              $"ValIva:{movimiento.Valor_iva}  \n" +
+                              $"ValOtroIm:0.00 \n" +
+                              $"ValTolFac:{movimiento.Valor}\n" +
                               $"CUFE:{cufe}";
                 }
 
@@ -334,15 +334,15 @@ namespace GeneradorCufe.ViewModel
                 }
 
                 // Creación de la tabla con 9 columnas
-                PdfPTable tabla = new PdfPTable(9);
+                PdfPTable tabla = new PdfPTable(10);
                 tabla.HorizontalAlignment = Element.ALIGN_CENTER;
                 tabla.WidthPercentage = 100;
-                float[] anchosColumnas = new float[] { 0.6f, 1.2f, 1.5f, 5, 0.8f, 2, 0.8f, 2, 2 }; // Anchuras de las columnas en porcentaje
+                float[] anchosColumnas = new float[] { 0.6f, 1.2f, 1.4f, 4, 0.8f,2, 0.8f, 1.5f, 1.8f, 1.8f }; // Anchuras de las columnas en porcentaje
                 tabla.SetWidths(anchosColumnas);
                 tabla.SpacingBefore = 10;
 
                 // Encabezados de la tabla
-                string[] encabezados = { "Nro.", "Artículo", "Cantidad", "Descripción", "U/M", "Precio.Uni", "IVA %", "VL.IVA", "Vr. Parcial" };
+                string[] encabezados = { "Nro.", "Artículo", "Cantidad", "Descripción", "U/M", "Precio.Uni", "IVA %", "INC", "VL.IVA", "Vr. Parcial" };
                 foreach (string encabezadoTabla in encabezados) // Cambiar el nombre de la variable para evitar el conflicto de nombres
                 {
                     PdfPCell celdaEncabezado = new PdfPCell(new Phrase(encabezadoTabla, FontFactory.GetFont("Helvetica", 8, Font.BOLD)));
@@ -385,7 +385,7 @@ namespace GeneradorCufe.ViewModel
                     tabla.AddCell(celdaUM);
 
                     // Añade las celdas restantes del producto (Neto, Iva, IvaTotal, Valor)
-                    PdfPCell celdaNeto = new PdfPCell(new Phrase(producto.Neto.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaNeto = new PdfPCell(new Phrase(producto.Valor.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaNeto.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaNeto.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaNeto);
@@ -395,12 +395,17 @@ namespace GeneradorCufe.ViewModel
                     celdaIva.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaIva);
 
+                    PdfPCell celdaINC = new PdfPCell(new Phrase(producto.Consumo.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    celdaINC.HorizontalAlignment = Element.ALIGN_CENTER;
+                    celdaINC.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    tabla.AddCell(celdaINC);
+
                     PdfPCell celdaIvaTotal = new PdfPCell(new Phrase(producto.IvaTotal.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaIvaTotal.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaIvaTotal.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaIvaTotal);
 
-                    PdfPCell celdaValor = new PdfPCell(new Phrase(producto.Valor.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    PdfPCell celdaValor = new PdfPCell(new Phrase(producto.Neto.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaValor.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaValor.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaValor);

@@ -17,10 +17,11 @@ namespace GeneradorCufe.ViewModel
         public static async Task<bool> Enviar(Emisor emisor, Adquiriente adquiriente, Factura factura, byte[] archivoAdjunto, string cufe)
         {
             // Configurar el cliente SMTP
-            SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com");
+            SmtpClient clienteSmtp = new SmtpClient("mail.rmsoft.com.co");
             clienteSmtp.Port = 587;
-            clienteSmtp.Credentials = new NetworkCredential("sistemas.rmsoft@gmail.com", "ektq xifn kjsc mwoy");
+            clienteSmtp.Credentials = new NetworkCredential("facturaelectronica@rmsoft.com.co", "J%[XE9.X0i]{");
             clienteSmtp.EnableSsl = true; // Habilitar SSL
+           
 
             string nitCompleto = emisor.Nit_emisor ?? "";
             string[] partesNit = nitCompleto.Split('-');
@@ -35,7 +36,7 @@ namespace GeneradorCufe.ViewModel
             }
 
             // Crear el mensaje
-            MailAddress direccionRemitente = new MailAddress( adquiriente.Correo_adqui, adquiriente.Nombre_adqu);
+            MailAddress direccionRemitente = new MailAddress("facturaelectronica@rmsoft.com.co", adquiriente.Nombre_adqu);
             MailAddress direccionDestinatario = new MailAddress(adquiriente.Correo_adqui);
             MailMessage mensaje = new MailMessage(direccionRemitente, direccionDestinatario);
 
@@ -85,6 +86,12 @@ namespace GeneradorCufe.ViewModel
                 // Enviar el mensaje
                 clienteSmtp.Send(mensaje);
                 return true;
+            }
+            catch (SmtpException ex)
+            {
+                // Manejar la excepción SmtpException
+                Console.WriteLine("Error al enviar el correo: " + ex.Message);
+                return false;
             }
             catch (Exception ex)
             {
