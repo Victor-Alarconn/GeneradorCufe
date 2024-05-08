@@ -9,6 +9,7 @@ using System.IO;
 using GeneradorCufe.Model;
 using iTextSharp.text;
 using GeneradorCufe.Consultas;
+using iTextSharp.text.pdf;
 
 namespace GeneradorCufe.ViewModel
 {
@@ -59,22 +60,46 @@ namespace GeneradorCufe.ViewModel
 
 
             mensaje.IsBodyHtml = true; // Establecer el cuerpo del mensaje como HTML
+            string rutaImagen = @"C:\Users\Programacion01\source\repos\RepoVictor\GeneradorCufe\xml\logo.png";
+            if (File.Exists(rutaImagen))
+            {
+                // Agregar la imagen como un archivo adjunto al mensaje
+                Attachment imagenAdjunta = new Attachment(rutaImagen);
+                imagenAdjunta.ContentId = "qrCodeImage"; // Asignar un CID único para la imagen
+                mensaje.Attachments.Add(imagenAdjunta);
+            }
+            else
+            {
+                // La imagen no existe, puedes manejar esta situación según tus necesidades
+                Console.WriteLine("La imagen no existe en la ruta especificada.");
+            }
 
             // Construir el cuerpo del mensaje en formato HTML
             string cuerpo = $@"
-                     <div style='text-align: center;'>
-                     <strong>ESTIMADO/A CLIENTE,</strong><br/><br/>
-                     <strong>{adquiriente.Nombre_adqu}</strong><br/><br/>
-                     Ha recibido una Factura o Nota Electrónica adjunta a este correo, a continuación encontrará resumen de este documento:<br/><br/>
-                     <strong>Emisor:</strong> {emisor.Nombre_emisor}<br/>
-                     <strong>Prefijo y número del documento:</strong> {Documento}<br/>
-                     <strong>Tipo de documento:</strong> {tipo_documento}<br/>
-                     <strong>Fecha de emisión:</strong> {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}<br/>
-                     </div>
-                     <br/>
-                     En caso de tener alguna inquietud respecto a la información contenida en el documento por favor comunicarse con {emisor.Nombre_emisor}<br/><br/>
-                     NOTA CONFIDENCIAL: La información contenida en este e-mail y en todos sus archivos anexos es confidencial de {emisor.Nombre_emisor}, solo para uso individual del destinatario o entidad a quienes está dirigido. Si usted no es destinatario, cualquier almacenamiento, distribución, difusión o copia de este mensaje está estrictamente prohibida y sancionada por la ley. Si por error recibe este mensaje, le ofrecemos disculpas, por favor elimínela inmediatamente y notifique de su error a la persona que la envió, absteniéndose de divulgar su contenido.";
-
+                        <div style='text-align: center; border: 5px solid #ccc; border-radius: 10px; padding: 10px;'>
+                            <div style='background-color: red; display: inline-block; padding: 5px 10px; border-radius: 5px; vertical-align: middle;'>
+                                <img src='cid:qrCodeImage' alt='Logo' style='width: 100px; height: auto; vertical-align: middle;' />
+                                <strong style='color: white;'>¡HOLA, {adquiriente.Nombre_adqu}!</strong>
+                            </div>
+                            <br/><br/>
+                            <span style='font-size: 18px; color: red; text-decoration: underline;'>HA RECIBIDO UNA FACTURA O NOTA ELECTRÓNICA</span><br/>
+                            ADJUNTA A ESTE CORREO, A CONTINUACIÓN ENCONTRARÁ RESUMEN DE ESTE DOCUMENTO:<br/><br/>
+                            <strong>Emisor:</strong> {emisor.Nombre_emisor}<br/>
+                            <strong>Prefijo y número del documento:</strong> {Documento}<br/>
+                            <strong>Tipo de documento:</strong> {tipo_documento}<br/>
+                            <strong>Fecha de emisión:</strong> {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}<br/>
+                            <br/>
+                            En caso de tener alguna inquietud respecto a la información contenida en el documento por favor comunicarse con {emisor.Nombre_emisor}<br/><br/>
+                            <div style='background-color: #f2f2f2; padding: 10px;'>
+                               <strong style='color: black;'>INFORMACIÓN CONFIDENCIAL:</strong> Este correo electrónico y todos sus archivos adjuntos contienen información confidencial propiedad de {emisor.Nombre_emisor}. Está destinado únicamente para el uso del destinatario o la entidad a la que está dirigido. Si usted no es el destinatario previsto, queda prohibida cualquier copia, distribución, divulgación o almacenamiento de este mensaje, y puede estar sujeto a acciones legales. Si ha recibido este mensaje por error, le pedimos que lo elimine inmediatamente y se ponga en contacto con el remitente para informar del error, absténgase de divulgar su contenido.
+                            </div>
+                            <p style='font-size: 9px;'>Este es un sistema automático, por favor no responda este mensaje al correo remitente.<br/>
+                           Recuerde agregar esta dirección de correo a sus contactos y lista de remitentes seguros para asegurarse de recibir nuestros mensajes.</p>
+                            <br/><br/>
+                            <strong> Rm SOFT Software y Servicios</strong><br/>
+                            Proveedor Tecnológico de Facturación Electrónica<br/>
+                           <a href='https://rmsoft.com.co/' style='color: #2190E3;'>https://rmsoft.com.co/</a>
+                        </div>";
             mensaje.Body = cuerpo;
 
             // Adjuntar el archivo ZIP al mensaje
