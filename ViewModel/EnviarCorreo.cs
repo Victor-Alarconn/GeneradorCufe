@@ -82,8 +82,8 @@ namespace GeneradorCufe.ViewModel
                                 <strong style='color: white;'>¡HOLA, {adquiriente.Nombre_adqu}!</strong>
                             </div>
                             <br/><br/>
-                            <span style='font-size: 18px; color: red; text-decoration: underline;'>HA RECIBIDO UNA FACTURA O NOTA ELECTRÓNICA</span><br/>
-                            ADJUNTA A ESTE CORREO, A CONTINUACIÓN ENCONTRARÁ RESUMEN DE ESTE DOCUMENTO:<br/><br/>
+                            <span style='font-size: 18px; color: red; text-decoration: underline;'>HA RECIBIDO UN DOCUMENTO ELECTRÓNICO</span><br/>
+                            ADJUNTO A ESTE CORREO, A CONTINUACIÓN ENCONTRARÁ RESUMEN DE ESTE DOCUMENTO:<br/><br/>
                             <strong>Emisor:</strong> {emisor.Nombre_emisor}<br/>
                             <strong>Prefijo y número del documento:</strong> {Documento}<br/>
                             <strong>Tipo de documento:</strong> {tipo_documento}<br/>
@@ -96,8 +96,10 @@ namespace GeneradorCufe.ViewModel
                             <p style='font-size: 9px;'>Este es un sistema automático, por favor no responda este mensaje al correo remitente.<br/>
                            Recuerde agregar esta dirección de correo a sus contactos y lista de remitentes seguros para asegurarse de recibir nuestros mensajes.</p>
                             <br/><br/>
-                            <strong> Rm SOFT Software y Servicios</strong><br/>
+                            <strong> Cadena S.A.</strong><br/>
                             Proveedor Tecnológico de Facturación Electrónica<br/>
+                           <strong>RMSOFT CASA DE SOFTWARE S.A.S</strong><br/>
+                            Software Comercial<br/>
                            <a href='https://rmsoft.com.co/' style='color: #2190E3;'>https://rmsoft.com.co/</a>
                         </div>";
             mensaje.Body = cuerpo;

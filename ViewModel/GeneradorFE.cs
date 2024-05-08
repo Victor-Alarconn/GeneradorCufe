@@ -143,7 +143,6 @@ namespace GeneradorCufe.ViewModel
 
                 decimal retiene = movimiento.Retiene;
 
-
                 // Obtener el elemento WithholdingTaxTotal si existe
                 var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
 
@@ -154,7 +153,12 @@ namespace GeneradorCufe.ViewModel
                     withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
-                    withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue("2.50");
+
+                    // Calcular el porcentaje de retención y formatearlo a "2.50"
+                    decimal porcentajeRetencion = (retiene / movimiento.Valor_neto) * 100;
+                    string porcentajeFormateado = porcentajeRetencion.ToString("F2", CultureInfo.InvariantCulture);
+
+                    withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue(porcentajeFormateado);
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "ID")?.SetValue("06");
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cac + "TaxScheme")?.Element(cbc + "Name")?.SetValue("ReteFuente");
                 }
