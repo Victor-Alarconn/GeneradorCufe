@@ -45,9 +45,9 @@ namespace GeneradorCufe.Consultas
                 Dictionary<int, EstadoProcesamiento> registroProcesando;
 
                 // Leer el archivo temporal si existe
-                if (File.Exists("registro_procesando.txt"))
+                if (File.Exists("registro_procesando.json"))
                 {
-                    using (StreamReader reader = new StreamReader("registro_procesando.txt"))
+                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
                     {
                         string json = reader.ReadToEnd();
                         registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
@@ -86,7 +86,7 @@ namespace GeneradorCufe.Consultas
 
                                     // Serializar y guardar el diccionario actualizado
                                     string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
-                                    File.WriteAllText("registro_procesando.txt", jsonOutput);
+                                    File.WriteAllText("registro_procesando.json", jsonOutput);
 
                                     // Procesar el registro
                                     ProcesarRegistro(row, emisorConsulta);
@@ -103,6 +103,7 @@ namespace GeneradorCufe.Consultas
                 // Manejar el error
             }
         }
+
 
 
 
@@ -149,9 +150,9 @@ namespace GeneradorCufe.Consultas
                 // Cargar el diccionario desde el archivo temporal, si existe
                 Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado;
 
-                if (File.Exists("registro_procesando.txt"))
+                if (File.Exists("registro_procesando.json"))
                 {
-                    using (StreamReader reader = new StreamReader("registro_procesando.txt"))
+                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
                     {
                         string json = reader.ReadToEnd();
                         registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
@@ -159,7 +160,7 @@ namespace GeneradorCufe.Consultas
                 }
                 else
                 {
-                    throw new FileNotFoundException("El archivo temporal 'registro_procesando.txt' no se encontró. No se puede continuar sin este archivo.");
+                    throw new FileNotFoundException("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
                 }
 
                 // Usar el diccionario cargado para acceder a los registros
@@ -214,12 +215,12 @@ namespace GeneradorCufe.Consultas
                 }
                 else
                 {
-                    throw new KeyNotFoundException($"No se encontró el registro con ID: {idEncabezado} en el archivo temporal 'registro_procesando.txt'.");
+                    throw new KeyNotFoundException($"No se encontró el registro con ID: {idEncabezado} en el archivo temporal 'registro_procesando.json'.");
                 }
 
                 // Guardar el diccionario actualizado en el archivo temporal
                 string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                File.WriteAllText("registro_procesando.txt", jsonOutput);
+                File.WriteAllText("registro_procesando.json", jsonOutput);
             }
             catch (Exception ex)
             {
@@ -237,9 +238,9 @@ namespace GeneradorCufe.Consultas
                 // Cargar el diccionario desde el archivo temporal, si existe
                 Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
 
-                if (File.Exists("registro_procesando.txt"))
-                {
-                    using (StreamReader reader = new StreamReader("registro_procesando.txt"))
+                if (File.Exists("registro_procesando.json"))
+                {   
+                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
                     {
                         string json = reader.ReadToEnd();
                         registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
@@ -247,7 +248,7 @@ namespace GeneradorCufe.Consultas
                 }
                 else
                 {
-                    Console.WriteLine("El archivo temporal 'registro_procesando.txt' no se encontró. No se puede continuar sin este archivo.");
+                    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
                     return;
                 }
 
@@ -258,11 +259,11 @@ namespace GeneradorCufe.Consultas
 
                     // Guardar el diccionario actualizado en el archivo temporal
                     string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    File.WriteAllText("registro_procesando.txt", jsonOutput);
+                    File.WriteAllText("registro_procesando.json", jsonOutput);
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.txt'.");
+                    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
                 }
 
                 // Actualizar el estado en la base de datos
@@ -311,9 +312,9 @@ namespace GeneradorCufe.Consultas
                 // Cargar el diccionario desde el archivo temporal, si existe
                 Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado;
 
-                if (File.Exists("registro_procesando.txt"))
+                if (File.Exists("registro_procesando.json"))
                 {
-                    using (StreamReader reader = new StreamReader("registro_procesando.txt"))
+                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
                     {
                         string json = reader.ReadToEnd();
                         registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
@@ -321,7 +322,7 @@ namespace GeneradorCufe.Consultas
                 }
                 else
                 {
-                    throw new FileNotFoundException("El archivo temporal 'registro_procesando.txt' no se encontró. No se puede continuar sin este archivo.");
+                    throw new FileNotFoundException("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
                 }
 
                 // Eliminar el registro del diccionario
@@ -331,11 +332,11 @@ namespace GeneradorCufe.Consultas
 
                     // Guardar el diccionario actualizado en el archivo temporal
                     string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    File.WriteAllText("registro_procesando.txt", jsonOutput);
+                    File.WriteAllText("registro_procesando.json", jsonOutput);
                 }
                 else
                 {
-                    throw new KeyNotFoundException($"No se encontró el registro con ID: {idEncabezado} en el archivo temporal 'registro_procesando.txt'.");
+                    throw new KeyNotFoundException($"No se encontró el registro con ID: {idEncabezado} en el archivo temporal 'registro_procesando.json'.");
                 }
             }
             catch (Exception ex)

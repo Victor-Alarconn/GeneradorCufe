@@ -147,7 +147,7 @@ namespace GeneradorCufe.ViewModel
                     string response = Encoding.UTF8.GetString(responseBytes);
 
                     // Mostrar un mensaje de éxito con el código de estado
-                  //  MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                //   MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
@@ -158,7 +158,7 @@ namespace GeneradorCufe.ViewModel
             catch (HttpRequestException ex)
             {
                 // Manejar cualquier error de la solicitud POST
-             //   MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
                 facturaConsulta.MarcarComoConError(factura, ex);
                 return "";
@@ -321,7 +321,7 @@ namespace GeneradorCufe.ViewModel
 
                                 Dictionary<int, EstadoProcesamiento> registroProcesando;
 
-                                using (StreamReader reader = new StreamReader("registro_procesando.txt"))
+                                using (StreamReader reader = new StreamReader("registro_procesando.json"))
                                 {
                                     string json = reader.ReadToEnd();
                                     registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
@@ -342,7 +342,7 @@ namespace GeneradorCufe.ViewModel
 
                                         // Guardar el diccionario actualizado en el archivo temporal
                                         string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
-                                        File.WriteAllText("registro_procesando.txt", jsonOutput);
+                                        File.WriteAllText("registro_procesando.json", jsonOutput);
                                     }
                                 }
                                 else
