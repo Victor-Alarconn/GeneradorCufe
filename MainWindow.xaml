@@ -59,6 +59,7 @@
         <TextBox x:Name="TxtSetTestId" Text="{Binding SetTestId, Mode=TwoWay}"  HorizontalAlignment="Left" Height="78" Margin="526,131,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="220" />
         <Button x:Name="BtnXML" Content="Generar XML" HorizontalAlignment="Left" Height="29" Margin="99,620,0,0" VerticalAlignment="Top" Width="384" Background="#FF90A2DC" Click="BtnCufe_Click_2"/>
         <Button x:Name="ConvertirXML" Content="Convertir a Base64" HorizontalAlignment="Left" Height="29" Margin="565,578,0,0" VerticalAlignment="Top" Width="138" Click="ConvertirXML_Click"/>
+        <Button x:Name="ConvertirXML_Copiar" Content="Convertir Mapa" HorizontalAlignment="Left" Height="29" Margin="567,617,0,0" VerticalAlignment="Top" Width="138" Click="ConvertirMapa_Click"/>
 
     </Grid>
 </Window>

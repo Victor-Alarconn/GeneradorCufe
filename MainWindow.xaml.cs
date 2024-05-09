@@ -1,7 +1,9 @@
 ﻿using GeneradorCufe.ViewModel;
 using Microsoft.Win32;
+using OSGeo.OGR;
 using System.ComponentModel;
 using System.Globalization;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,6 +16,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+
 
 namespace GeneradorCufe
 {
@@ -271,6 +275,85 @@ namespace GeneradorCufe
                 {
                     // Mostrar mensaje de error si ocurre una excepción
                     MessageBox.Show("Error al convertir el archivo XML a base64: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void ConvertirMapa_Click(object sender, RoutedEventArgs e)
+        {
+            // Crear un cuadro de diálogo para seleccionar archivos KML
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Archivos KML (*.kml)|*.kml";
+            openFileDialog.Multiselect = false;
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Directorio inicial
+
+            // Mostrar el cuadro de diálogo
+            bool? result = openFileDialog.ShowDialog();
+
+            if (result == true)
+            {
+                // Obtener la ruta del archivo KML seleccionado
+                string kmlFilePath = openFileDialog.FileName;
+
+                try
+                {
+                    // Registrar los drivers de GDAL/OGR
+                    Ogr.RegisterAll();
+
+                    // Ruta del archivo SHP de salida (misma ubicación que el archivo KML)
+                    string outputSHPPath = System.IO.Path.ChangeExtension(kmlFilePath, ".shp");
+
+                    // Abrir el archivo KML de entrada
+                    DataSource inputDataSource = Ogr.Open(kmlFilePath, 0);
+
+                    // Crear un nuevo archivo SHP de salida
+                    Driver outputDriver = Ogr.GetDriverByName("ESRI Shapefile");
+                    DataSource outputDataSource = outputDriver.CreateDataSource(outputSHPPath, null);
+
+                    // Recorrer cada capa en el archivo KML de entrada
+                    for (int i = 0; i < inputDataSource.GetLayerCount(); i++)
+                    {
+                        Layer layer = inputDataSource.GetLayerByIndex(i);
+
+                        // Crear una nueva capa en el archivo SHP de salida
+                        Layer outputLayer = outputDataSource.CreateLayer(layer.GetName(), null, wkbGeometryType.wkbUnknown, null);
+
+                        // Copiar los campos (atributos) de la capa de entrada a la capa de salida
+                        for (int j = 0; j < layer.GetLayerDefn().GetFieldCount(); j++)
+                        {
+                            FieldDefn fieldDefn = layer.GetLayerDefn().GetFieldDefn(j);
+                            outputLayer.CreateField(fieldDefn, 1);
+                        }
+
+                        // Copiar las geometrías de la capa de entrada a la capa de salida
+                        FeatureDefn featureDefn = outputLayer.GetLayerDefn();
+                        Feature feature;
+                        while ((feature = layer.GetNextFeature()) != null)
+                        {
+                            OSGeo.OGR.Geometry geometry = feature.GetGeometryRef(); // Aquí especificamos el espacio de nombres completo
+                            Feature outputFeature = new Feature(featureDefn);
+                            outputFeature.SetGeometry(geometry);
+                            for (int k = 0; k < feature.GetFieldCount(); k++)
+                            {
+                                outputFeature.SetField(k, feature.GetFieldAsString(k));
+                            }
+                            outputLayer.CreateFeature(outputFeature);
+                            outputFeature.Dispose();
+                            feature.Dispose();
+                        }
+                    }
+
+                    // Cerrar las fuentes de datos
+                    inputDataSource.Dispose();
+                    outputDataSource.Dispose();
+
+                    // Mostrar mensaje de éxito
+                    MessageBox.Show("El archivo KML se ha convertido a SHP y se ha guardado en: " + outputSHPPath, "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    // Mostrar mensaje de error si ocurre una excepción
+                    MessageBox.Show("Error al convertir el archivo KML a SHP: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
