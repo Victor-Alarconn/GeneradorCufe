@@ -401,17 +401,30 @@ namespace GeneradorCufe.ViewModel
             Movimiento movimiento = null;
             Encabezado encabezado = null;
 
-            XDocument xmlDoc; // Declarar xmlDoc fuera del bloque try
+            XDocument xmlDoc = null; // Inicializar xmlDoc
 
             // Verificar la condición para determinar la plantilla y la acción a utilizar
             if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
             {
-                // Si se cumple la condición, usar la plantilla de nota de crédito
-                xmlTemplatePath = Path.Combine(Directory.GetParent(basePath).Parent.Parent.Parent.FullName, "Plantilla_NC", "NC.xml");
-                xmlDoc = XDocument.Load(xmlTemplatePath);
+                // Si se cumple la condición, verificar si es una nota de crédito (NC) o una nota de débito (ND)
+                if (factura.Tipo_movimiento == "NC")
+                {
+                    // Usar la plantilla de nota de crédito
+                    xmlTemplatePath = Path.Combine(Directory.GetParent(basePath).Parent.Parent.Parent.FullName, "Plantilla_NC", "NC.xml");
+                    xmlDoc = XDocument.Load(xmlTemplatePath);
 
-                // Llamar a la acción para generar nota de crédito y asignar sus valores de retorno a cadenaConexion y cufe
-                (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura, cadenaConexion);
+                    // Llamar a la acción para generar nota de crédito y asignar sus valores de retorno a cadenaConexion y cufe
+                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura, cadenaConexion);
+                }
+                else if (factura.Tipo_movimiento == "ND")
+                {
+                    // Usar la plantilla de nota de débito
+                    xmlTemplatePath = Path.Combine(Directory.GetParent(basePath).Parent.Parent.Parent.FullName, "Plantilla_ND", "ND.xml");
+                    xmlDoc = XDocument.Load(xmlTemplatePath);
+
+                    // Llamar a la acción para generar nota de débito y asignar sus valores de retorno a cadenaConexion y cufe
+                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorND.GeneradorNotaDebito(xmlDoc, emisor, factura, cadenaConexion);
+                }
             }
             else
             {
@@ -432,12 +445,11 @@ namespace GeneradorCufe.ViewModel
                     facturaConsulta.MarcarComoConError(factura, ex);
 
                     return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>(), null, null, null);
-
                 }
             }
 
             // Convertir el XML actualizado a string
-            string xmlContent = xmlDoc.ToString();
+            string xmlContent = xmlDoc?.ToString() ?? "";
 
             // Convertir el contenido XML en base64
             byte[] bytes = Encoding.UTF8.GetBytes(xmlContent);
@@ -446,6 +458,8 @@ namespace GeneradorCufe.ViewModel
             // Devolver la tupla con todos los valores
             return (xmlContent, base64Encoded, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
         }
+
+
 
     }
 
