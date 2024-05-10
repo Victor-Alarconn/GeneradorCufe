@@ -158,7 +158,7 @@ namespace GeneradorCufe.ViewModel
             catch (HttpRequestException ex)
             {
                 // Manejar cualquier error de la solicitud POST
-                MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
                 facturaConsulta.MarcarComoConError(factura, ex);
                 return "";
@@ -391,9 +391,8 @@ namespace GeneradorCufe.ViewModel
 
         public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
-            string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string baseXmlFilePath = Path.Combine(basePath, "Plantilla", "XML.xml");
-            string xmlTemplatePath = ""; // Declaración fuera del bloque if
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string xmlTemplatePath = Path.Combine(Directory.GetParent(basePath).Parent.Parent.Parent.FullName, "Plantilla", "XML.xml");
 
             string cadenaConexion = Data.ConstruirCadenaConexion(factura);
             string cufe = "";
@@ -408,7 +407,7 @@ namespace GeneradorCufe.ViewModel
             if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
             {
                 // Si se cumple la condición, usar la plantilla de nota de crédito
-                xmlTemplatePath = Path.Combine(basePath, "Plantilla_NC", "NC.xml");
+                xmlTemplatePath = Path.Combine(Directory.GetParent(basePath).Parent.Parent.Parent.FullName, "Plantilla_NC", "NC.xml");
                 xmlDoc = XDocument.Load(xmlTemplatePath);
 
                 // Llamar a la acción para generar nota de crédito y asignar sus valores de retorno a cadenaConexion y cufe
@@ -417,7 +416,7 @@ namespace GeneradorCufe.ViewModel
             else
             {
                 // Si no se cumple, usar la plantilla normal
-                xmlTemplatePath = baseXmlFilePath;
+                xmlTemplatePath = xmlTemplatePath;
 
                 try
                 {

@@ -21,6 +21,7 @@ namespace GeneradorCufe.Consultas
         private readonly Data _data;
         private readonly System.Timers.Timer _timer;
         private readonly Dictionary<int, EstadoProcesamiento> _registroProcesando;
+        private readonly object _lock = new object();
 
         public Factura_Consulta()
         {
@@ -40,74 +41,82 @@ namespace GeneradorCufe.Consultas
 
         private void ConsultarBaseDatos()
         {
-            try
+            lock (_lock)
             {
-                Dictionary<int, EstadoProcesamiento> registroProcesando;
-
-                // Leer el archivo temporal si existe
-                if (File.Exists("registro_procesando.json"))
+                try
                 {
-                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                    Dictionary<int, EstadoProcesamiento> registroProcesando;
+
+                    // Leer el archivo temporal si existe
+                    if (File.Exists("registro_procesando.json"))
                     {
-                        string json = reader.ReadToEnd();
-                        registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                    }
-                }
-                else
-                {
-                    // Si no existe el archivo, crear un nuevo diccionario
-                    registroProcesando = new Dictionary<int, EstadoProcesamiento>();
-                }
-
-                using (MySqlConnection connection = _data.CreateConnection())
-                {
-                    connection.Open();
-
-                    string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, terminal, ip_base FROM fac WHERE estado = 0";
-
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
-                    {
-                        using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
+                        using (StreamReader reader = new StreamReader("registro_procesando.json"))
                         {
-                            DataTable dataTable = new DataTable();
-                            adapter.Fill(dataTable);
-
-                            Emisor_Consulta emisorConsulta = new Emisor_Consulta();
-
-                            foreach (DataRow row in dataTable.Rows)
-                            {
-                                int idEncabezado = Convert.ToInt32(row["id_enc"]);
-
-                                // Verificar si el registro está en proceso
-                                if (!registroProcesando.ContainsKey(idEncabezado) || !registroProcesando[idEncabezado].Procesando)
-                                {
-                                    // Marcar el registro como en proceso
-                                    registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
-
-                                    // Serializar y guardar el diccionario actualizado
-                                    string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
-                                    File.WriteAllText("registro_procesando.json", jsonOutput);
-
-                                    // Procesar el registro
-                                    ProcesarRegistro(row, emisorConsulta);
-                                }
-                            }
+                            string json = reader.ReadToEnd();
+                            registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
                         }
                     }
+                    else
+                    {
+                        // Si no existe el archivo, crear un nuevo diccionario
+                        registroProcesando = new Dictionary<int, EstadoProcesamiento>();
+                    }
 
-                    connection.Close();
+                    using (MySqlConnection connection = _data.CreateConnection())
+                    {
+                        connection.Open();
+
+                        string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, terminal, ip_base FROM fac WHERE estado = 0";
+
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
+                            {
+                                DataTable dataTable = new DataTable();
+                                adapter.Fill(dataTable);
+
+                                List<Factura> facturas = new List<Factura>(); // Lista para almacenar las facturas
+
+                                // Llenar la lista de facturas con los registros de la base de datos
+                                foreach (DataRow row in dataTable.Rows)
+                                {
+                                    int idEncabezado = Convert.ToInt32(row["id_enc"]);
+
+                                    // Verificar si el registro está en proceso
+                                    if (!registroProcesando.ContainsKey(idEncabezado) || !registroProcesando[idEncabezado].Procesando)
+                                    {
+                                        // Marcar el registro como en proceso
+                                        registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
+
+                                        // Procesar los datos de la fila y agregar la factura a la lista
+                                        Factura factura = ProcesarDatosFactura(row);
+                                        facturas.Add(factura);
+                                    }
+                                }
+
+                                // Serializar y guardar el diccionario actualizado
+                                string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
+                                File.WriteAllText("registro_procesando.json", jsonOutput);
+
+                                // Procesar todas las facturas en bloque
+                                ProcesarRegistros(facturas);
+                            }
+                        }
+
+                        connection.Close();
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                // Manejar el error
+                catch (Exception ex)
+                {
+                    // Manejar el error
+                }
             }
         }
 
 
 
 
-        private void ProcesarRegistro(DataRow row, Emisor_Consulta emisorConsulta)
+        private Factura ProcesarDatosFactura(DataRow row)
         {
             Factura factura = new Factura
             {
@@ -123,21 +132,31 @@ namespace GeneradorCufe.Consultas
                 Ip_base = row["ip_base"]?.ToString() ?? ""
             };
 
-            try
+            return factura;
+        }
+
+        private void ProcesarRegistros(List<Factura> facturas)
+        {
+            Emisor_Consulta emisorConsulta = new Emisor_Consulta();
+
+            foreach (Factura factura in facturas)
             {
-                if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
+                try
                 {
-                    emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "*LiLo89*");
+                    if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
+                    {
+                        emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "*LiLo89*");
+                    }
+                    else if (factura.Ip_base == "192.190.42.191")
+                    {
+                        emisorConsulta.EjecutarAccionParaIP(factura, "root", "**qwerty**");
+                    }
+
                 }
-                else if (factura.Ip_base == "192.190.42.191")
+                catch (Exception ex)
                 {
-                    emisorConsulta.EjecutarAccionParaIP(factura, "root", "**qwerty**");
+                    MarcarComoConError(factura, ex);
                 }
-                
-            }
-            catch (Exception ex)
-            {
-                MarcarComoConError(factura, ex);
             }
         }
 
