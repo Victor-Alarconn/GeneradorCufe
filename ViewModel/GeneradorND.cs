@@ -27,7 +27,7 @@ namespace GeneradorCufe.ViewModel
                 Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
                 FormaPago_Consulta formaPagoConsulta = new FormaPago_Consulta();
                 Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
-                string PrefijoNC = "NC" + factura.Recibo;
+                string PrefijoNC = "ND" + factura.Recibo;
 
 
                 // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
@@ -70,7 +70,7 @@ namespace GeneradorCufe.ViewModel
                 emisor.Codigo_municipio_emisor = cude;
 
                 // Actualizar 'CustomizationID'
-                xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("20"); // 22 o sin referencia a facturas
+                xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("30"); // 32 o sin referencia a facturas
 
                 string perfilEjecucionID = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase) ? "1" : "2";
 
