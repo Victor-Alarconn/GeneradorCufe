@@ -13,7 +13,7 @@ namespace GeneradorCufe.ViewModel
     public class GenerarFormasPago
     {
 
-        public static string GenerarFormaPagos(XDocument xmlDoc, List<FormaPago> listaFormaPago)
+        public static string GenerarFormaPagos(XDocument xmlDoc, List<FormaPago> listaFormaPago, decimal dias)
         {
             string Pagos = ""; // Variable para almacenar los métodos de pago
 
@@ -39,11 +39,26 @@ namespace GeneradorCufe.ViewModel
 
                         if (formaPago.Id_forma == "99")
                         {
-                            // Caso especial para forma de pago "99"
                             paymentMeansElementCloned.Element(cbc + "ID")?.SetValue("2");
                             paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("2");
+
+                            // Convertir la fecha actual a DateTime
+                            DateTime fechaActual = DateTime.Now;
+
+                            // Agregar los días especificados
+                            fechaActual = fechaActual.AddDays(Convert.ToDouble(dias));
+
+                            // Crear el elemento PaymentDueDate y establecer su valor
+                            var paymentDueDateElement = new XElement(cbc + "PaymentDueDate", fechaActual.ToString("yyyy-MM-dd"));
+
+                            // Insertar PaymentDueDate antes de PaymentID
+                            var paymentIdElement = paymentMeansElementCloned.Element(cbc + "PaymentID");
+                            paymentIdElement?.AddBeforeSelf(paymentDueDateElement);
+
                             paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Crédito ACH");
                         }
+
+
                         else
                         {
 

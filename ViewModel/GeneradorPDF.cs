@@ -282,7 +282,18 @@ namespace GeneradorCufe.ViewModel
                 cEmisionFactura.Padding = 1;
 
                 // Fecha de vencimiento (ficticia)
-                DateTime fechaVencimiento = DateTime.Now.AddDays(30); // Ejemplo: 30 días después de la fecha de emisión
+                DateTime fechaVencimiento;
+                if (decimal.TryParse(movimiento.Dias.ToString(), out decimal diasDecimal) && diasDecimal > 0)
+                {
+                    int dias = (int)Math.Round(diasDecimal); // Convertir el decimal a entero, redondeándolo
+                    fechaVencimiento = DateTime.Now.AddDays(dias);
+                }
+                else
+                {
+                    fechaVencimiento = DateTime.Now;
+                }
+
+
                 string iVenciFactura = "FECHA DE VENCIMIENTO\r\n" + fechaVencimiento.ToString("yyyy-MM-dd");
                 PdfPCell cVenciFactura = new PdfPCell(new Phrase(iVenciFactura, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                 cVenciFactura.BorderColor = BaseColor.GRAY;
@@ -290,6 +301,7 @@ namespace GeneradorCufe.ViewModel
                 cVenciFactura.HorizontalAlignment = Element.ALIGN_CENTER;
                 cVenciFactura.VerticalAlignment = Element.ALIGN_MIDDLE;
                 cVenciFactura.Padding = 1;
+
 
                 encabezado2.AddCell(cAdquiriente);
                 encabezado2.AddCell(cOtrosDatos);

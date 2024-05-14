@@ -148,7 +148,7 @@ namespace GeneradorCufe.ViewModel
                 Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
                 GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos);
 
-                emisor.Codigo_FormaPago_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
+                emisor.Codigo_FormaPago_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago, movimiento.Dias);
 
                 // Calcular el total del IVA de todos los productos
                 GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento);

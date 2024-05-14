@@ -158,7 +158,7 @@ namespace GeneradorCufe.ViewModel
             catch (HttpRequestException ex)
             {
                 // Manejar cualquier error de la solicitud POST
-            //    MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+               MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
                 facturaConsulta.MarcarComoConError(factura, ex);
                 return "";
@@ -173,7 +173,7 @@ namespace GeneradorCufe.ViewModel
                         using (var reader = new StreamReader(stream))
                         {
                             string errorResponse = reader.ReadToEnd();
-                         //   MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
 
                             // Guardar el error en la base de datos
                             respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
