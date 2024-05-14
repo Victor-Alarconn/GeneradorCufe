@@ -17,7 +17,6 @@ namespace GeneradorCufe.ViewModel
             try
             {
 
-
                 XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
                 XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
@@ -167,7 +166,6 @@ namespace GeneradorCufe.ViewModel
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
 
-                    // Calcular el porcentaje de retención y formatearlo a "2.50"
                     decimal porcentajeRetencion = (retiene / movimiento.Valor_neto) * 100;
                     string porcentajeFormateado = porcentajeRetencion.ToString("F2", CultureInfo.InvariantCulture);
 
@@ -204,29 +202,29 @@ namespace GeneradorCufe.ViewModel
                     legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor); // Total Valor a Pagar // cufe ValTot
                 }
 
-                GenerarProductos.MapCreditNoteLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
+                GenerarProductos.MapDebitNoteLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
 
-                // Buscar el elemento <DATA> dentro del elemento <CreditNote> con el espacio de nombres completo
-                XNamespace creditNoteNs = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2";
-                var dataElement = xmlDoc.Descendants(creditNoteNs + "DATA").FirstOrDefault();
+                // Buscar el elemento <DATA> dentro del elemento <DebitNote> con el espacio de nombres completo
+                XNamespace DebitNotes = "urn:oasis:names:specification:ubl:schema:xsd:DebitNote-2";
+                var dataElement = xmlDoc.Descendants(DebitNotes + "DATA").FirstOrDefault();
 
                 if (dataElement != null)
                 {
-                    dataElement.Element(creditNoteNs + "UBL21")?.SetValue("true");
+                    dataElement.Element(DebitNotes + "UBL21")?.SetValue("true");
 
                     // Buscar el elemento <Partnership> dentro de <DATA> con el espacio de nombres completo
-                    var partnershipElement = dataElement.Descendants(creditNoteNs + "Partnership").FirstOrDefault();
+                    var partnershipElement = dataElement.Descendants(DebitNotes + "Partnership").FirstOrDefault();
                     if (partnershipElement != null)
                     {
-                        partnershipElement.Element(creditNoteNs + "ID")?.SetValue("900770401");
-                        partnershipElement.Element(creditNoteNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
+                        partnershipElement.Element(DebitNotes + "ID")?.SetValue("900770401");
+                        partnershipElement.Element(DebitNotes + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
                         if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
                         {
-                            partnershipElement.Element(creditNoteNs + "SetTestID")?.Remove();
+                            partnershipElement.Element(DebitNotes + "SetTestID")?.Remove();
                         }
                         else
                         {
-                            partnershipElement.Element(creditNoteNs + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5");
+                            partnershipElement.Element(DebitNotes + "SetTestID")?.SetValue("e84ce8bd-5bc9-434c-bc0e-4e34454a45a5");
                         }
                     }
                 }

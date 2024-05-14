@@ -128,7 +128,7 @@ namespace GeneradorCufe.ViewModel
                 }
 
                 var corporateRegistrationSchemeElement = partyLegalEntityElement.Element(cac + "CorporateRegistrationScheme");
-                if (corporateRegistrationSchemeElement != null && listaProductos.First().Recibo == "" )
+                if (corporateRegistrationSchemeElement != null && listaProductos.Any() && string.IsNullOrEmpty(listaProductos.First().Recibo))
                 {
                     corporateRegistrationSchemeElement.Element(cbc + "ID")?.SetValue(encabezado.Prefijo);
                 }

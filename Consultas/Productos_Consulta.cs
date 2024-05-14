@@ -30,7 +30,8 @@ namespace GeneradorCufe.Consultas
                     connection.Open();
 
                     // Define tu consulta SQL con las columnas específicas y el filtro por el valor de la factura
-                    string query = "SELECT codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, hdigita, vrventa, consumo FROM xxxxmvin WHERE factura = @factura AND recibo = ''";
+                    string query = "SELECT codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, hdigita, vrventa, consumo FROM xxxxmvin WHERE factura = @factura AND (recibo = '' OR recibo IS NULL)";
+
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
@@ -45,7 +46,7 @@ namespace GeneradorCufe.Consultas
                                 Productos producto = new Productos()
                                 {
                                     Codigo = reader.GetString("codigo"),
-                                    Recibo = reader.GetString("recibo"),
+                                    Recibo = reader.IsDBNull(reader.GetOrdinal("recibo")) ? null : reader.GetString("recibo"),
                                     Nit = reader.GetString("nit"),
                                     Detalle = reader.GetString("detalle"),
                                     Cantidad = reader.GetDecimal("cantidad"),

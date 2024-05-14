@@ -4,15 +4,15 @@
       <ext:ExtensionContent>
         <sts:DianExtensions>
           <sts:InvoiceControl>
-            <sts:InvoiceAuthorization>18760000001</sts:InvoiceAuthorization>
+            <sts:InvoiceAuthorization>18764056392118</sts:InvoiceAuthorization>
             <sts:AuthorizationPeriod>
-              <cbc:StartDate>2019-01-19</cbc:StartDate>
-              <cbc:EndDate>2030-01-19</cbc:EndDate>
+              <cbc:StartDate>2023-09-19</cbc:StartDate>
+              <cbc:EndDate>2024-09-19</cbc:EndDate>
             </sts:AuthorizationPeriod>
             <sts:AuthorizedInvoices>
-              <sts:Prefix>SETT</sts:Prefix>
-              <sts:From>1</sts:From>
-              <sts:To>5000000</sts:To>
+              <sts:Prefix>FERM</sts:Prefix>
+              <sts:From>4468</sts:From>
+              <sts:To>6000</sts:To>
             </sts:AuthorizedInvoices>
           </sts:InvoiceControl>
         </sts:DianExtensions>
@@ -20,20 +20,20 @@
     </ext:UBLExtension>
   </ext:UBLExtensions>
   <cbc:CustomizationID>10</cbc:CustomizationID>
-  <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
-  <cbc:ID>SETT0266</cbc:ID>
-  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">af530376f40b85170036187f3543034759c474542108b27a448633f83f1c9e0d0f059061177c3a03f8926f8e61706a9d</cbc:UUID>
+  <cbc:ProfileExecutionID>1</cbc:ProfileExecutionID>
+  <cbc:ID>FERM05452</cbc:ID>
+  <cbc:UUID schemeID="1" schemeName="CUFE-SHA384">40be51160ed4dcc377f343b77b85d177690bd4c1fe21826b6a69967ef3602060eaf6db1e1fe3964051dc57fd2a14111e</cbc:UUID>
   <cbc:IssueDate>2024-05-14</cbc:IssueDate>
-  <cbc:IssueTime>08:30:05-05:00</cbc:IssueTime>
+  <cbc:IssueTime>15:31:53-05:00</cbc:IssueTime>
   <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
-  <cbc:Note>Factura de Venta Emitida por 1004994836-0-PCS CORPORATIVOS</cbc:Note>
+  <cbc:Note>Factura de Venta Emitida por 900770401-8-RM SOFT CASA DE SOFTWARE SAS</cbc:Note>
   <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
   <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
   <cac:AccountingSupplierParty>
-    <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
+    <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
     <cac:Party>
       <cac:PartyName>
-        <cbc:Name>PCS CORPORATIVOS</cbc:Name>
+        <cbc:Name>RM SOFT CASA DE SOFTWARE SAS</cbc:Name>
       </cac:PartyName>
       <cac:PhysicalLocation>
         <cac:Address>
@@ -43,7 +43,7 @@
           <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
           <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
           <cac:AddressLine>
-            <cbc:Line>Calle 24 # 7-29 Of 401 Pereira,Risaralda</cbc:Line>
+            <cbc:Line>Calle 24  No.7 27  OF 401 Pereira, Rda.</cbc:Line>
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
@@ -52,8 +52,8 @@
         </cac:Address>
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
-        <cbc:RegistrationName>PCS CORPORATIVOS</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="0" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1004994836</cbc:CompanyID>
+        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE SAS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
         <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
         <cac:RegistrationAddress>
           <cbc:ID>66001</cbc:ID>
@@ -62,7 +62,7 @@
           <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
           <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
           <cac:AddressLine>
-            <cbc:Line>Calle 24 # 7-29 Of 401 Pereira,Risaralda</cbc:Line>
+            <cbc:Line>Calle 24  No.7 27  OF 401 Pereira, Rda.</cbc:Line>
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
@@ -75,15 +75,15 @@
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
-        <cbc:RegistrationName>PCS CORPORATIVOS</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="0" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1004994836</cbc:CompanyID>
+        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE SAS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
         <cac:CorporateRegistrationScheme>
-          <cbc:ID>SETT</cbc:ID>
+          <cbc:ID>FERM</cbc:ID>
         </cac:CorporateRegistrationScheme>
       </cac:PartyLegalEntity>
       <cac:Contact>
-        <cbc:Telephone>3205231618</cbc:Telephone>
-        <cbc:ElectronicMail>soporte3.rmsoft@gmail.com</cbc:ElectronicMail>
+        <cbc:Telephone>Tel.3108264694</cbc:Telephone>
+        <cbc:ElectronicMail>comercial@rmsoft.com.co</cbc:ElectronicMail>
       </cac:Contact>
     </cac:Party>
   </cac:AccountingSupplierParty>
@@ -91,10 +91,10 @@
     <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
     <cac:Party>
       <cac:PartyIdentification>
-        <cbc:ID schemeName="13">1007441861</cbc:ID>
+        <cbc:ID schemeName="13">86777377</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyName>
-        <cbc:Name>VICTOR AGUSTIN ALARCON ALARCON</cbc:Name>
+        <cbc:Name>JOSE RUBIEL MUÑOZ LOPEZ</cbc:Name>
       </cac:PartyName>
       <cac:PhysicalLocation>
         <cac:Address>
@@ -104,7 +104,7 @@
           <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
           <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
           <cac:AddressLine>
-            <cbc:Line>CALLE 24 N 7 29</cbc:Line>
+            <cbc:Line>CL 80 55 25 AP 3C</cbc:Line>
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
@@ -113,8 +113,8 @@
         </cac:Address>
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
-        <cbc:RegistrationName>VICTOR AGUSTIN ALARCON ALARCON</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="7" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1007441861</cbc:CompanyID>
+        <cbc:RegistrationName>JOSE RUBIEL MUÑOZ LOPEZ</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="6" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">86777377</cbc:CompanyID>
         <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
         <cac:RegistrationAddress>
           <cbc:ID>66001</cbc:ID>
@@ -123,7 +123,7 @@
           <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
           <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
           <cac:AddressLine>
-            <cbc:Line>CALLE 24 N 7 29</cbc:Line>
+            <cbc:Line>CL 80 55 25 AP 3C</cbc:Line>
           </cac:AddressLine>
           <cac:Country>
             <cbc:IdentificationCode>CO</cbc:IdentificationCode>
@@ -136,28 +136,27 @@
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
       <cac:PartyLegalEntity>
-        <cbc:RegistrationName>VICTOR AGUSTIN ALARCON ALARCON</cbc:RegistrationName>
-        <cbc:CompanyID schemeID="7" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1007441861</cbc:CompanyID>
+        <cbc:RegistrationName>JOSE RUBIEL MUÑOZ LOPEZ</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="6" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">86777377</cbc:CompanyID>
       </cac:PartyLegalEntity>
       <cac:Contact>
-        <cbc:Telephone>644555</cbc:Telephone>
-        <cbc:ElectronicMail>soporte3.rmsoft@gmail.com</cbc:ElectronicMail>
+        <cbc:Telephone>3341938</cbc:Telephone>
+        <cbc:ElectronicMail>anislu@hotmail.com</cbc:ElectronicMail>
       </cac:Contact>
     </cac:Party>
   </cac:AccountingCustomerParty>
   <cac:PaymentMeans>
-    <cbc:ID>2</cbc:ID>
-    <cbc:PaymentMeansCode>2</cbc:PaymentMeansCode>
-    <cbc:PaymentID>Crédito ACH</cbc:PaymentID>
-    <cbc:PaymentDueDate>2024-05-14</cbc:PaymentDueDate>
+    <cbc:ID>1</cbc:ID>
+    <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
+    <cbc:PaymentID>Efectivo</cbc:PaymentID>
   </cac:PaymentMeans>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="COP">111764.71</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
     <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="COP">588235.29</cbc:TaxableAmount>
-      <cbc:TaxAmount currencyID="COP">111764.71</cbc:TaxAmount>
+      <cbc:TaxableAmount currencyID="COP">300000.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
       <cac:TaxCategory>
-        <cbc:Percent>19.00</cbc:Percent>
+        <cbc:Percent>0.00</cbc:Percent>
         <cac:TaxScheme>
           <cbc:ID>01</cbc:ID>
           <cbc:Name>IVA</cbc:Name>
@@ -166,22 +165,22 @@
     </cac:TaxSubtotal>
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
-    <cbc:LineExtensionAmount currencyID="COP">588235.29</cbc:LineExtensionAmount>
-    <cbc:TaxExclusiveAmount currencyID="COP">588235.29</cbc:TaxExclusiveAmount>
-    <cbc:TaxInclusiveAmount currencyID="COP">700000.00</cbc:TaxInclusiveAmount>
-    <cbc:PayableAmount currencyID="COP">700000.00</cbc:PayableAmount>
+    <cbc:LineExtensionAmount currencyID="COP">300000.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="COP">300000.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="COP">300000.00</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="COP">300000.00</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
     <cbc:ID>1</cbc:ID>
-    <cbc:InvoicedQuantity unitCode="ZZ">2.00</cbc:InvoicedQuantity>
-    <cbc:LineExtensionAmount currencyID="COP">588235.29</cbc:LineExtensionAmount>
+    <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">300000.00</cbc:LineExtensionAmount>
     <cac:TaxTotal>
-      <cbc:TaxAmount currencyID="COP">111764.71</cbc:TaxAmount>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
       <cac:TaxSubtotal>
-        <cbc:TaxableAmount currencyID="COP">588235.29</cbc:TaxableAmount>
-        <cbc:TaxAmount currencyID="COP">111764.71</cbc:TaxAmount>
+        <cbc:TaxableAmount currencyID="COP">300000.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
         <cac:TaxCategory>
-          <cbc:Percent>19.00</cbc:Percent>
+          <cbc:Percent>0.00</cbc:Percent>
           <cac:TaxScheme>
             <cbc:ID>01</cbc:ID>
             <cbc:Name>IVA</cbc:Name>
@@ -190,22 +189,21 @@
       </cac:TaxSubtotal>
     </cac:TaxTotal>
     <cac:Item>
-      <cbc:Description>DISCO DURO</cbc:Description>
+      <cbc:Description>SOPORTE CLOUD/ DESARROLLO MANEJO DESCUENTO ESPECIAL POR TIEMPO ESTABLECIDO EN TARIFA X HORA</cbc:Description>
       <cac:StandardItemIdentification>
-        <cbc:ID schemeID="999">0103                </cbc:ID>
+        <cbc:ID schemeID="999">0065                </cbc:ID>
       </cac:StandardItemIdentification>
     </cac:Item>
     <cac:Price>
-      <cbc:PriceAmount currencyID="COP">350000.00</cbc:PriceAmount>
-      <cbc:BaseQuantity unitCode="EA">2.00</cbc:BaseQuantity>
+      <cbc:PriceAmount currencyID="COP">300000.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
     </cac:Price>
   </cac:InvoiceLine>
   <DATA>
     <UBL21>true</UBL21>
     <Partnership>
       <ID>900770401</ID>
-      <TechKey>fc8eac422eba16e22ffd8c6f94b3f40a6e38162c</TechKey>
-      <SetTestID>e84ce8bd-5bc9-434c-bc0e-4e34454a45a5</SetTestID>
+      <TechKey>5090bcff4b4a4ebb2d76d3ba5069c6ff2283533e4a0cf9bc603711736de0d9ca</TechKey>
     </Partnership>
   </DATA>
 </Invoice>

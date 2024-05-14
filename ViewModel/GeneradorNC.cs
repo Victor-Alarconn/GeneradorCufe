@@ -167,7 +167,6 @@ namespace GeneradorCufe.ViewModel
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
 
-                    // Calcular el porcentaje de retención y formatearlo a "2.50"
                     decimal porcentajeRetencion = (retiene / movimiento.Valor_neto) * 100;
                     string porcentajeFormateado = porcentajeRetencion.ToString("F2", CultureInfo.InvariantCulture);
 
