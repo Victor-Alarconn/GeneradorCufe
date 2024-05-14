@@ -9,7 +9,8 @@ namespace GeneradorCufe.Model
     public class Emisor
     {
         public string? Nombre_emisor { get; set; }
-        public string? Codigo_municipio_emisor { get; set; }
+        public string? Codigo_FormaPago_emisor { get; set; }
+        public string? cude { get; set; }
         public string? Nombre_municipio_emisor { get; set; }
         public string? Codigo_departamento_emisor { get; set; }
         public string? Nombre_departamento_emisor { get; set; }

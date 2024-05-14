@@ -37,29 +37,40 @@ namespace GeneradorCufe.ViewModel
                         // Clonar la plantilla para cada forma de pago
                         var paymentMeansElementCloned = new XElement(paymentMeansTemplate);
 
-                        // Reemplazar los valores entre llaves con los valores correspondientes
-                        paymentMeansElementCloned.Element(cbc + "ID")?.SetValue("1");
+                        if (formaPago.Id_forma == "99")
+                        {
+                            // Caso especial para forma de pago "99"
+                            paymentMeansElementCloned.Element(cbc + "ID")?.SetValue("2");
+                            paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("2");
+                            paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Crédito ACH");
+                        }
+                        else
+                        {
 
-                        if (formaPago.Id_forma == "00")
-                        {
-                            paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("10");
-                            paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Efectivo");
-                        }
-                        else if (formaPago.Id_forma == "01")
-                        {
-                            paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("49");
-                            paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Débito");
-                        }
-                        else if (formaPago.Id_forma == "02")
-                        {
-                            paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("48");
-                            paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Crédito");
-                            paymentMeansElementCloned.Add(new XElement(cbc + "PaymentDueDate", DateTime.Now.ToString("yyyy-MM-dd")));
-                        }
-                        else if (formaPago.Id_forma == "03")
-                        {
-                            paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("47");
-                            paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Transferencia Débito Bancaria");
+                            // Reemplazar los valores entre llaves con los valores correspondientes
+                            paymentMeansElementCloned.Element(cbc + "ID")?.SetValue("1");
+
+                            if (formaPago.Id_forma == "00")
+                            {
+                                paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("10");
+                                paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Efectivo");
+                            }
+                            else if (formaPago.Id_forma == "01")
+                            {
+                                paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("49");
+                                paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Débito");
+                            }
+                            else if (formaPago.Id_forma == "02")
+                            {
+                                paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("48");
+                                paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Crédito");
+                                paymentMeansElementCloned.Add(new XElement(cbc + "PaymentDueDate", DateTime.Now.ToString("yyyy-MM-dd")));
+                            }
+                            else if (formaPago.Id_forma == "03")
+                            {
+                                paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("47");
+                                paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Transferencia Débito Bancaria");
+                            }
                         }
 
                         // Agregar PaymentMeans al XML después de la plantilla existente

@@ -67,7 +67,7 @@ namespace GeneradorCufe.ViewModel
 
                 string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
                 string cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
-                emisor.Codigo_municipio_emisor = cude;
+                emisor.cude = cude;
 
                 // Actualizar 'CustomizationID'
                 xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("20"); // 22 o sin referencia a facturas
@@ -148,7 +148,7 @@ namespace GeneradorCufe.ViewModel
                 Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
                 GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos);
 
-                emisor.Codigo_municipio_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
+                emisor.Codigo_FormaPago_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
 
                 // Calcular el total del IVA de todos los productos
                 GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento);

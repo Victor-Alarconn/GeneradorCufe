@@ -152,7 +152,7 @@ namespace GeneradorCufe.ViewModel
                               $"ValIva:{movimiento.Valor_iva}\n" +
                               $"ValOtroIm:0.00\n" +
                               $"ValTolFac:{movimiento.Valor} \n" +
-                              $"CUDE:{emisor.Codigo_municipio_emisor}";
+                              $"CUDE:{emisor.cude}";
                 }
                 else
                 {
@@ -255,10 +255,13 @@ namespace GeneradorCufe.ViewModel
                 cAdquiriente.Rowspan = 1;
 
                 // Crear la cuarta columna
-                string iOtrosDatos = "Medio de pago: Contado\r\n" +
-                                     "Forma de pago: "+ emisor.Codigo_municipio_emisor + "\r\n" +
+                string medioPago = (emisor.Codigo_FormaPago_emisor == "Crédito ACH") ? "Crédito" : "Contado";
+
+                string iOtrosDatos = "Medio de pago: " + medioPago + "\r\n" +
+                                     "Forma de pago: " + emisor.Codigo_FormaPago_emisor + "\r\n" +
                                      "Vendedor: " + movimiento.Vendedor + "\r\n" +
                                      Orden;
+
                 PdfPCell cOtrosDatos = new PdfPCell(new Phrase(iOtrosDatos, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                 cOtrosDatos.BorderColor = BaseColor.GRAY;
                 cOtrosDatos.Border = Rectangle.BOX;
@@ -320,7 +323,7 @@ namespace GeneradorCufe.ViewModel
                     nuevoRenglonCUDE.WidthPercentage = 100;
 
                     // Agregar una celda con el texto CUFE al nuevo objeto PdfPTable
-                    string nuevoDatoCUDE = "CUDE: " + emisor.Codigo_municipio_emisor;
+                    string nuevoDatoCUDE = "CUDE: " + emisor.cude;
                     PdfPCell celdaNuevoDatoCUDE = new PdfPCell(new Phrase(nuevoDatoCUDE, FontFactory.GetFont("Helvetica", 9, Font.NORMAL)));
                     celdaNuevoDatoCUDE.Border = Rectangle.NO_BORDER; // Eliminar bordes
                     celdaNuevoDatoCUDE.HorizontalAlignment = Element.ALIGN_LEFT; // Alinear a la izquierda

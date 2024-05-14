@@ -137,7 +137,7 @@ namespace GeneradorCufe.ViewModel
                 //    paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
                 //}
 
-                emisor.Codigo_municipio_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
+                emisor.Codigo_FormaPago_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago);
                 GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento); // Calcular el total del IVA de todos los productos
 
 
@@ -210,7 +210,7 @@ namespace GeneradorCufe.ViewModel
                     if (partnershipElement != null)
                     {
                         partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
-                        partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("5090bcff4b4a4ebb2d76d3ba5069c6ff2283533e4a0cf9bc603711736de0d9ca");
+                        partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
                         if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
                         {
                             partnershipElement.Element(invoiceNs + "SetTestID")?.Remove();
