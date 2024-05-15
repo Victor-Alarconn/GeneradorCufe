@@ -39,11 +39,22 @@ namespace GeneradorCufe.ViewModel
 
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
+            decimal Neto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
             // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
             string numeroFactura = factura.Facturas;
-            string fechaFactura = movimiento.Fecha_Factura.ToString("yyyy-MM-dd");
+            DateTime fechaFacturaString = movimiento.Fecha_Factura;
+            DateTime fechaHoy = DateTime.Today;
+            string fechaFactura = "";
+
+            if ((fechaHoy - fechaFacturaString).TotalDays > 2)
+            {
+                fechaFactura = fechaFacturaString.ToString("yyyy-MM-dd"); 
+            }
+
+             fechaFactura = DateTime.Today.ToString("yyyy-MM-dd");
+
             string horaFactura = hora;
-            decimal valorSubtotal = movimiento.Valor_neto;
+            decimal valorSubtotal = Neto;
             string codigo = "01";
             decimal iva = Iva;
             string codigo2 = "04";
@@ -72,7 +83,17 @@ namespace GeneradorCufe.ViewModel
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
             decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
-            string fechaNC = listaProductos.FirstOrDefault().Fecha.ToString("yyyy-MM-dd");
+            DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
+            DateTime fechaHoy = DateTime.Today;
+
+            if ((fechaHoy - fechaProducto).TotalDays < 2)
+            {
+                fechaProducto = DateTime.Today;
+            }
+
+            string fechaNC = fechaProducto.ToString("yyyy-MM-dd");
+
+
 
             decimal Valor = 0;
 

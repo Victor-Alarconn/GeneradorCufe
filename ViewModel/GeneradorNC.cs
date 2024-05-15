@@ -86,7 +86,17 @@ namespace GeneradorCufe.ViewModel
                 xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
 
                 // Actualizar 'IssueDate' y 'IssueTime'
-                xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(listaProductos.FirstOrDefault().Fecha.ToString("yyyy-MM-dd"));
+                DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
+                DateTime fechaHoy = DateTime.Today;
+
+                if ((fechaHoy - fechaProducto).TotalDays < 2)
+                {
+                    fechaProducto = DateTime.Today;
+                }
+
+                string fechaProductoString = fechaProducto.ToString("yyyy-MM-dd");
+
+                xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(fechaProductoString);
                 xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
 
 

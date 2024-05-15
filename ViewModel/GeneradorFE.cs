@@ -75,16 +75,25 @@ namespace GeneradorCufe.ViewModel
                 // Actualizar el valor del perfil de ejecución en el XML
                 xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue(perfilEjecucionID);
 
-
                 xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(factura.Facturas);
                 xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(CUFE);
                 xmlDoc.Descendants(cbc + "UUID").Attributes("schemeID").FirstOrDefault()?.SetValue(perfilEjecucionID);
-                xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
-                xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
-                xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); // Código de tipo de factura (01 para factura de venta)
-                                                                                              // Crear un nuevo elemento Note para la nota adicional
-                var nuevaNotaElement = new XElement(cbc + "Note");
+                DateTime fechaFactura = movimiento.Fecha_Factura;
+                DateTime fechaHoy = DateTime.Today;
 
+                if ((fechaHoy - fechaFactura).TotalDays > 2)
+                {
+                    xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(fechaFactura.ToString("yyyy-MM-dd"));
+                }
+                else
+                {
+                    xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(fechaHoy.ToString("yyyy-MM-dd"));
+                }
+
+                xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
+                xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); 
+                                                                                             
+                var nuevaNotaElement = new XElement(cbc + "Note");
                 // Verificar si se cumple la condición para agregar una nota adicional
                 if (movimiento.Retiene > 0.00m && emisor.Retiene_emisor == 3)
                 {
@@ -169,25 +178,19 @@ namespace GeneradorCufe.ViewModel
                 }
 
 
-                decimal Valor = 0;
+                decimal Valor = movimiento.Retiene != 0 && emisor.Retiene_emisor == 2 ? Math.Round(movimiento.Valor + movimiento.Retiene, 2) : movimiento.Valor;
 
-                if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0)
-                {
-                    Valor = Math.Round(movimiento.Valor + movimiento.Retiene, 2);
-                }
-                else
-                {
-                    Valor = movimiento.Valor;
-                }
+                decimal ValorNeto = movimiento.Valor_neto == 0.00m ? Math.Round(listaProductos.Sum(producto => producto.Neto), 2) : movimiento.Valor_neto;
 
                 var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
                 if (legalMonetaryTotalElement != null)
                 {
-                    legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Bruto antes de tributos 
-                    legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(movimiento.Valor_neto); // Total Valor Base Imponible
+                    legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(ValorNeto); // Total Valor Bruto antes de tributos 
+                    legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(ValorNeto); // Total Valor Base Imponible
                     legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Valor); // Total Valor Bruto más tributos
                     legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor); // Total Valor a Pagar // cufe ValTot
                 }
+
 
                 if (factura.Recibo != "0" && !string.IsNullOrEmpty(factura.Recibo))
                 {
