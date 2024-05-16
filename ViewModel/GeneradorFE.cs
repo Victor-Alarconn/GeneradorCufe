@@ -47,7 +47,7 @@ namespace GeneradorCufe.ViewModel
                 string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
                 string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
 
-                string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit, emisor); // se puede resumir 
+                string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, encabezado); // se puede resumir 
                 string CUFE = GeneradorCufe_Cude.GenerarCUFE(construir);
 
 
@@ -213,7 +213,7 @@ namespace GeneradorCufe.ViewModel
                     if (partnershipElement != null)
                     {
                         partnershipElement.Element(invoiceNs + "ID")?.SetValue("900770401");
-                        partnershipElement.Element(invoiceNs + "TechKey")?.SetValue("5090bcff4b4a4ebb2d76d3ba5069c6ff2283533e4a0cf9bc603711736de0d9ca");
+                        partnershipElement.Element(invoiceNs + "TechKey")?.SetValue(encabezado.Llave_tecnica);
                         if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
                         {
                             partnershipElement.Element(invoiceNs + "SetTestID")?.Remove();

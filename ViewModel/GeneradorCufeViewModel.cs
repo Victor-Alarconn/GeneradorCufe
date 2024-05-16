@@ -129,7 +129,6 @@ namespace GeneradorCufe.ViewModel
                 {
                     if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Si es "docum", establecer el encabezado efacturaAuthorizationToken para "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K"
                         client.Headers["efacturaAuthorizationToken"] = "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K";
                     }
                     else

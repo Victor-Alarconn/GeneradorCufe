@@ -17,6 +17,7 @@ namespace GeneradorCufe.Model
         public string? Resolucion { get; set; }
         public string? Notas { get; set; }
         public string? Nota_fin { get; set; }
+        public string? Llave_tecnica { get; set; }
 
     }
 }

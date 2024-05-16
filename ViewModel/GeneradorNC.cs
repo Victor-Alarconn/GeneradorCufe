@@ -57,7 +57,7 @@ namespace GeneradorCufe.ViewModel
                     hora = horaCon.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
 
                     // Construir el CUFE
-                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe, factura, hora, Nit, emisor);
+                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe, factura, hora, Nit, emisor, encabezado);
                     cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
                 }
                 else
@@ -228,7 +228,7 @@ namespace GeneradorCufe.ViewModel
                     if (partnershipElement != null)
                     {
                         partnershipElement.Element(creditNoteNs + "ID")?.SetValue("900770401");
-                        partnershipElement.Element(creditNoteNs + "TechKey")?.SetValue("fc8eac422eba16e22ffd8c6f94b3f40a6e38162c");
+                        partnershipElement.Element(creditNoteNs + "TechKey")?.SetValue(encabezado.Llave_tecnica);
                         if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
                         {
                             partnershipElement.Element(creditNoteNs + "SetTestID")?.Remove();

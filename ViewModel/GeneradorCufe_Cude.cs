@@ -10,72 +10,23 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorCufe_Cude
     {
-        public static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora, string nit, Emisor emisor)
+        public static string ConstruirCadenaCUFE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string hora, string nit, Emisor emisor, Encabezado encabezado)
         {
+            decimal Valor = emisor.Retiene_emisor == 2 && movimiento.Retiene != 0 ? Math.Round(movimiento.Valor + movimiento.Retiene, 2) : movimiento.Valor;
 
-            decimal Valor = 0;
-
-            if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0)
-            {
-                Valor = Math.Round(movimiento.Valor + movimiento.Retiene, 2);
-            }
-            else
-            {
-                Valor = movimiento.Valor;
-            }
-
-            int ambiente;
-
-            // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
-            if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
-            {
-                ambiente = 1;
-            }
-            else
-            {
-                ambiente = 2;
-            }
-
+            int ambiente = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
 
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
             decimal Neto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
-            // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
-            string numeroFactura = factura.Facturas;
-            DateTime fechaFacturaString = movimiento.Fecha_Factura;
-            DateTime fechaHoy = DateTime.Today;
-            string fechaFactura = "";
 
-            if ((fechaHoy - fechaFacturaString).TotalDays > 2)
-            {
-                fechaFactura = fechaFacturaString.ToString("yyyy-MM-dd"); 
-            }
+            string fechaFactura = (DateTime.Today - movimiento.Fecha_Factura).TotalDays > 2 ? movimiento.Fecha_Factura.ToString("yyyy-MM-dd") : DateTime.Today.ToString("yyyy-MM-dd");
 
-             fechaFactura = DateTime.Today.ToString("yyyy-MM-dd");
-
-            string horaFactura = hora;
-            decimal valorSubtotal = Neto;
-            string codigo = "01";
-            decimal iva = Iva;
-            string codigo2 = "04";
-            decimal impuesto2 = consumo;
-            string codigo3 = "03";
-            string impuesto3 = "0.00";
-            decimal total = Valor;
-            string nitFacturador = nit;
-            string numeroIdentificacionCliente = movimiento.Nit;
-            string clavetecnica = "5090bcff4b4a4ebb2d76d3ba5069c6ff2283533e4a0cf9bc603711736de0d9ca";
-            int tipodeambiente = ambiente;
-
-            // Construir la cadena CUFE
-            string cadenaCUFE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{clavetecnica}{tipodeambiente}";
-
-            // Reemplazar comas por puntos en la cadena CUFE
+            string cadenaCUFE = $"{factura.Facturas}{fechaFactura}{hora}{Neto}01{Iva}04{consumo}030.00{Valor}{nit}{movimiento.Nit}{encabezado.Llave_tecnica}{ambiente}";
             cadenaCUFE = cadenaCUFE.Replace(',', '.');
 
             return cadenaCUFE;
         }
-
 
 
         public static string ConstruirCadenaCUDE(Movimiento movimiento, List<Productos> listaProductos, Factura factura, string horaf, string nit, Emisor emisor, string hora, string prefijo)
@@ -86,61 +37,19 @@ namespace GeneradorCufe.ViewModel
             DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
             DateTime fechaHoy = DateTime.Today;
 
-            if ((fechaHoy - fechaProducto).TotalDays < 2)
-            {
-                fechaProducto = DateTime.Today;
-            }
-
+            fechaProducto = (fechaHoy - fechaProducto).TotalDays < 2 ? fechaHoy : fechaProducto;
             string fechaNC = fechaProducto.ToString("yyyy-MM-dd");
 
+            decimal Valor = emisor.Retiene_emisor == 2 && movimiento.Retiene != 0 ? Math.Round(movimiento.Nota_credito + 0, 2) : movimiento.Nota_credito;
 
+            int ambiente = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
 
-            decimal Valor = 0;
-
-            if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0) // falta calcular el valor 
-            {
-                Valor = Math.Round(movimiento.Nota_credito + 0, 2);
-            }
-            else
-            {
-                Valor = movimiento.Nota_credito;
-            }
-
-            int ambiente;
-
-            // Verificar si emisor.Url_emisor es igual a "docum" sin importar mayúsculas o minúsculas
-            if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
-            {
-                ambiente = 1;
-            }
-            else
-            {
-                ambiente = 2;
-            }
-
-            DateTimeOffset now = DateTimeOffset.Now;
-            // Asegúrate de convertir los valores a los formatos correctos y de manejar posibles valores nulos
-            string numeroFactura = prefijo;
-            string fechaFactura = fechaNC;
-            string horaFactura = horaf;
-            decimal valorSubtotal = VlrNeto;
-            string codigo = "01";
-            decimal iva = Iva;
-            string codigo2 = "04";
-            decimal impuesto2 = consumo;
-            string codigo3 = "03";
-            string impuesto3 = "0.00";
-            decimal total = Valor;
-            string nitFacturador = nit;
-            string numeroIdentificacionCliente = movimiento.Nit;
-            string Software_Pin = "75315";
-            int tipodeambiente = ambiente; // pruebas
-
-            string cadenaCUDE = $"{numeroFactura}{fechaFactura}{horaFactura}{valorSubtotal}{codigo}{iva}{codigo2}{impuesto2}{codigo3}{impuesto3}{total}{nitFacturador}{numeroIdentificacionCliente}{Software_Pin}{tipodeambiente}";
+            string cadenaCUDE = $"{prefijo}{fechaNC}{horaf}{VlrNeto}01{Iva}04{consumo}030.00{Valor}{nit}{movimiento.Nit}753151{ambiente}";
             cadenaCUDE = cadenaCUDE.Replace(',', '.');
 
             return cadenaCUDE;
         }
+
 
         public static string GenerarCUFE(string cadenaCUFE)
         {
