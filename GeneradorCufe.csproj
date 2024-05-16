@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
     <PackageReference Include="ThinkGeo.Dependency.Gdal" Version="14.0.0" />
   </ItemGroup>
 

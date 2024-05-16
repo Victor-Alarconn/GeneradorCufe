@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MySqlConnector;
 
 
 
@@ -281,79 +282,52 @@ namespace GeneradorCufe
 
         private void ConvertirMapa_Click(object sender, RoutedEventArgs e)
         {
-            // Crear un cuadro de diálogo para seleccionar archivos KML
+            // Crear un cuadro de diálogo para seleccionar archivos de imagen
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Archivos KML (*.kml)|*.kml";
+            openFileDialog.Filter = "Imágenes|*.jpg;*.png"; // Filtrar solo imágenes JPG y PNG
             openFileDialog.Multiselect = false;
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Directorio inicial
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures); // Directorio inicial
 
             // Mostrar el cuadro de diálogo
             bool? result = openFileDialog.ShowDialog();
 
             if (result == true)
             {
-                // Obtener la ruta del archivo KML seleccionado
-                string kmlFilePath = openFileDialog.FileName;
-
                 try
                 {
-                    // Registrar los drivers de GDAL/OGR
-                    Ogr.RegisterAll();
+                    // Leer la imagen seleccionada como un arreglo de bytes
+                    byte[] imageBytes = File.ReadAllBytes(openFileDialog.FileName);
 
-                    // Ruta del archivo SHP de salida (misma ubicación que el archivo KML)
-                    string outputSHPPath = System.IO.Path.ChangeExtension(kmlFilePath, ".shp");
-
-                    // Abrir el archivo KML de entrada
-                    DataSource inputDataSource = Ogr.Open(kmlFilePath, 0);
-
-                    // Crear un nuevo archivo SHP de salida
-                    Driver outputDriver = Ogr.GetDriverByName("ESRI Shapefile");
-                    DataSource outputDataSource = outputDriver.CreateDataSource(outputSHPPath, null);
-
-                    // Recorrer cada capa en el archivo KML de entrada
-                    for (int i = 0; i < inputDataSource.GetLayerCount(); i++)
+                    // Establecer la conexión a la base de datos MySQL
+                    string connectionString = "Database=empresas; Data Source=192.190.42.191; User Id=root; Password=**qwerty**; ConvertZeroDateTime=True;";
+                    using (MySqlConnection connection = new MySqlConnection(connectionString))
                     {
-                        Layer layer = inputDataSource.GetLayerByIndex(i);
+                        connection.Open();
 
-                        // Crear una nueva capa en el archivo SHP de salida
-                        Layer outputLayer = outputDataSource.CreateLayer(layer.GetName(), null, wkbGeometryType.wkbUnknown, null);
-
-                        // Copiar los campos (atributos) de la capa de entrada a la capa de salida
-                        for (int j = 0; j < layer.GetLayerDefn().GetFieldCount(); j++)
+                        // Consulta SQL para actualizar la imagen en la base de datos
+                        string query = "UPDATE empresas SET logo = @logo WHERE emprobra = 'A059'";
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
                         {
-                            FieldDefn fieldDefn = layer.GetLayerDefn().GetFieldDefn(j);
-                            outputLayer.CreateField(fieldDefn, 1);
-                        }
+                            // Agregar parámetro para la imagen
+                            command.Parameters.AddWithValue("@logo", imageBytes);
 
-                        // Copiar las geometrías de la capa de entrada a la capa de salida
-                        FeatureDefn featureDefn = outputLayer.GetLayerDefn();
-                        Feature feature;
-                        while ((feature = layer.GetNextFeature()) != null)
-                        {
-                            OSGeo.OGR.Geometry geometry = feature.GetGeometryRef(); // Aquí especificamos el espacio de nombres completo
-                            Feature outputFeature = new Feature(featureDefn);
-                            outputFeature.SetGeometry(geometry);
-                            for (int k = 0; k < feature.GetFieldCount(); k++)
+                            // Ejecutar la consulta SQL
+                            int rowsAffected = command.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
                             {
-                                outputFeature.SetField(k, feature.GetFieldAsString(k));
+                                MessageBox.Show("La imagen se ha actualizado correctamente en la base de datos.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
-                            outputLayer.CreateFeature(outputFeature);
-                            outputFeature.Dispose();
-                            feature.Dispose();
+                            else
+                            {
+                                MessageBox.Show("No se pudo actualizar la imagen en la base de datos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
                         }
                     }
-
-                    // Cerrar las fuentes de datos
-                    inputDataSource.Dispose();
-                    outputDataSource.Dispose();
-
-                    // Mostrar mensaje de éxito
-                    MessageBox.Show("El archivo KML se ha convertido a SHP y se ha guardado en: " + outputSHPPath, "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    // Mostrar mensaje de error si ocurre una excepción
-                    MessageBox.Show("Error al convertir el archivo KML a SHP: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Error al cargar la imagen en la base de datos: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
