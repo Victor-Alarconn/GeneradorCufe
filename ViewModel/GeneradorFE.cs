@@ -137,15 +137,6 @@ namespace GeneradorCufe.ViewModel
                 GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos); // Información del adquiriente
 
 
-                // Información del medio de pago
-                //var paymentMeansElement = xmlDoc.Descendants(cac + "PaymentMeans").FirstOrDefault();
-                //if (paymentMeansElement != null)
-                //{
-                //    paymentMeansElement.Element(cbc + "ID")?.SetValue("1");
-                //    paymentMeansElement.Element(cbc + "PaymentMeansCode")?.SetValue("10");
-                //    paymentMeansElement.Element(cbc + "PaymentID")?.SetValue("Efectivo");
-                //}
-
                 emisor.Codigo_FormaPago_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago, movimiento.Dias);
                 GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento); // Calcular el total del IVA de todos los productos
 
@@ -154,17 +145,16 @@ namespace GeneradorCufe.ViewModel
 
                 // Obtener el elemento WithholdingTaxTotal si existe
                 var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
-
+                decimal ValorNeto = movimiento.Valor_neto == 0.00m ? Math.Round(listaProductos.Sum(producto => producto.Neto), 2) : movimiento.Valor_neto;
                 // Verificar si retiene es mayor que 0.00 y si el movimiento.Retiene es igual a 2
                 if (retiene > 0.00m && emisor.Retiene_emisor == 2)
                 {
                     // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es mayor que 0.00
                     withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
-                    withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
+                    withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(ValorNeto);
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
 
-                    // Calcular el porcentaje de retención y formatearlo a "2.50"
-                    decimal porcentajeRetencion = (retiene / movimiento.Valor_neto) * 100;
+                    decimal porcentajeRetencion = (retiene / ValorNeto) * 100;
                     string porcentajeFormateado = porcentajeRetencion.ToString("F2", CultureInfo.InvariantCulture);
 
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue(porcentajeFormateado);
@@ -179,8 +169,6 @@ namespace GeneradorCufe.ViewModel
 
 
                 decimal Valor = movimiento.Retiene != 0 && emisor.Retiene_emisor == 2 ? Math.Round(movimiento.Valor + movimiento.Retiene, 2) : movimiento.Valor;
-
-                decimal ValorNeto = movimiento.Valor_neto == 0.00m ? Math.Round(listaProductos.Sum(producto => producto.Neto), 2) : movimiento.Valor_neto;
 
                 var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
                 if (legalMonetaryTotalElement != null)

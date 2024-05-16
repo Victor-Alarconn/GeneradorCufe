@@ -57,10 +57,13 @@ namespace GeneradorCufe.ViewModel
                 encabezado.SetWidths(new float[] { 2, 4, 2 });
                 encabezado.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
 
-                string RutaLogo = "C:\\Users\\Programacion01\\source\\repos\\RepoVictor\\GeneradorCufe\\xml\\logo.png";
-                if (File.Exists(RutaLogo))
+                if (!string.IsNullOrEmpty(emisor.Logo_emisor))
                 {
-                    Image logo = Image.GetInstance(RutaLogo);
+                    // Convertir la cadena base64 del logo en bytes
+                    byte[] logoBytes = Convert.FromBase64String(emisor.Logo_emisor);
+
+                    // Convertir bytes en una instancia de iTextSharp.text.Image
+                    Image logo = Image.GetInstance(logoBytes);
                     logo.ScaleAbsoluteWidth(120); // Ajustar el ancho de la imagen
                     logo.ScaleAbsoluteHeight(80); // Ajustar también la altura de la imagen si es necesario
                     logo.BackgroundColor = BaseColor.WHITE;
@@ -73,6 +76,7 @@ namespace GeneradorCufe.ViewModel
                 }
                 else
                 {
+                    // Si no hay logo almacenado, agregar una celda vacía en su lugar
                     PdfPCell cEmpty = new PdfPCell(new Phrase(" "))
                     {
                         Border = Rectangle.NO_BORDER

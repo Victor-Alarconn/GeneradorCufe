@@ -65,7 +65,7 @@ namespace GeneradorCufe.ViewModel
                             // Reemplazar los valores entre llaves con los valores correspondientes
                             paymentMeansElementCloned.Element(cbc + "ID")?.SetValue("1");
 
-                            if (formaPago.Id_forma == "00")
+                            if (formaPago.Id_forma == "00" || formaPago.Id_forma == "0")
                             {
                                 paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("10");
                                 paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Efectivo");

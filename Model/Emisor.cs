@@ -24,6 +24,7 @@ namespace GeneradorCufe.Model
         public decimal  Retiene_emisor { get; set; }
         public string? Url_emisor { get; set; }
         public string? Ciudad_emisor { get; set; }
+        public string? Logo_emisor { get; set; }
 
     }
 }
