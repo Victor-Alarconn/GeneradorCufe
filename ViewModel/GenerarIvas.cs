@@ -26,37 +26,42 @@ namespace GeneradorCufe.ViewModel
             bool hayProductosConIVA = listaProductos.Any(p => p.Iva > 0);
             bool hayProductosSinIVA = listaProductos.Any(p => p.Iva == 0 && p.Consumo == 0);
             bool hayBolsa = movimiento.Numero_bolsa != 0;
+            bool hayExcuidos = listaProductos.Any(p => p.Excluido !=2);
 
-            if (hayProductosConIVA || hayProductosSinIVA)
+            if (hayExcuidos)
             {
-                // Crear TaxTotal para productos con IVA
-                var taxTotalElementIVA = new XElement(cac + "TaxTotal");
-                taxTotalElementIVA.Add(new XElement(cbc + "TaxAmount", totalImpuestoIVA.ToString("F2", CultureInfo.InvariantCulture)));
-                taxTotalElementIVA.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
 
-                // Agregar TaxTotal de productos con IVA al XML
-                xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault()?.AddAfterSelf(taxTotalElementIVA);
-
-                if (hayProductosConIVA)
+                if (hayProductosConIVA || hayProductosSinIVA)
                 {
-                    var gruposIVA = listaProductos.Where(p => p.Iva > 0).GroupBy(p => p.Iva);
-                    foreach (var grupo in gruposIVA)
+                    // Crear TaxTotal para productos con IVA
+                    var taxTotalElementIVA = new XElement(cac + "TaxTotal");
+                    taxTotalElementIVA.Add(new XElement(cbc + "TaxAmount", totalImpuestoIVA.ToString("F2", CultureInfo.InvariantCulture)));
+                    taxTotalElementIVA.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
+
+                    // Agregar TaxTotal de productos con IVA al XML
+                    xmlDoc.Descendants(cac + "TaxTotal").FirstOrDefault()?.AddAfterSelf(taxTotalElementIVA);
+
+                    if (hayProductosConIVA)
                     {
-                        decimal totalNetoGrupo = Math.Round(grupo.Sum(p => p.Neto), 2);
-                        decimal totalImpuestoGrupo = Math.Round(grupo.Sum(p => p.IvaTotal), 2);
-                        string porcentajeIVAFormateado = grupo.Key.ToString("F2", CultureInfo.InvariantCulture);
-                        var taxSubtotalElementConIVA = GenerarElementoTaxSubtotal(xmlDoc, porcentajeIVAFormateado, totalNetoGrupo, totalImpuestoGrupo, "01", "IVA", movimiento);
-                        taxTotalElementIVA.Add(taxSubtotalElementConIVA);
+                        var gruposIVA = listaProductos.Where(p => p.Iva > 0).GroupBy(p => p.Iva);
+                        foreach (var grupo in gruposIVA)
+                        {
+                            decimal totalNetoGrupo = Math.Round(grupo.Sum(p => p.Neto), 2);
+                            decimal totalImpuestoGrupo = Math.Round(grupo.Sum(p => p.IvaTotal), 2);
+                            string porcentajeIVAFormateado = grupo.Key.ToString("F2", CultureInfo.InvariantCulture);
+                            var taxSubtotalElementConIVA = GenerarElementoTaxSubtotal(xmlDoc, porcentajeIVAFormateado, totalNetoGrupo, totalImpuestoGrupo, "01", "IVA", movimiento);
+                            taxTotalElementIVA.Add(taxSubtotalElementConIVA);
+                        }
                     }
-                }
 
-                // Agregar los detalles de los impuestos para productos sin IVA
-                if (hayProductosSinIVA)
-                {
+                    // Agregar los detalles de los impuestos para productos sin IVA
+                    if (hayProductosSinIVA)
+                    {
 
-                    decimal totalBaseImponibleSinIVA = Math.Round(listaProductos.Where(p => p.Iva == 0 && p.Consumo == 0).Sum(p => p.Neto), 2);
-                    var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", totalBaseImponibleSinIVA, 0, "01", "IVA", movimiento);
-                    taxTotalElementIVA.Add(taxSubtotalElementSinIVA);
+                        decimal totalBaseImponibleSinIVA = Math.Round(listaProductos.Where(p => p.Iva == 0 && p.Consumo == 0).Sum(p => p.Neto), 2);
+                        var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", totalBaseImponibleSinIVA, 0, "01", "IVA", movimiento);
+                        taxTotalElementIVA.Add(taxSubtotalElementSinIVA);
+                    }
                 }
             }
 
