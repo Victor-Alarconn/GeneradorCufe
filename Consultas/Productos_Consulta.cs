@@ -24,18 +24,21 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
+                using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
                 {
-                    // Abre la conexión
                     connection.Open();
 
-                    // Define tu consulta SQL con las columnas específicas y el filtro por el valor de la factura
-                    string query = "SELECT codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, hdigita, vrventa, consumo FROM xxxxmvin WHERE factura = @factura AND (recibo = '' OR recibo IS NULL)";
-
+                    // Consulta SQL principal
+                    string query = @"
+                SELECT 
+                    codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, vrventa, consumo 
+                FROM 
+                    xxxxmvin 
+                WHERE 
+                    factura = @factura AND (recibo = '' OR recibo IS NULL)";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        // Agregar el parámetro para el valor de la factura
                         command.Parameters.AddWithValue("@factura", factura.Facturas);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -59,8 +62,25 @@ namespace GeneradorCufe.Consultas
                                     Consumo = reader.GetDecimal("consumo")
                                 };
 
-                                // Agregar el producto a la lista
+                                // Guardar el producto temporalmente en la lista
                                 productos.Add(producto);
+                            }
+                        }
+                    }
+
+                    // Ahora, realizar la consulta adicional para cada producto y actualizar el campo Excluido
+                    string subQuery = "SELECT artiexclu FROM xxxxartv WHERE artVcodigo = @codigo";
+                    using (MySqlCommand subCommand = new MySqlCommand(subQuery, connection))
+                    {
+                        foreach (var producto in productos)
+                        {
+                            subCommand.Parameters.Clear();
+                            subCommand.Parameters.AddWithValue("@codigo", producto.Codigo);
+
+                            object excluidoObj = subCommand.ExecuteScalar();
+                            if (excluidoObj != null)
+                            {
+                                producto.Excluido = Convert.ToInt32(excluidoObj);
                             }
                         }
                     }
@@ -76,6 +96,8 @@ namespace GeneradorCufe.Consultas
         }
 
 
+
+
         public List<Productos> ConsultarProductosNota(Factura factura, string cadenaConexion)
         {
             List<Productos> productos = new List<Productos>();
@@ -84,7 +106,6 @@ namespace GeneradorCufe.Consultas
             {
                 using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
                 {
-                    // Abre la conexión
                     connection.Open();
 
                     // Define tu consulta SQL con las columnas específicas y el filtro por el valor de la factura

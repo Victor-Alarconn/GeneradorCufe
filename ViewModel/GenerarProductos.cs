@@ -39,91 +39,98 @@ namespace GeneradorCufe.ViewModel
                     invoiceLineElement.Element(cbc + "InvoicedQuantity")?.SetValue(cantidadformateada);
                     invoiceLineElement.Element(cbc + "LineExtensionAmount")?.SetValue(producto.Neto); // cufe  ValFac
 
-                    // Establecer los valores del impuesto
-                    var taxTotalElement = invoiceLineElement.Element(cac + "TaxTotal");
-                    if (taxTotalElement != null)
+                    if (producto.Excluido != 2)
                     {
-                        // Verificar si el total de impuestos es 0.00 y hay consumo
-                        if (producto.IvaTotal == 0.00m && producto.Consumo > 0.00m)
+                        // Establecer los valores del impuesto
+                        var taxTotalElement = invoiceLineElement.Element(cac + "TaxTotal");
+                        if (taxTotalElement != null)
                         {
-                            // Eliminar la plantilla de TaxSubtotal si existe
-                            var taxSubtotalTemplate = taxTotalElement.Elements(cac + "TaxSubtotal").FirstOrDefault();
-                            taxSubtotalTemplate?.Remove();
-
-                            // Crear y establecer los elementos TaxAmount, Percent, ID y Name directamente
-                            var taxSubtotalElement = new XElement(cac + "TaxSubtotal");
-                            taxSubtotalElement.Add(new XElement(cbc + "TaxableAmount", producto.Neto.ToString("F2", CultureInfo.InvariantCulture)));
-                            taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetAttributeValue("currencyID", "COP");
-                            taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", producto.Consumo.ToString("F2", CultureInfo.InvariantCulture)));
-                            taxSubtotalElement.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
-
-                            var taxCategoryElement = new XElement(cac + "TaxCategory");
-                            taxCategoryElement.Add(new XElement(cbc + "Percent", "8.00"));
-
-                            var taxSchemeElement = new XElement(cac + "TaxScheme");
-                            taxSchemeElement.Add(new XElement(cbc + "ID", "04"));
-                            taxSchemeElement.Add(new XElement(cbc + "Name", "INC"));
-
-                            taxCategoryElement.Add(taxSchemeElement);
-                            taxSubtotalElement.Add(taxCategoryElement);
-
-                            // Agregar el elemento TaxSubtotal al TaxTotal
-                            taxTotalElement.Add(taxSubtotalElement);
-
-                            // Reemplazar el elemento TaxAmount existente con el valor de producto.Consumo
-                            var existingTaxAmountElement = taxTotalElement.Element(cbc + "TaxAmount");
-                            existingTaxAmountElement?.SetValue(producto.Consumo.ToString("F2", CultureInfo.InvariantCulture));
-                        }
-                        else
-                        {
-                            // Si no se cumple la condición anterior, establecer los valores predeterminados del impuesto
-                            taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal); // cufe ValImp1
-
-                            var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
-                            if (taxSubtotalElement != null)
+                            // Verificar si el total de impuestos es 0.00 y hay consumo
+                            if (producto.IvaTotal == 0.00m && producto.Consumo > 0.00m)
                             {
-                                string valorformateada = producto.Valor.ToString("F2", CultureInfo.InvariantCulture);
-                                taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(producto.Neto);
-                                taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal);
+                                // Eliminar la plantilla de TaxSubtotal si existe
+                                var taxSubtotalTemplate = taxTotalElement.Elements(cac + "TaxSubtotal").FirstOrDefault();
+                                taxSubtotalTemplate?.Remove();
 
-                                var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
-                                if (taxCategoryElement != null)
+                                // Crear y establecer los elementos TaxAmount, Percent, ID y Name directamente
+                                var taxSubtotalElement = new XElement(cac + "TaxSubtotal");
+                                taxSubtotalElement.Add(new XElement(cbc + "TaxableAmount", producto.Neto.ToString("F2", CultureInfo.InvariantCulture)));
+                                taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetAttributeValue("currencyID", "COP");
+                                taxSubtotalElement.Add(new XElement(cbc + "TaxAmount", producto.Consumo.ToString("F2", CultureInfo.InvariantCulture)));
+                                taxSubtotalElement.Element(cbc + "TaxAmount")?.SetAttributeValue("currencyID", "COP");
+
+                                var taxCategoryElement = new XElement(cac + "TaxCategory");
+                                taxCategoryElement.Add(new XElement(cbc + "Percent", "8.00"));
+
+                                var taxSchemeElement = new XElement(cac + "TaxScheme");
+                                taxSchemeElement.Add(new XElement(cbc + "ID", "04"));
+                                taxSchemeElement.Add(new XElement(cbc + "Name", "INC"));
+
+                                taxCategoryElement.Add(taxSchemeElement);
+                                taxSubtotalElement.Add(taxCategoryElement);
+
+                                // Agregar el elemento TaxSubtotal al TaxTotal
+                                taxTotalElement.Add(taxSubtotalElement);
+
+                                // Reemplazar el elemento TaxAmount existente con el valor de producto.Consumo
+                                var existingTaxAmountElement = taxTotalElement.Element(cbc + "TaxAmount");
+                                existingTaxAmountElement?.SetValue(producto.Consumo.ToString("F2", CultureInfo.InvariantCulture));
+                            }
+                            else
+                            {
+                                // Si no se cumple la condición anterior, establecer los valores predeterminados del impuesto
+                                taxTotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal); // cufe ValImp1
+
+                                var taxSubtotalElement = taxTotalElement.Element(cac + "TaxSubtotal");
+                                if (taxSubtotalElement != null)
                                 {
-                                    // Formatear el valor del IVA con dos decimales
-                                    string formattedIva = producto.Iva.ToString("F2", CultureInfo.InvariantCulture);
+                                    string valorformateada = producto.Valor.ToString("F2", CultureInfo.InvariantCulture);
+                                    taxSubtotalElement.Element(cbc + "TaxableAmount")?.SetValue(producto.Neto);
+                                    taxSubtotalElement.Element(cbc + "TaxAmount")?.SetValue(producto.IvaTotal);
 
-                                    // Establecer el valor formateado en el elemento Percent
-                                    taxCategoryElement.Element(cbc + "Percent")?.SetValue(formattedIva);
+                                    var taxCategoryElement = taxSubtotalElement.Element(cac + "TaxCategory");
+                                    if (taxCategoryElement != null)
+                                    {
+                                        // Formatear el valor del IVA con dos decimales
+                                        string formattedIva = producto.Iva.ToString("F2", CultureInfo.InvariantCulture);
 
-                                    // Agregar la parte faltante para TaxScheme dentro de TaxCategory
-                                    var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
-                                    if (taxSchemeElement == null)
-                                    {
-                                        // Si no existe el elemento TaxScheme, lo creamos
-                                        taxSchemeElement = new XElement(cac + "TaxScheme");
-                                        taxCategoryElement.Add(taxSchemeElement);
-                                    }
+                                        // Establecer el valor formateado en el elemento Percent
+                                        taxCategoryElement.Element(cbc + "Percent")?.SetValue(formattedIva);
 
-                                    // Verificar el valor del IVA del producto
-                                    if (producto.Iva == 8)
-                                    {
-                                        // Si el IVA es 8, cambiar el ID y el nombre del esquema de impuestos
-                                        taxSchemeElement.Element(cbc + "ID")?.SetValue("04");
-                                        taxSchemeElement.Element(cbc + "Name")?.SetValue("INC");
-                                    }
-                                    else
-                                    {
-                                        // Si no es 8, mantener los valores predeterminados (ID = 01, Name = IVA)
-                                        taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
-                                        taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                                        // Agregar la parte faltante para TaxScheme dentro de TaxCategory
+                                        var taxSchemeElement = taxCategoryElement.Element(cac + "TaxScheme");
+                                        if (taxSchemeElement == null)
+                                        {
+                                            // Si no existe el elemento TaxScheme, lo creamos
+                                            taxSchemeElement = new XElement(cac + "TaxScheme");
+                                            taxCategoryElement.Add(taxSchemeElement);
+                                        }
+
+                                        // Verificar el valor del IVA del producto
+                                        if (producto.Iva == 8)
+                                        {
+                                            // Si el IVA es 8, cambiar el ID y el nombre del esquema de impuestos
+                                            taxSchemeElement.Element(cbc + "ID")?.SetValue("04");
+                                            taxSchemeElement.Element(cbc + "Name")?.SetValue("INC");
+                                        }
+                                        else
+                                        {
+                                            // Si no es 8, mantener los valores predeterminados (ID = 01, Name = IVA)
+                                            taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
+                                            taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    else
+                    {
+                        invoiceLineElement.Element(cac + "TaxTotal")?.Remove();
+                    }
 
-                    // Establecer los valores del ítem
-                    var itemElement = invoiceLineElement.Element(cac + "Item");
+                        // Establecer los valores del ítem
+                        var itemElement = invoiceLineElement.Element(cac + "Item");
                     if (itemElement != null)
                     {
                         itemElement.Element(cbc + "Description")?.SetValue(producto.Detalle);
