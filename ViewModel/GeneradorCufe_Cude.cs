@@ -44,7 +44,7 @@ namespace GeneradorCufe.ViewModel
 
             int ambiente = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
 
-            string cadenaCUDE = $"{prefijo}{fechaNC}{horaf}{VlrNeto}01{Iva}04{consumo}030.00{Valor}{nit}{movimiento.Nit}753151{ambiente}";
+            string cadenaCUDE = $"{prefijo}{fechaNC}{horaf}{VlrNeto}01{Iva}04{consumo}030.00{Valor}{nit}{movimiento.Nit}75315{ambiente}";
             cadenaCUDE = cadenaCUDE.Replace(',', '.');
 
             return cadenaCUDE;

@@ -146,7 +146,10 @@ namespace GeneradorCufe.ViewModel
                     string response = Encoding.UTF8.GetString(responseBytes);
 
                     // Mostrar un mensaje de éxito con el código de estado
-                //   MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //   MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                   
+                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe,  factura);
 
                     // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
@@ -353,18 +356,12 @@ namespace GeneradorCufe.ViewModel
                                 // Realizar otras operaciones solo si se envió correctamente el correo electrónico
                                 if (correoEnviado)
                                 {
-                                    // Crear una instancia de la clase Respuesta_Consulta
-                                    Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
 
-                                    // Guardar la respuesta en la base de datos
-                                    bool respuestaGuardada = respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, documentBase64, recibo, cufe, idDocumento, Nota_credito, factura);
+                                    Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data()); 
 
-                                    // Verificar si la respuesta se guardó correctamente en la base de datos
-                                    if (respuestaGuardada)
-                                    {
                                         // Borrar la respuesta de la base de datos solo si se guardó correctamente
                                         respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
-                                    }
+                                    
                                 }
 
                             }

@@ -21,10 +21,28 @@ namespace GeneradorCufe.Consultas
             _data = data;
         }
 
-        public bool GuardarRespuestaEnBD(string cadenaConexion, string documentoBase64, string factura, string cufe, string recibo, bool nota, Factura factura1)
+        public bool GuardarRespuestaEnBD(string cadenaConexion, string cufe, Factura factura1)
         {
             try
             {
+                string idDocumento, codigoTipoDocumento, recibo, updateQuery;
+                bool nota = !string.IsNullOrEmpty(factura1.Recibo) && factura1.Recibo != "0";
+
+                if (nota)
+                {
+                    recibo = "NC" + factura1.Recibo;
+                    idDocumento = recibo;
+                    codigoTipoDocumento = "91";
+                    updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura";
+                }
+                else
+                {
+                    recibo = factura1.Facturas;
+                    idDocumento = recibo;
+                    codigoTipoDocumento = "01";
+                    updateQuery = "UPDATE xxxxccfc SET estado_fe = 3, dato_qr = @DocumentoJson, dato_cufe = @Cufe WHERE factura = @Factura";
+                }
+
                 string detalle = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 string jsonRespuesta = $"[{{\"factura\":\"{recibo}\",\"cufe/cude\":\"{cufe}\",\"estado\":{{\"codigo\":\"Enviado Adquiriente\"}},\"detalle\":\"{detalle}\"}}]";
 
@@ -32,29 +50,12 @@ namespace GeneradorCufe.Consultas
                 {
                     connection.Open();
 
-                    string updateQuery = string.Empty;
-
-                    // Verificar si la condición se cumple
-                    if (nota == true)
-                    {
-                        // Si la condición se cumple, actualizar la tabla "xxxxcmbt"
-                       updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura";
-                        
-                    }
-                    else
-                    {
-                        // Si la condición no se cumple, actualizar la tabla "xxxxccfc"
-                        updateQuery = "UPDATE xxxxccfc SET estado_fe = 3, dato_qr = @DocumentoJson, dato_cufe = @Cufe WHERE factura = @Factura";
-                    }
-
                     using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                     {
-                        // Asignar los valores de los parámetros DocumentoJson, Factura y CUFE
                         updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonRespuesta);
                         updateCommand.Parameters.AddWithValue("@Cufe", cufe);
-                        updateCommand.Parameters.AddWithValue("@Factura", factura);
+                        updateCommand.Parameters.AddWithValue("@Factura", recibo);
 
-                        // Ejecutar la actualización
                         int rowsAffected = updateCommand.ExecuteNonQuery();
 
                         if (rowsAffected > 0)
@@ -71,11 +72,11 @@ namespace GeneradorCufe.Consultas
             }
             catch (Exception ex)
             {
-                Factura_Consulta facturaConsulta = new Factura_Consulta();
-                facturaConsulta.MarcarComoConError(factura1, ex);
+                new Factura_Consulta().MarcarComoConError(factura1, ex);
                 return false;
             }
         }
+
 
 
 

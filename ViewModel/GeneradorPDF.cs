@@ -440,15 +440,13 @@ namespace GeneradorCufe.ViewModel
                 int cantidadProductos = listaProductos.Count;
 
                 // Calcula la cantidad de saltos de línea que deseas dejar al final de la tabla
-                int cantidadSaltosLinea = Math.Max(31 - cantidadProductos, 1); // Deja al menos un salto de línea
+                int cantidadSaltosLinea = Math.Max(30 - cantidadProductos, 1); // Deja al menos un salto de línea
 
                 // Agrega la cantidad de saltos de línea necesarios al final de la tabla
                 for (int i = 0; i < cantidadSaltosLinea; i++)
                 {
                     documento.Add(new Phrase("\n", FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                 }
-
-
 
                 // Tabla de totales
                 var tTotales = new PdfPTable(3);
@@ -458,7 +456,7 @@ namespace GeneradorCufe.ViewModel
                 // Datos ficticios
 
                 // Simulación de valor ficticio para el total neto
-                decimal vTotalAP = movimiento.Valor; // Total neto ficticio
+                decimal vTotalAP = movimiento.Valor;
                 string TextoAdicional = encabezado1.Notas;
                 string moneda = "COP";
                 string TextoConstancia = "Esta factura se asimila en sus efectos legales a la letra de cambio (segun el artículo 774 del Código del Comercio), con esta declara el comprador haber recibido real y materialmente la mercancia y/o servicio descrito en este titulo valor";
