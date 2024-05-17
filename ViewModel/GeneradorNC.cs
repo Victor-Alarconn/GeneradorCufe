@@ -89,7 +89,7 @@ namespace GeneradorCufe.ViewModel
                 DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
                 DateTime fechaHoy = DateTime.Today;
 
-                if ((fechaHoy - fechaProducto).TotalDays < 2)
+                if ((fechaHoy - fechaProducto).TotalDays < 14)
                 {
                     fechaProducto = DateTime.Today;
                 }

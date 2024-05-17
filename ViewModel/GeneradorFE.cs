@@ -81,7 +81,7 @@ namespace GeneradorCufe.ViewModel
                 DateTime fechaFactura = movimiento.Fecha_Factura;
                 DateTime fechaHoy = DateTime.Today;
 
-                if ((fechaHoy - fechaFactura).TotalDays > 2)
+                if ((fechaHoy - fechaFactura).TotalDays > 14)
                 {
                     xmlDoc.Descendants(cbc + "IssueDate").FirstOrDefault()?.SetValue(fechaFactura.ToString("yyyy-MM-dd"));
                 }

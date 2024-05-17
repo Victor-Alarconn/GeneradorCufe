@@ -61,14 +61,19 @@ namespace GeneradorCufe.ViewModel
 
                 // Generar el nombre del archivo ZIP
                 string zipFileName;
-                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento != "ND")
                 {
                     zipFileName = $"NC_{factura.Recibo}.zip";
+                }
+                else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                {
+                    zipFileName = $"ND_{factura.Recibo}.zip";
                 }
                 else
                 {
                     zipFileName = $"Archivos_{factura.Facturas}.zip";
                 }
+                
                 string zipFilePath = Path.Combine(xmlDirectory, zipFileName);
 
                 // Verificar si el archivo ZIP ya existe y eliminarlo si es necesario
@@ -200,7 +205,7 @@ namespace GeneradorCufe.ViewModel
         {
             try
             {
-                await Task.Delay(4000);
+                await Task.Delay(5000);
 
                 string nitCompleto = emisor.Nit_emisor ?? "";
                 string[] partesNit = nitCompleto.Split('-');
@@ -359,8 +364,8 @@ namespace GeneradorCufe.ViewModel
 
                                     Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data()); 
 
-                                        // Borrar la respuesta de la base de datos solo si se guardó correctamente
-                                        respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
+                                      // Borrar la respuesta de la base de datos solo si se guardó correctamente
+                                      respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
                                     
                                 }
 
