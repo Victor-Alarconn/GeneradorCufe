@@ -409,20 +409,36 @@ namespace GeneradorCufe.ViewModel
                     celdaNeto.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaNeto);
 
-                    PdfPCell celdaIva = new PdfPCell(new Phrase(producto.Iva.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    // Verificación y creación de celda para IVA
+                    decimal? ivaValue = producto.Excluido == 2 ? (decimal?)null : producto.Iva;
+                    PdfPCell celdaIva = ivaValue.HasValue
+                        ? new PdfPCell(new Phrase(ivaValue.Value.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)))
+                        : new PdfPCell(new Phrase(string.Empty, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+
                     celdaIva.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaIva.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaIva);
 
-                    PdfPCell celdaINC = new PdfPCell(new Phrase(producto.Consumo.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    // Verificación y creación de celda para Consumo
+                    decimal? consumoValue = producto.Excluido == 2 ? (decimal?)null : producto.Consumo;
+                    PdfPCell celdaINC = consumoValue.HasValue
+                        ? new PdfPCell(new Phrase(consumoValue.Value.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)))
+                        : new PdfPCell(new Phrase(string.Empty, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+
                     celdaINC.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaINC.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaINC);
 
-                    PdfPCell celdaIvaTotal = new PdfPCell(new Phrase(producto.IvaTotal.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+                    // Verificación y creación de celda para IvaTotal
+                    decimal? ivaTotalValue = producto.Excluido == 2 ? (decimal?)null : producto.IvaTotal;
+                    PdfPCell celdaIvaTotal = ivaTotalValue.HasValue
+                        ? new PdfPCell(new Phrase(ivaTotalValue.Value.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)))
+                        : new PdfPCell(new Phrase(string.Empty, FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
+
                     celdaIvaTotal.HorizontalAlignment = Element.ALIGN_CENTER;
                     celdaIvaTotal.VerticalAlignment = Element.ALIGN_MIDDLE;
                     tabla.AddCell(celdaIvaTotal);
+
 
                     PdfPCell celdaValor = new PdfPCell(new Phrase(producto.Neto.ToString("#,###,##0.00"), FontFactory.GetFont("Helvetica", 8, Font.NORMAL)));
                     celdaValor.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -511,7 +527,8 @@ namespace GeneradorCufe.ViewModel
                 ciDescuentosDetalle.VerticalAlignment = Element.ALIGN_MIDDLE;
                 ciDescuentosDetalle.Padding = 3;
 
-                var ivDescuentosDetalle = descuentosDetalle.ToString("$#,###,##0.00");
+                decimal Excentos = Math.Round(listaProductos.Where(producto => producto.Excluido != 2 && producto.Iva == 0).Sum(producto => producto.Neto), 2);
+                var ivDescuentosDetalle = Excentos.ToString("$#,###,##0.00");
 
                 var cvDescuentosDetalle = new PdfPCell(new Phrase(ivDescuentosDetalle, fnt9));
                 cvDescuentosDetalle.BorderColor = BaseColor.GRAY;
@@ -532,10 +549,10 @@ namespace GeneradorCufe.ViewModel
                 ciRecargosDetalle.Padding = 3;
 
                 // Simulación de valores ficticios para los recargos
-                decimal recargosDetalle = movimiento.Valor_neto; // Valor ficticio de recargos
+                decimal Gravado = Math.Round(listaProductos.Where(producto => producto.Excluido != 2 && producto.Iva !=0).Sum(producto => producto.Neto), 2);
 
                 // Convertir el valor de recargos a cadena
-                string iRecargosDetalle = recargosDetalle.ToString("$#,###,##0.00");
+                string iRecargosDetalle = Gravado.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor de recargos
                 var cvRecargosDetalle = new PdfPCell(new Phrase(iRecargosDetalle, fnt9));
@@ -700,11 +717,11 @@ namespace GeneradorCufe.ViewModel
                 ciAnticipo.VerticalAlignment = Element.ALIGN_MIDDLE;
                 ciAnticipo.Padding = 3;
 
-                // Simulación de valor ficticio para el anticipo
-                decimal anticipo = movimiento.Exentas; // Anticipo ficticio
+                // Excluidos
+                decimal Excluidos = Math.Round(listaProductos.Where(producto => producto.Excluido == 2).Sum(producto => producto.Neto), 2);
 
                 // Convertir el anticipo a cadena
-                string iAnticipo = anticipo.ToString("$#,###,##0.00");
+                string iAnticipo = Excluidos.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del anticipo ficticio
                 var cvAnticipo = new PdfPCell(new Phrase(iAnticipo, fnt9));
@@ -723,10 +740,10 @@ namespace GeneradorCufe.ViewModel
                 ciTotalNeto.VerticalAlignment = Element.ALIGN_MIDDLE;
                 ciTotalNeto.Padding = 3;
 
-               
 
+                decimal Retencion = movimiento.Valor - movimiento.Retiene;
                 // Convertir el total neto a cadena
-                string iTotalNeto = vTotalAP.ToString("$#,###,##0.00");
+                string iTotalNeto = Retencion.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del total neto ficticio
                 var cvTotalNeto = new PdfPCell(new Phrase(iTotalNeto, fnt10));

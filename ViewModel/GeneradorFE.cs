@@ -170,15 +170,15 @@ namespace GeneradorCufe.ViewModel
 
                 decimal Valor = movimiento.Retiene != 0 && emisor.Retiene_emisor == 2 ? Math.Round(movimiento.Valor + movimiento.Retiene, 2) : movimiento.Valor;
 
-                decimal Exentos = Math.Round(listaProductos.Where(producto => producto.Excluido == 2).Sum(producto => producto.Neto), 2);
-                decimal Excluidos = Math.Round(listaProductos.Where(producto => producto.Excluido != 2).Sum(producto => producto.Neto), 2);
+                decimal Excluidos = Math.Round(listaProductos.Where(producto => producto.Excluido == 2).Sum(producto => producto.Neto), 2);
+                decimal Exentos = Math.Round(listaProductos.Where(producto => producto.Excluido != 2).Sum(producto => producto.Neto), 2);
 
                 var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
                 if (legalMonetaryTotalElement != null)
                 {
                     legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(ValorNeto.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto antes de tributos 
-                    legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(Excluidos.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Base Imponible
-                    legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Exentos.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto más tributos
+                    legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(Exentos.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Base Imponible
+                    legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Valor.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto más tributos
                     legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor a Pagar // cufe ValTot
                 }
 

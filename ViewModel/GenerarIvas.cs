@@ -24,7 +24,7 @@ namespace GeneradorCufe.ViewModel
 
             bool hayProductosConIPO = listaProductos.Any(p => p.Iva == 0 && p.Consumo > 0);
             bool hayProductosConIVA = listaProductos.Any(p => p.Iva > 0);
-            bool hayProductosSinIVA = listaProductos.Any(p => p.Iva == 0 && p.Consumo == 0);
+            bool hayProductosSinIVA = listaProductos.Any(p => p.Iva == 0 && p.Consumo == 0 && p.Excluido !=2);
             bool hayBolsa = movimiento.Numero_bolsa != 0;
             bool hayExcuidos = listaProductos.Any(p => p.Excluido !=2);
 
