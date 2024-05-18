@@ -58,7 +58,7 @@ namespace GeneradorCufe.ViewModel
                     if (hayProductosSinIVA)
                     {
 
-                        decimal totalBaseImponibleSinIVA = Math.Round(listaProductos.Where(p => p.Iva == 0 && p.Consumo == 0).Sum(p => p.Neto), 2);
+                        decimal totalBaseImponibleSinIVA = Math.Round(listaProductos.Where(p => p.Iva == 0 && p.Consumo == 0 && p.Excluido !=2 ).Sum(p => p.Neto), 2);
                         var taxSubtotalElementSinIVA = GenerarElementoTaxSubtotal(xmlDoc, "0.00", totalBaseImponibleSinIVA, 0, "01", "IVA", movimiento);
                         taxTotalElementIVA.Add(taxSubtotalElementSinIVA);
                     }
