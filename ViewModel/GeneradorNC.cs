@@ -163,21 +163,20 @@ namespace GeneradorCufe.ViewModel
                 // Calcular el total del IVA de todos los productos
                 GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento);
 
-
                 decimal retiene = movimiento.Retiene;
 
                 // Obtener el elemento WithholdingTaxTotal si existe
                 var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
-
+                decimal ValorNeto = movimiento.Valor_neto == 0.00m ? Math.Round(listaProductos.Sum(producto => producto.Neto), 2) : movimiento.Valor_neto;
                 // Verificar si retiene es mayor que 0.00 y si el movimiento.Retiene es igual a 2
                 if (retiene > 0.00m && emisor.Retiene_emisor == 2)
                 {
                     // Reemplazar los valores del elemento WithholdingTaxTotal si retiene es mayor que 0.00
                     withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
-                    withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(movimiento.Valor_neto);
+                    withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(ValorNeto);
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
 
-                    decimal porcentajeRetencion = (retiene / movimiento.Valor_neto) * 100;
+                    decimal porcentajeRetencion = (retiene / ValorNeto) * 100;
                     string porcentajeFormateado = porcentajeRetencion.ToString("F2", CultureInfo.InvariantCulture);
 
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue(porcentajeFormateado);
@@ -191,26 +190,18 @@ namespace GeneradorCufe.ViewModel
                 }
 
 
-                decimal Valor = 0;
+                decimal Valor = movimiento.Retiene != 0 && emisor.Retiene_emisor == 2 ? Math.Round(movimiento.Valor + movimiento.Retiene, 2) : movimiento.Valor;
 
-                if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0) // falta calcular el valor 
-                {
-                    Valor = Math.Round(movimiento.Nota_credito + 0, 2);
-                }
-                else
-                {
-                    Valor = movimiento.Nota_credito;
-                }
-
-                decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
+                decimal Excluidos = Math.Round(listaProductos.Where(producto => producto.Excluido == 2).Sum(producto => producto.Neto), 2);
+                decimal Exentos = Math.Round(listaProductos.Where(producto => producto.Excluido != 2).Sum(producto => producto.Neto), 2);
 
                 var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
                 if (legalMonetaryTotalElement != null)
                 {
-                    legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(VlrNeto); // Total Valor Bruto antes de tributos
-                    legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(VlrNeto); // Total Valor Base Imponible
-                    legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Valor); // Total Valor Bruto más tributos
-                    legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor); // Total Valor a Pagar // cufe ValTot
+                    legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(ValorNeto.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto antes de tributos 
+                    legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(Exentos.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Base Imponible
+                    legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Valor.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto más tributos
+                    legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor a Pagar // cufe ValTot
                 }
 
                 GenerarProductos.MapCreditNoteLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
