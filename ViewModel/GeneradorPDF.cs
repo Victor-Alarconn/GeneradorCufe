@@ -87,7 +87,7 @@ namespace GeneradorCufe.ViewModel
                 // Datos del emisor (ficticios)
                 string nombreEmisor = emisor.Nombre_emisor;
                 string nitEmisor = emisor.Nit_emisor;
-                string representanteEmisor = "Representante: JURIDICA - Responsable IVA";
+                string representanteEmisor = "Representante:"+ emisor.Regimen_emisor + "-" + emisor.Responsable_emisor;
                 string direccionEmisor = "Dirección: " + emisor.Direccion_emisor;
                 string correoEmisor = emisor.Correo_emisor;
                 string telefonoEmisor = "Teléfono: " + emisor.Telefono_emisor;
@@ -645,6 +645,14 @@ namespace GeneradorCufe.ViewModel
 
                 // Simulación de valor ficticio para el total más impuesto
                 decimal totalMI = movimiento.Valor; // Total más impuesto ficticio
+                decimal Retencion = movimiento.Valor;
+                decimal descuentoGlobal = 0.00m;
+                if (movimiento.Retiene > 0.00m && emisor.Retiene_emisor == 2)
+                {
+                    
+                    descuentoGlobal = movimiento.Retiene;
+                    totalMI = movimiento.Valor + movimiento.Retiene;
+                }
 
                 // Convertir el total más impuesto a cadena
                 string iTotalMI = totalMI.ToString("$#,###,##0.00");
@@ -666,9 +674,6 @@ namespace GeneradorCufe.ViewModel
                 ciDescuentoGlobal.HorizontalAlignment = Element.ALIGN_CENTER;
                 ciDescuentoGlobal.VerticalAlignment = Element.ALIGN_MIDDLE;
                 ciDescuentoGlobal.Padding = 3;
-
-                // Simulación de valor ficticio para el descuento global
-                decimal descuentoGlobal = movimiento.Retiene; // Descuento global ficticio
 
                 // Convertir el descuento global a cadena
                 string iDescuentoGlobal = descuentoGlobal.ToString("$#,###,##0.00");
@@ -740,8 +745,7 @@ namespace GeneradorCufe.ViewModel
                 ciTotalNeto.VerticalAlignment = Element.ALIGN_MIDDLE;
                 ciTotalNeto.Padding = 3;
 
-
-                decimal Retencion = movimiento.Valor - movimiento.Retiene;
+                    
                 // Convertir el total neto a cadena
                 string iTotalNeto = Retencion.ToString("$#,###,##0.00");
 

@@ -25,6 +25,7 @@ namespace GeneradorCufe.Model
         public string? Url_emisor { get; set; }
         public string? Ciudad_emisor { get; set; }
         public string? Logo_emisor { get; set; }
+        public string? Regimen_emisor { get; set; }
 
     }
 }

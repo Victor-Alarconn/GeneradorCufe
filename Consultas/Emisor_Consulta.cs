@@ -31,7 +31,7 @@ namespace GeneradorCufe.Consultas
                 {
                     connection.Open();
 
-                    string query = $"SELECT emprnombr, emprnit, emprtipo, emprdirec, emprciuda, empregim_x, emprperson, empremail, emprtelef, empretiene, empr_urlx, emprcity, logo FROM empresas WHERE emprobra = @empresa";
+                    string query = $"SELECT emprnombr, emprnit, emprtipo, emprdirec, emprciuda, empregim_x, emprperson, empremail, emprtelef, empretiene, empr_urlx, emprcity, logo, emprperson FROM empresas WHERE emprobra = @empresa";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
@@ -74,7 +74,9 @@ namespace GeneradorCufe.Consultas
                                     Retiene_emisor = Convert.ToDecimal(row["empretiene"] ?? 0),
                                     Url_emisor = row["empr_urlx"].ToString() ?? "",
                                     Ciudad_emisor = row["emprcity"].ToString() ?? "",
-                                    Logo_emisor = Logo_emisor
+                                    Logo_emisor = Logo_emisor,
+                                    Regimen_emisor = Convert.ToDecimal(row["emprperson"] ?? 0) == 1 ? "Natural" :
+                                    Convert.ToDecimal(row["emprperson"] ?? 0) == 2 ? "Jurídica" : ""
                                 };
 
                                 InvoiceViewModel.EjecutarGeneracionXML(emisor, factura);

@@ -50,11 +50,8 @@ namespace GeneradorCufe.ViewModel
 
                             // Crear el elemento PaymentDueDate y establecer su valor
                             var paymentDueDateElement = new XElement(cbc + "PaymentDueDate", fechaActual.ToString("yyyy-MM-dd"));
-
-                            // Insertar PaymentDueDate antes de PaymentID
                             var paymentIdElement = paymentMeansElementCloned.Element(cbc + "PaymentID");
                             paymentIdElement?.AddBeforeSelf(paymentDueDateElement);
-
                             paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Crédito ACH");
                         }
 
@@ -75,12 +72,23 @@ namespace GeneradorCufe.ViewModel
                                 paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("49");
                                 paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Débito");
                             }
-                            else if (formaPago.Id_forma == "02")
+                            if (formaPago.Id_forma == "02")
                             {
                                 paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("48");
+
+                                // Convertir la fecha actual a DateTime
+                                DateTime fechaActual = DateTime.Now;
+
+                                // Crear el elemento PaymentDueDate y establecer su valor
+                                var paymentDueDateElement = new XElement(cbc + "PaymentDueDate", fechaActual.ToString("yyyy-MM-dd"));
+
+                                // Agregar PaymentDueDate antes de PaymentID
+                                var paymentIdElement = paymentMeansElementCloned.Element(cbc + "PaymentID");
+                                paymentIdElement?.AddBeforeSelf(paymentDueDateElement);
+
                                 paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Crédito");
-                                paymentMeansElementCloned.Add(new XElement(cbc + "PaymentDueDate", DateTime.Now.ToString("yyyy-MM-dd")));
                             }
+
                             else if (formaPago.Id_forma == "03")
                             {
                                 paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("47");

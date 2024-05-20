@@ -91,14 +91,18 @@ namespace GeneradorCufe.ViewModel
                 }
 
                 xmlDoc.Descendants(cbc + "IssueTime").FirstOrDefault()?.SetValue(horaformateada);
-                xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01"); 
-                                                                                             
+                xmlDoc.Descendants(cbc + "InvoiceTypeCode").FirstOrDefault()?.SetValue("01");
+
+                decimal retiene = movimiento.Retiene; // Calculo para el pocentaje de retencion
+                decimal ValorNeto = movimiento.Valor_neto == 0.00m ? Math.Round(listaProductos.Sum(producto => producto.Neto), 2) : movimiento.Valor_neto;
+                decimal porcentajeRetencion = (retiene / ValorNeto) * 100;
+
                 var nuevaNotaElement = new XElement(cbc + "Note");
                 // Verificar si se cumple la condición para agregar una nota adicional
                 if (movimiento.Retiene > 0.00m && emisor.Retiene_emisor == 3)
                 {
                     // Agregar una nota adicional
-                    string notaAdicional = " Retencion del " + movimiento.Retiene + " del % 3.5";
+                    string notaAdicional = " Retencion del " + movimiento.Retiene + " del %"+porcentajeRetencion;
 
                     // Establecer el valor de la nota adicional en el nuevo elemento Note
                     nuevaNotaElement.SetValue(notaAdicional);
@@ -140,12 +144,9 @@ namespace GeneradorCufe.ViewModel
                 emisor.Codigo_FormaPago_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago, movimiento.Dias);
                 GenerarIvas.GenerarIvasYAgregarElementos(xmlDoc, listaProductos, movimiento); // Calcular el total del IVA de todos los productos
 
-
-                decimal retiene = movimiento.Retiene;
-
                 // Obtener el elemento WithholdingTaxTotal si existe
                 var withholdingTaxTotalElement = xmlDoc.Descendants(cac + "WithholdingTaxTotal").FirstOrDefault();
-                decimal ValorNeto = movimiento.Valor_neto == 0.00m ? Math.Round(listaProductos.Sum(producto => producto.Neto), 2) : movimiento.Valor_neto;
+               
                 // Verificar si retiene es mayor que 0.00 y si el movimiento.Retiene es igual a 2
                 if (retiene > 0.00m && emisor.Retiene_emisor == 2)
                 {
@@ -153,8 +154,6 @@ namespace GeneradorCufe.ViewModel
                     withholdingTaxTotalElement?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxableAmount")?.SetValue(ValorNeto);
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cbc + "TaxAmount")?.SetValue(retiene.ToString("F2", CultureInfo.InvariantCulture));
-
-                    decimal porcentajeRetencion = (retiene / ValorNeto) * 100;
                     string porcentajeFormateado = porcentajeRetencion.ToString("F2", CultureInfo.InvariantCulture);
 
                     withholdingTaxTotalElement?.Element(cac + "TaxSubtotal")?.Element(cac + "TaxCategory")?.Element(cbc + "Percent")?.SetValue(porcentajeFormateado);
