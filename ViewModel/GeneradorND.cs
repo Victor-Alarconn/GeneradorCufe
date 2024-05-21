@@ -43,30 +43,12 @@ namespace GeneradorCufe.ViewModel
                 string[] partesNit = nitCompleto.Split('-');
                 string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
                 string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
-
-                string cufe;
                 string hora = "";
-                if (string.IsNullOrEmpty(movimiento.Dato_Cufe) || movimiento.Dato_Cufe == "0")
-                {
-                    // Consultar los valores totales para la construcción del CUFE
-                    movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
-                    List<Productos> listaProductosCufe = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
-
-                    DateTimeOffset horaCon = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
-                    hora = horaCon.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
-
-                    // Construir el CUFE
-                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe, factura, hora, Nit, emisor, encabezado);
-                    cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
-                }
-                else
-                {
-                    cufe = movimiento.Dato_Cufe;
-                }
+                
 
                 string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
-                string cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
-                emisor.cude = cude;
+                emisor.cude  = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
+
 
                 // Actualizar 'CustomizationID'
                 xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("30"); // 32 o sin referencia a facturas
@@ -80,7 +62,7 @@ namespace GeneradorCufe.ViewModel
                 xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(PrefijoNC);
 
                 // Actualizar 'UUID'
-                xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(cude);
+                xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(emisor.cude);
                 xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeID", perfilEjecucionID);
                 xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
 
@@ -138,7 +120,6 @@ namespace GeneradorCufe.ViewModel
                     if (invoiceDocumentReferenceElement != null)
                     {
                         invoiceDocumentReferenceElement.Element(cbc + "ID")?.SetValue(factura.Facturas);
-                        invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetValue(cufe);
                         invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetAttributeValue("schemeName", "CUFE-SHA384");
                         invoiceDocumentReferenceElement.Element(cbc + "IssueDate")?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
                     }
@@ -238,7 +219,7 @@ namespace GeneradorCufe.ViewModel
                         }
                     }
                 }
-                return (cufe, listaProductos, adquiriente, movimiento, encabezado);
+                return (null, listaProductos, adquiriente, movimiento, encabezado);
             }
             catch (Exception ex)
             {
