@@ -31,9 +31,34 @@ namespace GeneradorCufe.ViewModel
 
                 // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
                 Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
-                Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
-                List<Productos> listaProductos = productosConsulta.ConsultarProductosNota(factura, cadenaConexion);
+             //   Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
+                List<Productos> listaProductos = productosConsulta.ConsultarProductosDebito(factura, cadenaConexion);
                 List<FormaPago> listaFormaPago = formaPagoConsulta.ConsultarFormaPago(factura, cadenaConexion);
+                Movimiento movimiento;
+
+                
+                    movimiento = new Movimiento
+                    {
+                        Nit = listaProductos.First().Nit,
+                        Valor = listaProductos.First().Valor, // Asigna los valores manualmente según sea necesario
+                        Valor_iva = listaProductos.First().IvaTotal,
+                        Valor_dsto = 0.00M,
+                        Valor_neto = listaProductos.First().Valor,
+                        Exentas = 0.00M,
+                        Fecha_Factura = listaProductos.First().Fecha, 
+                        Hora_dig = listaProductos.First().Hora_Digitada,
+                        Retiene = 0.00M,
+                        Ipoconsumo = 0.00M,
+                        Numero_bolsa = 0,
+                        Valor_bolsa = 0,
+                        Dato_Cufe = string.Empty,
+                        Nota_credito = 0,
+                        Numero = string.Empty,
+                        Vendedor = string.Empty,
+                        Dias = 0
+                    };
+
+
 
                 string horaProducto = listaProductos.First().Hora_Digitada; // Aquí supongo que hay un atributo "Hora" en tu objeto Producto
                 DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(horaProducto, "HH:mm:ss", CultureInfo.InvariantCulture);
@@ -49,23 +74,23 @@ namespace GeneradorCufe.ViewModel
                 string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
                 emisor.cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
 
-                if (string.IsNullOrEmpty(movimiento.Dato_Cufe) || movimiento.Dato_Cufe == "0")
-                {
-                    // Consultar los valores totales para la construcción del CUFE
-                    movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
-                    List<Productos> listaProductosCufe = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
+                //if (string.IsNullOrEmpty(movimiento.Dato_Cufe) || movimiento.Dato_Cufe == "0")
+                //{
+                //    // Consultar los valores totales para la construcción del CUFE
+                //    movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
+                //    List<Productos> listaProductosCufe = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
 
-                    DateTimeOffset horaCon = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
-                    hora = horaCon.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
+                //    DateTimeOffset horaCon = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
+                //    hora = horaCon.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
 
-                    // Construir el CUFE
-                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe, factura, hora, Nit, emisor, encabezado);
-                    cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
-                }
-                else
-                {
-                    cufe = movimiento.Dato_Cufe;
-                }
+                //    // Construir el CUFE
+                //    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe, factura, hora, Nit, emisor, encabezado);
+                //    cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
+                //}
+                //else
+                //{
+                //    cufe = movimiento.Dato_Cufe;
+                //}
 
 
                 // Actualizar 'CustomizationID'
@@ -108,24 +133,14 @@ namespace GeneradorCufe.ViewModel
 
                 // Actualizar 'DocumentCurrencyCode'
                 xmlDoc.Descendants(cbc + "DocumentCurrencyCode").FirstOrDefault()?.SetValue("COP");
-
-                // Verificar si movimiento.Numero_bolsa tiene un valor diferente de 0
-                if (movimiento.Numero_bolsa != 0)
-                {
-                    // Sumar 1 al conteo de productos si hay un valor en movimiento.Numero_bolsa
-                    xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count + 1);
-                }
-                else
-                {
-                    // Establecer el conteo de productos sin sumar 1 si movimiento.Numero_bolsa es 0
-                    xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
-                }
+                xmlDoc.Descendants(cbc + "LineCountNumeric").FirstOrDefault()?.SetValue(listaProductos.Count);
+                
 
                 // Actualizar 'DiscrepancyResponse'
                 var discrepancyResponseElement = xmlDoc.Descendants(cac + "DiscrepancyResponse").FirstOrDefault();
                 if (discrepancyResponseElement != null)
                 {
-                    discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("Sección de la factura la cual se le aplica la correción");
+                    discrepancyResponseElement.Element(cbc + "ReferenceID")?.SetValue("Sección de la factura la cual se le aplica la correción victor");
                     discrepancyResponseElement.Element(cbc + "ResponseCode")?.SetValue("2"); // se puede cmabiar 
                     discrepancyResponseElement.Element(cbc + "Description")?.SetValue("Anulación de factura electrónica");
                 }

@@ -137,7 +137,7 @@ namespace GeneradorCufe.Consultas
                                     Consumo = reader.GetDecimal("consumo"),
                                     Hora_Digitada = reader["hdigita"].ToString(),
                                     Fecha = reader.GetDateTime("fecha")
-                            };
+                                };
 
                                 // Agregar el producto a la lista
                                 productos.Add(producto);
@@ -154,5 +154,56 @@ namespace GeneradorCufe.Consultas
 
             return productos;
         }
+
+        public List<Productos> ConsultarProductosDebito(Factura factura, string cadenaConexion)
+        {
+            List<Productos> productos = new List<Productos>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
+                {
+                    connection.Open();
+
+                    // Define tu consulta SQL con las columnas específicas y el filtro por el valor de la factura
+                    string query = "SELECT codigo, recibo, nit, debitos, vriva, fdigitar FROM xxxxcmbt WHERE recibo = @factura AND tipo = 'W'";
+
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        // Agregar el parámetro para el valor de la factura
+                        command.Parameters.AddWithValue("@factura", factura.Recibo);
+
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                // Crear un nuevo objeto Productos y asignar los valores de las columnas
+                                Productos producto = new Productos()
+                                {
+                                    Codigo = reader.GetString("codigo"),
+                                    Recibo = reader.GetString("recibo"),
+                                    Nit = reader.GetString("nit"),
+                                    Valor = reader.GetDecimal("debitos"),
+                                    IvaTotal = reader.GetDecimal("vriva"),
+                                    Hora_Digitada = DateTime.Now.ToString("HH:mm:ss"),
+                                    Fecha = reader.GetDateTime("fdigitar")
+                                };
+
+                                // Agregar el producto a la lista
+                                productos.Add(producto);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
+            }
+
+            return productos;
+        }
+
     }
 }

@@ -12,7 +12,7 @@ namespace GeneradorCufe.ViewModel
     public class GenerarAdquiriente
     {
         public static void MapAccountingCustomerParty(XDocument xmlDoc, string Nit, string cadenaConexion, Adquiriente adquiriente, Codigos codigos) // Información del adquiriente 
-        { // esperelo aqui
+        { 
             // Namespace específico para los elementos bajo 'sts'
             XNamespace sts = "dian:gov:co:facturaelectronica:Structures-2-1";
             // Namespace para elementos 'cbc'
