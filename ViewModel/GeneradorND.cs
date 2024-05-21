@@ -44,10 +44,28 @@ namespace GeneradorCufe.ViewModel
                 string Nit = partesNit.Length > 0 ? partesNit[0] : ""; // Obtiene la parte antes del guion
                 string Dv = partesNit.Length > 1 ? partesNit[1] : ""; // Obtiene el dígito verificador después del guion
                 string hora = "";
-                
+                string cufe = "";
 
                 string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
-                emisor.cude  = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
+                emisor.cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
+
+                if (string.IsNullOrEmpty(movimiento.Dato_Cufe) || movimiento.Dato_Cufe == "0")
+                {
+                    // Consultar los valores totales para la construcción del CUFE
+                    movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
+                    List<Productos> listaProductosCufe = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
+
+                    DateTimeOffset horaCon = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
+                    hora = horaCon.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
+
+                    // Construir el CUFE
+                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe, factura, hora, Nit, emisor, encabezado);
+                    cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
+                }
+                else
+                {
+                    cufe = movimiento.Dato_Cufe;
+                }
 
 
                 // Actualizar 'CustomizationID'
@@ -120,6 +138,7 @@ namespace GeneradorCufe.ViewModel
                     if (invoiceDocumentReferenceElement != null)
                     {
                         invoiceDocumentReferenceElement.Element(cbc + "ID")?.SetValue(factura.Facturas);
+                        invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetValue(cufe);
                         invoiceDocumentReferenceElement.Element(cbc + "UUID")?.SetAttributeValue("schemeName", "CUFE-SHA384");
                         invoiceDocumentReferenceElement.Element(cbc + "IssueDate")?.SetValue(movimiento.Fecha_Factura.ToString("yyyy-MM-dd"));
                     }
