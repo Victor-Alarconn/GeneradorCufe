@@ -17,7 +17,6 @@ namespace GeneradorCufe.ViewModel
             try
             {
 
-
                 XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
                 XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
 
@@ -76,11 +75,7 @@ namespace GeneradorCufe.ViewModel
 
                 // Actualizar 'ProfileExecutionID'
                 xmlDoc.Descendants(cbc + "ProfileExecutionID").FirstOrDefault()?.SetValue(perfilEjecucionID); // 1 produccion , 2 pruebas
-
-                // Actualizar 'ID'
                 xmlDoc.Descendants(cbc + "ID").FirstOrDefault()?.SetValue(PrefijoNC);
-
-                // Actualizar 'UUID'
                 xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetValue(cude);
                 xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeID", perfilEjecucionID);
                 xmlDoc.Descendants(cbc + "UUID").FirstOrDefault()?.SetAttributeValue("schemeName", "CUDE-SHA384");
@@ -151,7 +146,7 @@ namespace GeneradorCufe.ViewModel
                 string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
                 Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta);
 
-                GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos);
+                GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos, factura);
 
                 string nitValue = listaProductos[0].Nit;
 

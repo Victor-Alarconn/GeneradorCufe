@@ -31,7 +31,7 @@ namespace GeneradorCufe.ViewModel
 
                 // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
                 Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
-             //   Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
+               Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
                 List<Productos> listaProductos = productosConsulta.ConsultarProductosDebito(factura, cadenaConexion);
                 List<FormaPago> listaFormaPago = formaPagoConsulta.ConsultarFormaPago(factura, cadenaConexion);
                 Movimiento movimiento;
@@ -52,7 +52,7 @@ namespace GeneradorCufe.ViewModel
                         Numero_bolsa = 0,
                         Valor_bolsa = 0,
                         Dato_Cufe = string.Empty,
-                        Nota_credito = 0,
+                        Nota_credito = listaProductos.First().Valor,
                         Numero = string.Empty,
                         Vendedor = string.Empty,
                         Dias = 0
@@ -113,7 +113,7 @@ namespace GeneradorCufe.ViewModel
                 DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
                 DateTime fechaHoy = DateTime.Today;
 
-                if ((fechaHoy - fechaProducto).TotalDays > 2)
+                if ((fechaHoy - fechaProducto).TotalDays < 2)
                 {
                     fechaProducto = DateTime.Today;
                 }
@@ -165,7 +165,7 @@ namespace GeneradorCufe.ViewModel
                 string Departamento = partesCiudad.Length > 1 ? partesCiudad[1].Trim() : ""; // Obtiene el departamento (segundo elemento después de dividir)
                 Codigos codigos = codigosConsulta.ConsultarCodigos(ciudadCompleta);
 
-                GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos);
+                GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos, factura);
 
                 string nitValue = listaProductos[0].Nit;
 
@@ -205,7 +205,7 @@ namespace GeneradorCufe.ViewModel
                 }
 
 
-                decimal Valor = 0;
+                decimal Valor;
 
                 if (emisor.Retiene_emisor == 2 && movimiento.Retiene != 0) // falta calcular el valor 
                 {
@@ -213,12 +213,12 @@ namespace GeneradorCufe.ViewModel
                 }
                 else
                 {
-                    Valor = movimiento.Nota_credito;
+                    Valor = movimiento.Valor_neto;
                 }
 
-                decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
+                decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Valor), 2);
 
-                var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
+                var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "RequestedMonetaryTotal").FirstOrDefault();
                 if (legalMonetaryTotalElement != null)
                 {
                     legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(VlrNeto); // Total Valor Bruto antes de tributos

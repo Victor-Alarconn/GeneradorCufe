@@ -20,7 +20,7 @@ namespace GeneradorCufe.Model
         public string? Codigo_postal_adqui { get; set; }
         public string? Nit_adqui { get; set; }
         public string? Dv_Adqui { get; set; }
-        public string? Responsable { get; set; }
+        public decimal Responsable { get; set; }
         public string? Correo_adqui { get; set; }
         public decimal Tipo_p { get; set; }
         public string? Telefono_adqui { get; set; }

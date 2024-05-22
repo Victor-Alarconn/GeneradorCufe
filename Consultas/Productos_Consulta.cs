@@ -186,7 +186,10 @@ namespace GeneradorCufe.Consultas
                                     Valor = reader.GetDecimal("debitos"),
                                     IvaTotal = reader.GetDecimal("vriva"),
                                     Hora_Digitada = DateTime.Now.ToString("HH:mm:ss"),
-                                    Fecha = reader.GetDateTime("fdigitar")
+                                    Fecha = reader.GetDateTime("fdigitar"),
+                                    Cantidad = 1.00M,
+                                    Neto = reader.GetDecimal("debitos"),
+                                    Consumo = 0.00M,
                                 };
 
                                 // Agregar el producto a la lista

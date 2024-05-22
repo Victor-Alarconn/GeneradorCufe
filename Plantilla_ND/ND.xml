@@ -15,7 +15,7 @@
 	<cbc:UUID schemeID="2" schemeName="CUDE-SHA384">{UUID}</cbc:UUID>
 	<cbc:IssueDate>{IssueDate}</cbc:IssueDate>
 	<cbc:IssueTime>{IssueTime}</cbc:IssueTime>
-	<cbc:Note>{Note}</cbc:Note >
+	<cbc:Note>{Note}</cbc:Note>
 	<cbc:DocumentCurrencyCode>{DocumentCurrencyCode}</cbc:DocumentCurrencyCode>
 	<cbc:LineCountNumeric>{LineCountNumeric}</cbc:LineCountNumeric>
 	<cac:DiscrepancyResponse>
@@ -26,6 +26,7 @@
 	<cac:BillingReference>
 		<cac:InvoiceDocumentReference>
 			<cbc:ID>{ID}</cbc:ID>
+			<cbc:UUID schemeName="CUFE-SHA384">{UUID}</cbc:UUID>
 			<cbc:IssueDate>{IssueDate}</cbc:IssueDate>
 		</cac:InvoiceDocumentReference>
 	</cac:BillingReference>
@@ -53,9 +54,7 @@
 			</cac:PhysicalLocation>
 			<cac:PartyTaxScheme>
 				<cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
-				<cbc:CompanyID schemeAgencyID="195"
-					schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
-					schemeID="1" schemeName="31">{CompanyID}</cbc:CompanyID>
+				<cbc:CompanyID schemeID="1" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{CompanyID}</cbc:CompanyID>
 				<cbc:TaxLevelCode listName="No Aplica">{TaxLevelCode}</cbc:TaxLevelCode>
 				<cac:RegistrationAddress>
 					<cbc:ID>{CityName}</cbc:ID>
@@ -73,27 +72,28 @@
 				</cac:RegistrationAddress>
 				<cac:TaxScheme>
 					<cbc:ID>{ID}</cbc:ID>
-                    <cbc:Name>{Name}</cbc:Name>
+					<cbc:Name>{Name}</cbc:Name>
 				</cac:TaxScheme>
 			</cac:PartyTaxScheme>
 			<cac:PartyLegalEntity>
 				<cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
-				<cbc:CompanyID schemeAgencyID="195"
-					schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
-					schemeID="1" schemeName="31">{CompanyID}</cbc:CompanyID>
+				<cbc:CompanyID schemeID="1" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" >{CompanyID}</cbc:CompanyID>
 				<cac:CorporateRegistrationScheme>
 					<cbc:ID>{ID}</cbc:ID>
 				</cac:CorporateRegistrationScheme>
 			</cac:PartyLegalEntity>
 			<cac:Contact>
 				<cbc:Telephone>{Telephone}</cbc:Telephone>
-                <cbc:ElectronicMail>{ElectronicMail}</cbc:ElectronicMail>
+				<cbc:ElectronicMail>{ElectronicMail}</cbc:ElectronicMail>
 			</cac:Contact>
 		</cac:Party>
 	</cac:AccountingSupplierParty>
 	<cac:AccountingCustomerParty>
 		<cbc:AdditionalAccountID>{AdditionalAccountID}</cbc:AdditionalAccountID>
 		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeName="13">{ID}</cbc:ID>
+			</cac:PartyIdentification>
 			<cac:PartyName>
 				<cbc:Name>{Name}</cbc:Name>
 			</cac:PartyName>
@@ -115,9 +115,7 @@
 			</cac:PhysicalLocation>
 			<cac:PartyTaxScheme>
 				<cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
-				<cbc:CompanyID schemeAgencyID="195"
-					schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
-					schemeID="2" schemeName="31">{ompanyID}</cbc:CompanyID>
+				<cbc:CompanyID schemeID="2" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" >{ompanyID}</cbc:CompanyID>
 				<cbc:TaxLevelCode listName="No Aplica">{TaxLevelCode}</cbc:TaxLevelCode>
 				<cac:RegistrationAddress>
 					<cbc:ID>{CityName}</cbc:ID>
@@ -135,18 +133,16 @@
 				</cac:RegistrationAddress>
 				<cac:TaxScheme>
 					<cbc:ID>{ID}</cbc:ID>
-                    <cbc:Name>{Name}</cbc:Name>
+					<cbc:Name>{Name}</cbc:Name>
 				</cac:TaxScheme>
 			</cac:PartyTaxScheme>
 			<cac:PartyLegalEntity>
 				<cbc:RegistrationName>{RegistrationName}</cbc:RegistrationName>
-				<cbc:CompanyID schemeAgencyID="195"
-					schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
-					schemeID="2" schemeName="31">{CompanyID}</cbc:CompanyID>
+				<cbc:CompanyID schemeID="2" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">{CompanyID}</cbc:CompanyID>
 			</cac:PartyLegalEntity>
 			<cac:Contact>
 				<cbc:Telephone>{Telephone}</cbc:Telephone>
-                <cbc:ElectronicMail>{ElectronicMail}</cbc:ElectronicMail>
+				<cbc:ElectronicMail>{ElectronicMail}</cbc:ElectronicMail>
 			</cac:Contact>
 		</cac:Party>
 	</cac:AccountingCustomerParty>
@@ -159,12 +155,12 @@
 		<cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
 		<cac:TaxSubtotal>
 			<cbc:TaxableAmount currencyID="COP">{TaxableAmount}</cbc:TaxableAmount>
-            <cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
+			<cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
 			<cac:TaxCategory>
 				<cbc:Percent>{Percent}</cbc:Percent>
 				<cac:TaxScheme>
 					<cbc:ID>{ID}</cbc:ID>
-                    <cbc:Name>{Name}</cbc:Name>
+					<cbc:Name>{Name}</cbc:Name>
 				</cac:TaxScheme>
 			</cac:TaxCategory>
 		</cac:TaxSubtotal>
@@ -183,12 +179,12 @@
 			<cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
 			<cac:TaxSubtotal>
 				<cbc:TaxableAmount currencyID="COP">{TaxableAmount}</cbc:TaxableAmount>
-                <cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
+				<cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
 				<cac:TaxCategory>
 					<cbc:Percent>{Percent}</cbc:Percent>
 					<cac:TaxScheme>
 						<cbc:ID>{ID}</cbc:ID>
-                        <cbc:Name>{Name}</cbc:Name>
+						<cbc:Name>{Name}</cbc:Name>
 					</cac:TaxScheme>
 				</cac:TaxCategory>
 			</cac:TaxSubtotal>
@@ -196,7 +192,7 @@
 		<cac:Item>
 			<cbc:Description>{Description}</cbc:Description>
 			<cac:StandardItemIdentification>
-				<cbc:ID schemeID="999" schemeName="Estandar Propio">{ID}</cbc:ID>
+				<cbc:ID schemeID="999">{ID}</cbc:ID>
 			</cac:StandardItemIdentification>
 		</cac:Item>
 		<cac:Price>
@@ -207,9 +203,9 @@
 	<DATA>
 		<UBL21>true</UBL21>
 		<Partnership>
-			<ID>{ID}</ID> <!--NIT DE LA ALIANZA-->
-			<Techkey>{Techkey}</Techkey><!-- CLAVE TECNICA-->
-			<SetTestID>{SetTestID}</SetTestID><!-- SetTesID entregado por la Dian-->
+			<ID>{ID}</ID>
+			<TechKey>{TechKey}</TechKey>
+			<SetTestID>{SetTestID}</SetTestID>
 		</Partnership>
 	</DATA>
 </DebitNote>

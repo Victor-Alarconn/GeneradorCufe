@@ -110,8 +110,16 @@ namespace GeneradorCufe.ViewModel
                                     var taxSchemeElement = partyTaxSchemeElement.Element(cac + "TaxScheme");
                                     if (taxSchemeElement != null)
                                     {
-                                        taxSchemeElement.Element(cbc + "ID")?.SetValue("01");
-                                        taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA");
+                                        if (adquiriente.Responsable == 2)
+                                        {
+                                            taxSchemeElement.Element(cbc + "ID")?.SetValue("01"); // ID es 01 si es Responsable IVA
+                                            taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA"); // Name es IVA si es Responsable IVA
+                                        }
+                                        else
+                                        {
+                                            taxSchemeElement.Element(cbc + "ID")?.SetValue("ZZ"); // ID es ZZ si no es Responsable IVA
+                                            taxSchemeElement.Element(cbc + "Name")?.SetValue("No aplica"); // Name es No aplica si no es Responsable IVA
+                                        }
                                     }
                                 }
 

@@ -41,7 +41,7 @@ namespace GeneradorCufe.Consultas
                                 adquiriente.Nombre_adqu = nombreCompleto;
                                 adquiriente.Direccion_adqui = reader["trodirec"].ToString();
                                 adquiriente.Correo_adqui = reader["troemail"].ToString();
-                                adquiriente.Responsable = reader["troregimen"].ToString();
+                                adquiriente.Responsable = reader.GetDecimal("troregimen");
                                 adquiriente.Dv_Adqui = reader["trodigito"].ToString();
                                 adquiriente.Tipo_p = reader.GetDecimal("trotp_3ro");
                                 adquiriente.Telefono_adqui = reader["trotelef"].ToString();
