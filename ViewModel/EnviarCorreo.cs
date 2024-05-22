@@ -31,9 +31,13 @@ namespace GeneradorCufe.ViewModel
             string PrefijoNC = "";
             string Documento = "";
             string tipo_documento = "FACTURA ELECTRONICA DE VENTA";
-            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
             {
                 PrefijoNC = "NC" + factura.Recibo;
+            }
+            else if(!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+            {
+                PrefijoNC = "ND" + factura.Recibo;
             }
 
             // Crear el mensaje
@@ -46,11 +50,17 @@ namespace GeneradorCufe.ViewModel
                 MailAddress direccionDestinatarioSecundario = new MailAddress(adquiriente.Correo2);
                 mensaje.To.Add(direccionDestinatarioSecundario);
             }
-            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
             {
                 mensaje.Subject = $"{Nit}; {emisor.Nombre_emisor}; {PrefijoNC}; 91; {emisor.Nombre_emisor}";
                 Documento = PrefijoNC;
                 tipo_documento = "NOTA CREDITO";
+            }
+            else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+            {
+                mensaje.Subject = $"{Nit}; {emisor.Nombre_emisor}; {PrefijoNC}; 91; {emisor.Nombre_emisor}";
+                Documento = PrefijoNC;
+                tipo_documento = "NOTA Debito";
             }
             else
             {

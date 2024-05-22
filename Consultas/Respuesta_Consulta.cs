@@ -26,7 +26,8 @@ namespace GeneradorCufe.Consultas
             try
             {
                 string idDocumento, codigoTipoDocumento, recibo, updateQuery;
-                bool nota = !string.IsNullOrEmpty(factura1.Recibo) && factura1.Recibo != "0";
+                bool nota = !string.IsNullOrEmpty(factura1.Recibo) && factura1.Recibo != "0" && factura1.Tipo_movimiento == "NC";
+                bool debito = !string.IsNullOrEmpty(factura1.Recibo) && factura1.Recibo != "0" && factura1.Tipo_movimiento == "ND";
 
                 if (nota)
                 {
@@ -34,6 +35,13 @@ namespace GeneradorCufe.Consultas
                     idDocumento = recibo;
                     codigoTipoDocumento = "91";
                     updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura";
+                }
+                else if (debito)
+                {
+                    recibo = "ND" + factura1.Recibo;
+                    idDocumento = recibo;
+                    codigoTipoDocumento = "92";
+                    updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura AND tipo = 'W'";
                 }
                 else
                 {

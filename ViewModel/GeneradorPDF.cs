@@ -41,9 +41,13 @@ namespace GeneradorCufe.ViewModel
             try
             {
                 string PrefijoNC = "";
-                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
                 {
                     PrefijoNC = "NC" + factura.Recibo;
+                }
+                else if(!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                {
+                       PrefijoNC = "ND" + factura.Recibo;
                 }
 
                     Document documento = new Document(PageSize.A4, 15, 18, 15, 18);
@@ -92,9 +96,14 @@ namespace GeneradorCufe.ViewModel
                 string correoEmisor = emisor.Correo_emisor;
                 string telefonoEmisor = "Teléfono: " + emisor.Telefono_emisor;
                 string factura1;
-                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
                 {
                     PrefijoNC = "NC" + factura.Recibo;
+                    factura1 = "Nro. Doc: " + PrefijoNC;
+                }
+                else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                {
+                    PrefijoNC = "ND" + factura.Recibo;
                     factura1 = "Nro. Doc: " + PrefijoNC;
                 }
                 else

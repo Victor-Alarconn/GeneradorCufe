@@ -231,7 +231,7 @@ namespace GeneradorCufe.ViewModel
                     token = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
                 }
 
-                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
                 {
                     PrefijoNC = "NC" + factura.Recibo;
                     idDocumento = PrefijoNC;
@@ -239,6 +239,14 @@ namespace GeneradorCufe.ViewModel
                     recibo = factura.Recibo;
                     Nota_credito = true;
 
+                }
+                else if(!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                {
+                    PrefijoNC = "ND" + factura.Recibo;
+                    idDocumento = PrefijoNC;
+                    codigoTipoDocumento = "92";
+                    recibo = factura.Recibo;
+                    Nota_credito = true;
                 }
                 else
                 {
@@ -286,9 +294,13 @@ namespace GeneradorCufe.ViewModel
                             int añoActual = DateTime.Now.Year;
                             // Construir el nombre del archivo PDF
                             string nombreArchivoPDF;
-                            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
                             {
                                 nombreArchivoPDF = $"nc{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.pdf";
+                            }
+                            else if(!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                            {
+                                nombreArchivoPDF = $"nd{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.pdf";
                             }
                             else
                             {
@@ -297,7 +309,11 @@ namespace GeneradorCufe.ViewModel
 
                             // Construir el nombre del archivo XML
                             string nombreArchivoXML;
-                            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
+                            {
+                                nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.xml";
+                            }
+                            else if(!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
                             {
                                 nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.xml";
                             }
