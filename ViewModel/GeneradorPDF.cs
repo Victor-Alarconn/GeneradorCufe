@@ -202,9 +202,14 @@ namespace GeneradorCufe.ViewModel
                 imageQr.Alignment = Element.ALIGN_CENTER;
                 imageQr.ScaleToFit(85, 85);
                 PdfPCell qrCell = new PdfPCell();
-                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
                 {
                     qrCell.AddElement(new Phrase("Nota Crédito", FontFactory.GetFont("Helvetica", 9, Font.BOLD)));
+                    qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                }
+                else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                {
+                    qrCell.AddElement(new Phrase("Nota Debito", FontFactory.GetFont("Helvetica", 9, Font.BOLD)));
                     qrCell.HorizontalAlignment = Element.ALIGN_CENTER;
                 }
                 else
