@@ -47,19 +47,6 @@ namespace GeneradorCufe.Consultas
                                 byte[] logoBytes = (byte[])row["logo"];
                                 string Logo_emisor = Convert.ToBase64String(logoBytes);
 
-                                // Agregar un mensaje de depuración para verificar los bytes del logo
-                                Console.WriteLine("Bytes del logo: " + (logoBytes.Length > 0 ? "Recibidos" : "No recibidos"));
-
-                                if (!string.IsNullOrEmpty(Logo_emisor))
-                                {
-                                    Console.WriteLine("Logo emisor: " + Logo_emisor);
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Logo emisor: La cadena base64 está vacía o nula");
-                                    // Aquí puedes manejar este caso según tus necesidades
-                                }
-
                                 Emisor emisor = new Emisor
                                 {
                                     Nombre_emisor = row["emprnombr"].ToString() ?? "",

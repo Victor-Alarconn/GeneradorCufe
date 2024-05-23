@@ -170,7 +170,7 @@ namespace GeneradorCufe.ViewModel
                 else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
                 {
                     PrefijoNC = "ND" + factura.Recibo;
-                    TextoQR = $"PrefijoNC:{PrefijoNC}\n" +
+                    TextoQR = $"PrefijoND:{PrefijoNC}\n" +
                               $"FecFac:{fechaFac}\n" +
                               $"HorFac:{horaformateada} \n" +
                               $"NitFac:{NitFact} \n" +

@@ -132,31 +132,16 @@ namespace GeneradorCufe.ViewModel
             {
                 using (WebClient client = new WebClient())
                 {
-                    if (emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase))
-                    {
-                        client.Headers["efacturaAuthorizationToken"] = "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K";
-                    }
-                    else
-                    {
-                        client.Headers["efacturaAuthorizationToken"] = "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
-                    }
+                    client.Headers["efacturaAuthorizationToken"] = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase)
+                        ? "RtFGzoqD-5dab-BVQl-qHaQ-ICPjsQnP4Q1K"
+                        : "RNimIzV6-emyM-sQ2b-mclA-S9DWbc84jKCV";
 
-                    // Convertir el contenido base64 en bytes
-                    byte[] bytes = Encoding.UTF8.GetBytes(base64Content);
-
-                    // Realizar la solicitud POST y obtener la respuesta
-                    byte[] responseBytes = client.UploadData(url, "POST", bytes);
-
-                    // Convertir la respuesta a string
+                    // Convertir el contenido base64 en bytes y realizar la solicitud POST
+                    byte[] responseBytes = client.UploadData(url, "POST", Encoding.UTF8.GetBytes(base64Content));
                     string response = Encoding.UTF8.GetString(responseBytes);
 
-                    // Mostrar un mensaje de éxito con el código de estado
-                    //   MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                   
-                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe,  factura, emisor);
-
-                    // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
+                    // Guardar la respuesta en la base de datos y realizar la consulta del XML
+                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
 
                     return response;
@@ -164,41 +149,43 @@ namespace GeneradorCufe.ViewModel
             }
             catch (HttpRequestException ex)
             {
-                // Manejar cualquier error de la solicitud POST
-               MessageBox.Show($"Error al enviar la solicitud POST:\n\n{ex.Message}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
-                Factura_Consulta facturaConsulta = new Factura_Consulta();
-                facturaConsulta.MarcarComoConError(factura, ex);
+                ManejarErrorSolicitud(ex, factura, "Error de Solicitud POST", "Error al enviar la solicitud POST");
                 return "";
             }
             catch (WebException webEx)
             {
-                if (webEx.Response != null)
-                {
-                    HttpStatusCode statusCode = ((HttpWebResponse)webEx.Response).StatusCode;
-                    using (var stream = webEx.Response.GetResponseStream())
-                    {
-                        using (var reader = new StreamReader(stream))
-                        {
-                            string errorResponse = reader.ReadToEnd();
-                            MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                return ManejarErrorWebException(webEx, respuestaConsulta, cadenaConexion, factura);
+            }
+        }
 
-                            // Guardar el error en la base de datos
-                            respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
-                            Factura_Consulta facturaConsulta = new Factura_Consulta();
-                            facturaConsulta.MarcarComoConError(factura, webEx);
+        private static void ManejarErrorSolicitud(Exception ex, Factura factura, string titulo, string mensaje)
+        {
+            MessageBox.Show($"{mensaje}:\n\n{ex.Message}", titulo, MessageBoxButton.OK, MessageBoxImage.Error);
+            new Factura_Consulta().MarcarComoConError(factura, ex);
+        }
 
-                            return "";
-                        }
-                    }
-                }
-                else
+        private static string ManejarErrorWebException(WebException webEx, Respuesta_Consulta respuestaConsulta, string cadenaConexion, Factura factura)
+        {
+            if (webEx.Response != null)
+            {
+                HttpStatusCode statusCode = ((HttpWebResponse)webEx.Response).StatusCode;
+                using (var stream = webEx.Response.GetResponseStream())
+                using (var reader = new StreamReader(stream))
                 {
-                    // Manejar cualquier otro error de la solicitud POST
-                    MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                    string errorResponse = reader.ReadToEnd();
+                    MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                    respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
+                    new Factura_Consulta().MarcarComoConError(factura, webEx);
                     return "";
                 }
             }
+            else
+            {
+                MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                return "";
+            }
         }
+
 
 
         public static async Task ConsultarXML(Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado)
@@ -409,60 +396,58 @@ namespace GeneradorCufe.ViewModel
         public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string xmlTemplatePath = Path.Combine(Directory.GetParent(basePath).Parent.Parent.Parent.FullName, "Plantilla", "XML.xml");
+            string parentPath = Directory.GetParent(basePath).Parent.Parent.Parent.FullName;
 
             string cadenaConexion = Data.ConstruirCadenaConexion(factura);
+            string xmlTemplatePath;
+            XDocument xmlDoc = null;
+
             string cufe = "";
             List<Productos> listaProductos = null;
             Adquiriente adquiriente = null;
             Movimiento movimiento = null;
             Encabezado encabezado = null;
 
-            XDocument xmlDoc = null; // Inicializar xmlDoc
-
-            // Verificar la condición para determinar la plantilla y la acción a utilizar
-            if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+            // Determinar la ruta de la plantilla según el tipo de movimiento
+            switch (factura.Tipo_movimiento)
             {
-                // Si se cumple la condición, verificar si es una nota de crédito (NC) o una nota de débito (ND)
+                case "SO1":
+                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla", "XML.xml");
+                    break;
+                case "NC":
+                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla_NC", "NC.xml");
+                    break;
+                case "ND":
+                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla_ND", "ND.xml");
+                    break;
+                default:
+                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla", "XML.xml");
+                    break;
+            }
+
+            try
+            {
+                xmlDoc = XDocument.Load(xmlTemplatePath);
+
+                // Llamar al método apropiado según el tipo de movimiento
                 if (factura.Tipo_movimiento == "NC")
                 {
-                    // Usar la plantilla de nota de crédito
-                    xmlTemplatePath = Path.Combine(Directory.GetParent(basePath).Parent.Parent.Parent.FullName, "Plantilla_NC", "NC.xml");
-                    xmlDoc = XDocument.Load(xmlTemplatePath);
-
-                    // Llamar a la acción para generar nota de crédito y asignar sus valores de retorno a cadenaConexion y cufe
                     (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura, cadenaConexion);
                 }
                 else if (factura.Tipo_movimiento == "ND")
                 {
-                    // Usar la plantilla de nota de débito
-                    xmlTemplatePath = Path.Combine(Directory.GetParent(basePath).Parent.Parent.Parent.FullName, "Plantilla_ND", "ND.xml");
-                    xmlDoc = XDocument.Load(xmlTemplatePath);
-
-                    // Llamar a la acción para generar nota de débito y asignar sus valores de retorno a cadenaConexion y cufe
                     (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorND.GeneradorNotaDebito(xmlDoc, emisor, factura, cadenaConexion);
                 }
-            }
-            else
-            {
-                // Si no se cumple, usar la plantilla normal
-                xmlTemplatePath = xmlTemplatePath;
-
-                try
+                else
                 {
-                    // Intenta cargar el documento XML base
-                    xmlDoc = XDocument.Load(xmlTemplatePath);
-
-                    // Actualizar el documento XML con los datos dinámicos
                     (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorFE.UpdateXmlWithViewModelData(xmlDoc, emisor, factura, cadenaConexion);
                 }
-                catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
-                {
-                    Factura_Consulta facturaConsulta = new Factura_Consulta();
-                    facturaConsulta.MarcarComoConError(factura, ex);
-
-                    return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>(), null, null, null);
-                }
+            }
+            catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
+            {
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
+                return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>(), null, null, null);
             }
 
             // Convertir el XML actualizado a string
@@ -475,6 +460,7 @@ namespace GeneradorCufe.ViewModel
             // Devolver la tupla con todos los valores
             return (xmlContent, base64Encoded, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
         }
+
 
 
 
