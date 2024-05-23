@@ -438,6 +438,10 @@ namespace GeneradorCufe.ViewModel
                 {
                     (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorND.GeneradorNotaDebito(xmlDoc, emisor, factura, cadenaConexion);
                 }
+                else if(factura.Tipo_movimiento == "SO1")
+                {
+                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorDS.GeneradorDocSoporte(xmlDoc, emisor, factura, cadenaConexion);
+                }
                 else
                 {
                     (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorFE.UpdateXmlWithViewModelData(xmlDoc, emisor, factura, cadenaConexion);
