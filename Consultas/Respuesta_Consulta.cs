@@ -21,7 +21,7 @@ namespace GeneradorCufe.Consultas
             _data = data;
         }
 
-        public bool GuardarRespuestaEnBD(string cadenaConexion, string cufe, Factura factura1)
+        public bool GuardarRespuestaEnBD(string cadenaConexion, string cufe, Factura factura1, Emisor emisor)
         {
             try
             {
@@ -31,16 +31,18 @@ namespace GeneradorCufe.Consultas
 
                 if (nota)
                 {
-                    recibo = "NC" + factura1.Recibo;
+                    recibo = factura1.Recibo;
                     idDocumento = recibo;
                     codigoTipoDocumento = "91";
-                    updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura";
+                    cufe = emisor.cude;
+                    updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura AND tipo = 'X'";
                 }
                 else if (debito)
                 {
-                    recibo = "ND" + factura1.Recibo;
+                    recibo = factura1.Recibo;
                     idDocumento = recibo;
                     codigoTipoDocumento = "92";
+                    cufe = emisor.cude;
                     updateQuery = "UPDATE xxxxcmbt SET estado_fe = 3, dato_qr = @DocumentoJson WHERE recibo = @Factura AND tipo = 'W'";
                 }
                 else

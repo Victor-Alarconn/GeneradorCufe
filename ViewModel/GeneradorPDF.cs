@@ -153,9 +153,23 @@ namespace GeneradorCufe.ViewModel
 
                 // Construir el texto del código QR
                 string TextoQR;
-                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0")
+                if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
                 {
                     PrefijoNC = "NC" + factura.Recibo;
+                    TextoQR = $"PrefijoNC:{PrefijoNC}\n" +
+                              $"FecFac:{fechaFac}\n" +
+                              $"HorFac:{horaformateada} \n" +
+                              $"NitFac:{NitFact} \n" +
+                              $"DocAdq:{adquiriente.Nit_adqui}\n" +
+                              $"ValFac:{movimiento.Valor_neto} \n" +
+                              $"ValIva:{movimiento.Valor_iva}\n" +
+                              $"ValOtroIm:0.00\n" +
+                              $"ValTolFac:{movimiento.Valor} \n" +
+                              $"CUDE:{emisor.cude}";
+                }
+                else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                {
+                    PrefijoNC = "ND" + factura.Recibo;
                     TextoQR = $"PrefijoNC:{PrefijoNC}\n" +
                               $"FecFac:{fechaFac}\n" +
                               $"HorFac:{horaformateada} \n" +

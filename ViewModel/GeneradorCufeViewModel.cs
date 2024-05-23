@@ -154,7 +154,7 @@ namespace GeneradorCufe.ViewModel
                     //   MessageBox.Show("Solicitud POST exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
                    
-                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe,  factura);
+                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe,  factura, emisor);
 
                     // Realizar una solicitud GET para consultar el XML después de la solicitud POST exitosa
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);

@@ -85,13 +85,9 @@ namespace GeneradorCufe.ViewModel
                 DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(horaProducto, "HH:mm:ss", CultureInfo.InvariantCulture);
                 string horaformateada = horaConDesplazamiento.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
 
-               
-                
-               
 
                 string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
                 emisor.cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
-                cufe = emisor.cude;
                
 
 
@@ -115,7 +111,7 @@ namespace GeneradorCufe.ViewModel
                 DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
                 DateTime fechaHoy = DateTime.Today;
 
-                if ((fechaHoy - fechaProducto).TotalDays < 2)
+                if ((fechaHoy - fechaProducto).TotalDays < 14)
                 {
                     fechaProducto = DateTime.Today;
                 }

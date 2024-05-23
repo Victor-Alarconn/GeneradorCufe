@@ -60,7 +60,7 @@ namespace GeneradorCufe.ViewModel
             {
                 mensaje.Subject = $"{Nit}; {emisor.Nombre_emisor}; {PrefijoNC}; 91; {emisor.Nombre_emisor}";
                 Documento = PrefijoNC;
-                tipo_documento = "NOTA Debito";
+                tipo_documento = "NOTA DEBITO";
             }
             else
             {
