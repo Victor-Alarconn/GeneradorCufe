@@ -54,12 +54,9 @@ namespace GeneradorCufe.ViewModel
                             paymentIdElement?.AddBeforeSelf(paymentDueDateElement);
                             paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Crédito ACH");
                         }
-
-
                         else
                         {
 
-                            // Reemplazar los valores entre llaves con los valores correspondientes
                             paymentMeansElementCloned.Element(cbc + "ID")?.SetValue("1");
 
                             if (formaPago.Id_forma == "00" || formaPago.Id_forma == "0")
