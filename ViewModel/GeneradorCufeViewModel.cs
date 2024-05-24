@@ -398,6 +398,8 @@ namespace GeneradorCufe.ViewModel
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string parentPath = Directory.GetParent(basePath).Parent.Parent.Parent.FullName;
 
+          //  string basePath = @"C:\Users\Programacion01\Desktop\Facturacion_P";
+
             string cadenaConexion = Data.ConstruirCadenaConexion(factura);
             string xmlTemplatePath;
             XDocument xmlDoc = null;
