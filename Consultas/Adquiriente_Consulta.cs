@@ -17,19 +17,28 @@ namespace GeneradorCufe.Consultas
             _data = new Conexion.Data("MySqlConnectionString");
         }
 
-        public Adquiriente ConsultarAdquiriente(string nit, string cadenaConexion)
+        public Adquiriente ConsultarAdquiriente(string nit, string cadenaConexion, Factura factura)
         {
             Adquiriente adquiriente = new Adquiriente();
 
-            string query = "SELECT tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen, trodigito, trotp_3ro, trotelef, trocity, trotipo, tropagweb FROM xxxx3ros WHERE tronit = @Nit LIMIT 1";
+            string query = @"
+            SELECT 
+                tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen, 
+                trodigito, trotp_3ro, trotelef, trocity, trotipo, tropagweb 
+            FROM 
+                xxxx3ros 
+            WHERE 
+                tronit = @Nit AND id_empresa = @Empresa 
+            LIMIT 1";
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
+                using (MySqlConnection connection = _data.CreateConnection()) // Utilizar la cadena de conexión proporcionada
                 {
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Nit", nit);
+                        command.Parameters.AddWithValue("@Empresa", factura.Empresa); // Agregar el parámetro para id_empresa
 
                         connection.Open();
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -56,11 +65,12 @@ namespace GeneradorCufe.Consultas
             catch (Exception ex)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
-              //  facturaConsulta.MarcarComoConError(factura, ex);
+                facturaConsulta.MarcarComoConError(factura, ex);
             }
 
             return adquiriente;
         }
+
 
 
 

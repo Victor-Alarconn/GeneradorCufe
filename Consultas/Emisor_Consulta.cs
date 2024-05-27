@@ -25,7 +25,7 @@ namespace GeneradorCufe.Consultas
         {
             try
             {
-                string connectionString = $"Database=empresas; Data Source={factura.Ip_base}; User Id={usuario}; Password={contraseña}; ConvertZeroDateTime=True;";
+                string connectionString = $"Database=empresas; Data Source=192.190.42.191; User Id=root; Password=**qwerty**; ConvertZeroDateTime=True;";
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
@@ -44,8 +44,12 @@ namespace GeneradorCufe.Consultas
 
                             foreach (DataRow row in dataTable.Rows)
                             {
-                                byte[] logoBytes = (byte[])row["logo"];
-                                string Logo_emisor = Convert.ToBase64String(logoBytes);
+                                string Logo_emisor = string.Empty;
+                                if (row["logo"] != DBNull.Value)
+                                {
+                                    byte[] logoBytes = (byte[])row["logo"];
+                                    Logo_emisor = Convert.ToBase64String(logoBytes);
+                                }
 
                                 Emisor emisor = new Emisor
                                 {
@@ -63,7 +67,7 @@ namespace GeneradorCufe.Consultas
                                     Ciudad_emisor = row["emprcity"].ToString() ?? "",
                                     Logo_emisor = Logo_emisor,
                                     Regimen_emisor = Convert.ToDecimal(row["emprperson"] ?? 0) == 1 ? "Natural" :
-                                    Convert.ToDecimal(row["emprperson"] ?? 0) == 2 ? "Jurídica" : ""
+                                                     Convert.ToDecimal(row["emprperson"] ?? 0) == 2 ? "Jurídica" : ""
                                 };
 
                                 InvoiceViewModel.EjecutarGeneracionXML(emisor, factura);
@@ -78,6 +82,7 @@ namespace GeneradorCufe.Consultas
                 facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
+
 
 
     }

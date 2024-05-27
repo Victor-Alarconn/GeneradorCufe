@@ -12,7 +12,7 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorDS
     {
-        public static (string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GeneradorDocSoporte(XDocument xmlDoc, Emisor emisor, Factura factura, string cadenaConexion)
+        public static (string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GeneradorDocSoporte(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             try
             {
@@ -28,6 +28,7 @@ namespace GeneradorCufe.ViewModel
                 Movimiento_Consulta movimientoConsulta = new Movimiento_Consulta();
                 FormaPago_Consulta formaPagoConsulta = new FormaPago_Consulta();
                 Adquiriente_Consulta adquirienteConsulta = new Adquiriente_Consulta();
+                string cadenaConexion = "";
 
                 // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
                 Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
@@ -136,7 +137,7 @@ namespace GeneradorCufe.ViewModel
                 GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos, factura);  // Información del emisor
 
                 string nitValue = listaProductos[0].Nit;
-                Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
+                Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion, factura);
                 GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos); // Información del adquiriente
 
 

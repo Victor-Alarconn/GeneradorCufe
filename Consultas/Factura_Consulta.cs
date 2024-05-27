@@ -66,7 +66,7 @@ namespace GeneradorCufe.Consultas
                     {
                         connection.Open();
 
-                        string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, terminal, ip_base FROM fac WHERE estado = 0";
+                        string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas FROM fac WHERE estado = 0";
 
                         using (MySqlCommand command = new MySqlCommand(query, connection))
                         {
@@ -128,8 +128,8 @@ namespace GeneradorCufe.Consultas
                 Aplica = row["aplica"]?.ToString() ?? "",
                 Nombre = row["nombre3"]?.ToString() ?? "",
                 Notas = row["notas"]?.ToString() ?? "",
-                Terminal = row["terminal"]?.ToString() ?? "",
-                Ip_base = row["ip_base"]?.ToString() ?? ""
+               // Terminal = row["terminal"]?.ToString() ?? "",
+               // Ip_base = row["ip_base"]?.ToString() ?? ""
             };
 
             return factura;
@@ -143,14 +143,8 @@ namespace GeneradorCufe.Consultas
             {
                 try
                 {
-                    if (factura.Ip_base == "200.118.190.213" || factura.Ip_base == "200.118.190.167")
-                    {
-                        emisorConsulta.EjecutarAccionParaIP(factura, "RmSoft20X", "*LiLo89*");
-                    }
-                    else if (factura.Ip_base == "192.190.42.191")
-                    {
+                  
                         emisorConsulta.EjecutarAccionParaIP(factura, "root", "**qwerty**");
-                    }
 
                 }
                 catch (Exception ex)

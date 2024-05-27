@@ -23,14 +23,21 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                string query = "SELECT nit, valor, vriva, desctos, gravada, exentas, fcruce, hdigita, rfuente, consumo, nbolsa, vbolsa, dato_cufe, ncre, numero, vendedor, dias FROM xxxxccfc WHERE factura = @factura";
+                string query = @"
+        SELECT 
+            nit, valor, vriva, desctos, gravada, exentas, fcruce, hdigita, rfuente, consumo, nbolsa, vbolsa, dato_cufe, ncre, numero, vendedor, dias, electron 
+        FROM 
+            xxxxccfc 
+        WHERE 
+            factura = @factura AND id_empresa = @Empresa"; // Añadir condición para id_empresa
 
-                using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
+                using (MySqlConnection connection = _data.CreateConnection()) // Utilizar la cadena de conexión proporcionada
                 {
                     connection.Open();
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@factura", factura.Facturas);
+                        command.Parameters.AddWithValue("@factura", factura.Facturas); // Asignar valor a parámetro factura
+                        command.Parameters.AddWithValue("@Empresa", factura.Empresa); // Asignar valor a parámetro empresa
 
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
@@ -51,27 +58,8 @@ namespace GeneradorCufe.Consultas
                                 movimiento.Dato_Cufe = reader["dato_cufe"].ToString();
                                 movimiento.Nota_credito = reader.IsDBNull(reader.GetOrdinal("ncre")) ? 0 : reader.GetDecimal(reader.GetOrdinal("ncre"));
                                 movimiento.Numero = reader["numero"].ToString();
-                                string codigoVendedor = reader["vendedor"].ToString();
+                                movimiento.Vendedor = reader["electron"].ToString(); // Obtener el nombre del vendedor directamente
                                 movimiento.Dias = reader.IsDBNull(reader.GetOrdinal("dias")) ? 0 : reader.GetDecimal(reader.GetOrdinal("dias"));
-
-                                // Cerrar el lector de la primera consulta antes de ejecutar la segunda
-                                reader.Close();
-
-                                // Consulta adicional para obtener el nombre del vendedor
-                                string queryVendedor = "SELECT vnnombre FROM xxxxvend WHERE vncodigo = @codigoVendedor";
-
-                                using (MySqlCommand commandVendedor = new MySqlCommand(queryVendedor, connection))
-                                {
-                                    commandVendedor.Parameters.AddWithValue("@codigoVendedor", codigoVendedor);
-
-                                    using (MySqlDataReader readerVendedor = commandVendedor.ExecuteReader())
-                                    {
-                                        if (readerVendedor.Read())
-                                        {
-                                            movimiento.Vendedor = readerVendedor["vnnombre"].ToString();
-                                        }
-                                    }
-                                }
                             }
                         }
                     }
@@ -85,6 +73,8 @@ namespace GeneradorCufe.Consultas
 
             return movimiento;
         }
+
+
 
 
 

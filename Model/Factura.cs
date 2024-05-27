@@ -16,8 +16,8 @@ namespace GeneradorCufe.Model
         public string? Aplica { get; set; }
         public string? Nombre { get; set; }
         public string? Notas { get; set; }
-        public string? Terminal { get; set; }
-        public string? Ip_base { get; set; }
+     //  public string? Terminal { get; set; }
+     //   public string? Ip_base { get; set; }
 
     }
 }

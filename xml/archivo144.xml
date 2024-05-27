@@ -1,0 +1,310 @@
+<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">
+  <ext:UBLExtensions>
+    <ext:UBLExtension>
+      <ext:ExtensionContent>
+        <sts:DianExtensions>
+          <sts:InvoiceControl>
+            <sts:InvoiceAuthorization>18764068859674</sts:InvoiceAuthorization>
+            <sts:AuthorizationPeriod>
+              <cbc:StartDate>2024-04-12</cbc:StartDate>
+              <cbc:EndDate>2024-10-12</cbc:EndDate>
+            </sts:AuthorizationPeriod>
+            <sts:AuthorizedInvoices>
+              <sts:Prefix>FE</sts:Prefix>
+              <sts:From>137</sts:From>
+              <sts:To>10000</sts:To>
+            </sts:AuthorizedInvoices>
+          </sts:InvoiceControl>
+        </sts:DianExtensions>
+      </ext:ExtensionContent>
+    </ext:UBLExtension>
+  </ext:UBLExtensions>
+  <cbc:CustomizationID>10</cbc:CustomizationID>
+  <cbc:ProfileExecutionID>1</cbc:ProfileExecutionID>
+  <cbc:ID>FE00144</cbc:ID>
+  <cbc:UUID schemeID="1" schemeName="CUFE-SHA384">65c1692f05ea00b92e000c44ed3809bb48dacb0d7266f539c1b0fcfdd98c1bfaa26d8fe39c1239425f14e880c10afd53</cbc:UUID>
+  <cbc:IssueDate>2024-05-27</cbc:IssueDate>
+  <cbc:IssueTime>18:11:53-05:00</cbc:IssueTime>
+  <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
+  <cbc:Note>Factura de Venta Emitida por 1088312295-6-EL SABOR ANTIOQUEÑO TIPICOS Y PARRILLA</cbc:Note>
+  <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>4</cbc:LineCountNumeric>
+  <cac:AccountingSupplierParty>
+    <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
+    <cac:Party>
+      <cac:PartyName>
+        <cbc:Name>EL SABOR ANTIOQUEÑO TIPICOS Y PARRILLA</cbc:Name>
+      </cac:PartyName>
+      <cac:PhysicalLocation>
+        <cac:Address>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>Cra 18 N10 43 lc 324 cc ciudad victoria</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:Address>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
+        <cbc:RegistrationName>EL SABOR ANTIOQUEÑO TIPICOS Y PARRILLA</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="6" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1088312295</cbc:CompanyID>
+        <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
+        <cac:RegistrationAddress>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>Cra 18 N10 43 lc 324 cc ciudad victoria</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
+          <cbc:ID>ZZ</cbc:ID>
+          <cbc:Name>No aplica</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>EL SABOR ANTIOQUEÑO TIPICOS Y PARRILLA</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="6" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1088312295</cbc:CompanyID>
+        <cac:CorporateRegistrationScheme>
+          <cbc:ID>FE</cbc:ID>
+        </cac:CorporateRegistrationScheme>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Telephone>3346162</cbc:Telephone>
+        <cbc:ElectronicMail>luisafndaq@hotmail.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeName="31">900447030</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>AROMAMARKETING SAS</cbc:Name>
+      </cac:PartyName>
+      <cac:PhysicalLocation>
+        <cac:Address>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>DG 46 SUR 50 79 CA 44</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:Address>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
+        <cbc:RegistrationName>AROMAMARKETING SAS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="5" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900447030</cbc:CompanyID>
+        <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
+        <cac:RegistrationAddress>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>DG 46 SUR 50 79 CA 44</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>AROMAMARKETING SAS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="5" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900447030</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Telephone>9371790</cbc:Telephone>
+        <cbc:ElectronicMail>contabilidad@aromamarketing.com.co,luisafndaq@hotmail.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:ID>1</cbc:ID>
+    <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
+    <cbc:PaymentID>Efectivo</cbc:PaymentID>
+  </cac:PaymentMeans>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="COP">2585.18</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">32314.82</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">2585.18</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>8.00</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>04</cbc:ID>
+          <cbc:Name>INC</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">20900.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>0.00</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="COP">53214.82</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="COP">53214.82</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="COP">55800.00</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="COP">55800.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">23055.56</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">1844.44</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">23055.56</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">1844.44</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>8.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>04</cbc:ID>
+            <cbc:Name>INC</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>PATACON</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">30</cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">24900.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">20900.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">20900.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>0.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>MONDONGO</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">37</cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">20900.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>3</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">4629.63</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">370.37</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">4629.63</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">370.37</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>8.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>04</cbc:ID>
+            <cbc:Name>INC</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>COCA COLA 400</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">80</cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">5000.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>4</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">4629.63</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">370.37</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">4629.63</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">370.37</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>8.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>04</cbc:ID>
+            <cbc:Name>INC</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>COCA COLA 400</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">80</cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">5000.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <DATA>
+    <UBL21>true</UBL21>
+    <Partnership>
+      <ID>900770401</ID>
+      <TechKey>1e970e30e2acf6e089bef7d8ee787d01f8ac64fef0771649e7355a6e4b01f42e</TechKey>
+    </Partnership>
+  </DATA>
+</Invoice>

@@ -1,0 +1,325 @@
+<Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">
+  <ext:UBLExtensions>
+    <ext:UBLExtension>
+      <ext:ExtensionContent>
+        <sts:DianExtensions>
+          <sts:InvoiceControl>
+            <sts:InvoiceAuthorization>18764056392118</sts:InvoiceAuthorization>
+            <sts:AuthorizationPeriod>
+              <cbc:StartDate>2023-09-19</cbc:StartDate>
+              <cbc:EndDate>2024-09-19</cbc:EndDate>
+            </sts:AuthorizationPeriod>
+            <sts:AuthorizedInvoices>
+              <sts:Prefix>FERM</sts:Prefix>
+              <sts:From>4468</sts:From>
+              <sts:To>6000</sts:To>
+            </sts:AuthorizedInvoices>
+          </sts:InvoiceControl>
+        </sts:DianExtensions>
+      </ext:ExtensionContent>
+    </ext:UBLExtension>
+  </ext:UBLExtensions>
+  <cbc:CustomizationID>10</cbc:CustomizationID>
+  <cbc:ProfileExecutionID>1</cbc:ProfileExecutionID>
+  <cbc:ID>FERM05509</cbc:ID>
+  <cbc:UUID schemeID="1" schemeName="CUFE-SHA384">81057760d7e6943b3fe68603ad48c697865ca6511da2285f42c9f7b702187f90f43c5d86c4deea7239a265a4d64a8cae</cbc:UUID>
+  <cbc:IssueDate>2024-05-24</cbc:IssueDate>
+  <cbc:IssueTime>15:43:04-05:00</cbc:IssueTime>
+  <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
+  <cbc:Note>Factura de Venta Emitida por 900770401-8-RM SOFT CASA DE SOFTWARE SAS</cbc:Note>
+  <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>5</cbc:LineCountNumeric>
+  <cac:AccountingSupplierParty>
+    <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+    <cac:Party>
+      <cac:PartyName>
+        <cbc:Name>RM SOFT CASA DE SOFTWARE SAS</cbc:Name>
+      </cac:PartyName>
+      <cac:PhysicalLocation>
+        <cac:Address>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>Calle 24  No.7 27  OF 401 Pereira, Rda.</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:Address>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
+        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE SAS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
+        <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
+        <cac:RegistrationAddress>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>Calle 24  No.7 27  OF 401 Pereira, Rda.</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>RM SOFT CASA DE SOFTWARE SAS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">900770401</cbc:CompanyID>
+        <cac:CorporateRegistrationScheme>
+          <cbc:ID>FERM</cbc:ID>
+        </cac:CorporateRegistrationScheme>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Telephone>Tel.3108264694</cbc:Telephone>
+        <cbc:ElectronicMail>comercial@rmsoft.com.co</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeName="13">42058855</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>LILIANA  AREVALO CASADIEGO</cbc:Name>
+      </cac:PartyName>
+      <cac:PhysicalLocation>
+        <cac:Address>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>CL 16 8 69</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:Address>
+      </cac:PhysicalLocation>
+      <cac:PartyTaxScheme>
+        <cbc:RegistrationName>LILIANA  AREVALO CASADIEGO</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="3" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">42058855</cbc:CompanyID>
+        <cbc:TaxLevelCode>R-99-PN</cbc:TaxLevelCode>
+        <cac:RegistrationAddress>
+          <cbc:ID>66001</cbc:ID>
+          <cbc:CityName>Pereira</cbc:CityName>
+          <cbc:PostalZone>660001</cbc:PostalZone>
+          <cbc:CountrySubentity>Risaralda</cbc:CountrySubentity>
+          <cbc:CountrySubentityCode>66</cbc:CountrySubentityCode>
+          <cac:AddressLine>
+            <cbc:Line>CL 16 8 69</cbc:Line>
+          </cac:AddressLine>
+          <cac:Country>
+            <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+            <cbc:Name languageID="es">Colombia</cbc:Name>
+          </cac:Country>
+        </cac:RegistrationAddress>
+        <cac:TaxScheme>
+          <cbc:ID>ZZ</cbc:ID>
+          <cbc:Name>No aplica</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>LILIANA  AREVALO CASADIEGO</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="3" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">42058855</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Telephone>3354678</cbc:Telephone>
+        <cbc:ElectronicMail>lianarevalo@hotmail.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:ID>1</cbc:ID>
+    <cbc:PaymentMeansCode>47</cbc:PaymentMeansCode>
+    <cbc:PaymentID>Transferencia Débito Bancaria</cbc:PaymentID>
+  </cac:PaymentMeans>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="COP">163321.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:Percent>0.00</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>01</cbc:ID>
+          <cbc:Name>IVA</cbc:Name>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="COP">163321.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="COP">163321.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="COP">163321.00</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="COP">163321.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">65000.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">65000.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>0.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>SERVICIO CLOUD SOFTWARE (SAAS) MES DE ABRIL</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">0012                </cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">65000.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">65000.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">65000.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>0.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>SERVICIO CLOUD SOFTWARE (SAAS) MES DE MAYO</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">0012                </cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">65000.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>3</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">46.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">13662.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">13662.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>0.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>SERVICIO CLOUD FACTURACION ELECTRONICA MARZO FACTURAS 46</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">0058                </cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">297.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">46.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>4</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">19.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">5700.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">5700.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>0.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>SERVICIO CLOUD RECEPCION COMPRAS</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">0101                </cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">300.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">19.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>5</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="ZZ">47.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">13959.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="COP">13959.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:Percent>0.00</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Name>IVA</cbc:Name>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>SERVICIO CLOUD FACTURACION ELECTRONICA MAYO FACTURAS 47</cbc:Description>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="999">0058                </cbc:ID>
+      </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="COP">297.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="EA">47.00</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <DATA>
+    <UBL21>true</UBL21>
+    <Partnership>
+      <ID>900770401</ID>
+      <TechKey>5090bcff4b4a4ebb2d76d3ba5069c6ff2283533e4a0cf9bc603711736de0d9ca</TechKey>
+    </Partnership>
+  </DATA>
+</Invoice>

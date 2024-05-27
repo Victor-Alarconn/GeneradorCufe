@@ -12,13 +12,14 @@ namespace GeneradorCufe.ViewModel
 {
     public class GeneradorND
     {
-        public static (string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GeneradorNotaDebito(XDocument xmlDoc, Emisor emisor, Factura factura, string cadenaConexion)
+        public static (string CUFE, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GeneradorNotaDebito(XDocument xmlDoc, Emisor emisor, Factura factura)
         {
             try
             {
 
                 XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
                 XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+                string cadenaConexion = "";
 
                 Productos_Consulta productosConsulta = new Productos_Consulta();
                 Encabezado_Consulta encabezadoConsulta = new Encabezado_Consulta();
@@ -167,7 +168,7 @@ namespace GeneradorCufe.ViewModel
 
                 string nitValue = listaProductos[0].Nit;
 
-                Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion);
+                Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion, factura);
                 GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos);
 
                 emisor.Codigo_FormaPago_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago, movimiento.Dias);

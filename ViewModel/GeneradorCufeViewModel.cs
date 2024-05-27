@@ -141,7 +141,7 @@ namespace GeneradorCufe.ViewModel
                     string response = Encoding.UTF8.GetString(responseBytes);
 
                     // Guardar la respuesta en la base de datos y realizar la consulta del XML
-                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
+                //    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
 
                     return response;
@@ -400,7 +400,7 @@ namespace GeneradorCufe.ViewModel
 
           //  string basePath = @"C:\Users\Programacion01\Desktop\Facturacion_P";
 
-            string cadenaConexion = Data.ConstruirCadenaConexion(factura);
+          //  string cadenaConexion = Data.ConstruirCadenaConexion(factura);
             string xmlTemplatePath;
             XDocument xmlDoc = null;
 
@@ -434,19 +434,19 @@ namespace GeneradorCufe.ViewModel
                 // Llamar al método apropiado según el tipo de movimiento
                 if (factura.Tipo_movimiento == "NC")
                 {
-                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura, cadenaConexion);
+                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorNC.GeneradorNotaCredito(xmlDoc, emisor, factura);
                 }
                 else if (factura.Tipo_movimiento == "ND")
                 {
-                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorND.GeneradorNotaDebito(xmlDoc, emisor, factura, cadenaConexion);
+                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorND.GeneradorNotaDebito(xmlDoc, emisor, factura);
                 }
                 else if(factura.Tipo_movimiento == "SO1")
                 {
-                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorDS.GeneradorDocSoporte(xmlDoc, emisor, factura, cadenaConexion);
+                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorDS.GeneradorDocSoporte(xmlDoc, emisor, factura);
                 }
                 else
                 {
-                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorFE.UpdateXmlWithViewModelData(xmlDoc, emisor, factura, cadenaConexion);
+                    (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorFE.UpdateXmlWithViewModelData(xmlDoc, emisor, factura);
                 }
             }
             catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
@@ -464,7 +464,7 @@ namespace GeneradorCufe.ViewModel
             string base64Encoded = Convert.ToBase64String(bytes);
 
             // Devolver la tupla con todos los valores
-            return (xmlContent, base64Encoded, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
+            return (xmlContent, base64Encoded, null, cufe, listaProductos, adquiriente, movimiento, encabezado);
         }
 
 

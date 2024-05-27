@@ -23,29 +23,29 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                string query = "SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0, resolucion, notas, NOTA_FIN, llave_tecn FROM xxxxterm WHERE terminal = @Terminal";
+                string query = "SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0, resolucion, notas, NOTA_FIN, llave_tecn FROM xxxxterm WHERE id_empresa = @Terminal";
 
-                using (MySqlConnection connection = new MySqlConnection(cadenaConexion)) // Utilizar la cadena de conexión proporcionada
+                using (MySqlConnection connection = _data.CreateConnection()) // Utilizar la cadena de conexión proporcionada
                 {
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Terminal", factura.Terminal);
+                        command.Parameters.AddWithValue("@Terminal", factura.Empresa);
 
                         connection.Open();
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                encabezado.Autorizando = reader.GetString("resol_fe");
-                                encabezado.Fecha_inicio = reader.GetDateTime("f_inicio");
-                                encabezado.Fecha_termina = reader.GetDateTime("f_termina");
-                                encabezado.R_inicio = reader.GetInt32("r_inicio");
-                                encabezado.R_termina = reader.GetInt32("r_termina");
-                                encabezado.Prefijo = reader.GetString("prefijo0");
-                                encabezado.Resolucion = reader.GetString("resolucion");
-                                encabezado.Notas = reader.GetString("notas");
-                                encabezado.Nota_fin = reader.GetString("NOTA_FIN");
-                                encabezado.Llave_tecnica = reader.GetString("llave_tecn");
+                                encabezado.Autorizando = reader["resol_fe"] as string ?? string.Empty;
+                                encabezado.Fecha_inicio = reader["f_inicio"] != DBNull.Value ? reader.GetDateTime("f_inicio") : DateTime.MinValue;
+                                encabezado.Fecha_termina = reader["f_termina"] != DBNull.Value ? reader.GetDateTime("f_termina") : DateTime.MinValue;
+                                encabezado.R_inicio = reader["r_inicio"] != DBNull.Value ? reader.GetInt32("r_inicio") : 0;
+                                encabezado.R_termina = reader["r_termina"] != DBNull.Value ? reader.GetInt32("r_termina") : 0;
+                                encabezado.Prefijo = reader["prefijo0"] as string ?? string.Empty;
+                                encabezado.Resolucion = reader["resolucion"] as string ?? string.Empty;
+                                encabezado.Notas = reader["notas"] as string ?? string.Empty;
+                                encabezado.Nota_fin = reader["NOTA_FIN"] as string ?? string.Empty;
+                                encabezado.Llave_tecnica = reader["llave_tecn"] as string ?? string.Empty;
                             }
                         }
                     }
