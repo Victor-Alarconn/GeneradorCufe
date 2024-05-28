@@ -141,7 +141,7 @@ namespace GeneradorCufe.ViewModel
                     string response = Encoding.UTF8.GetString(responseBytes);
 
                     // Guardar la respuesta en la base de datos y realizar la consulta del XML
-                //    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
+                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
 
                     return response;
@@ -368,7 +368,7 @@ namespace GeneradorCufe.ViewModel
                                     Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data()); 
 
                                       // Borrar la respuesta de la base de datos solo si se guardó correctamente
-                                      respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
+                                   //   respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
                                     
                                 }
 

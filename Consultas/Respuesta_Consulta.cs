@@ -56,7 +56,7 @@ namespace GeneradorCufe.Consultas
                 string detalle = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 string jsonRespuesta = $"[{{\"factura\":\"{recibo}\",\"cufe/cude\":\"{cufe}\",\"estado\":{{\"codigo\":\"Enviado Adquiriente\"}},\"detalle\":\"{detalle}\"}}]";
 
-                using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection connection = _data.CreateConnection())
                 {
                     connection.Open();
 
@@ -77,6 +77,27 @@ namespace GeneradorCufe.Consultas
                             Console.WriteLine("No se pudo actualizar la respuesta de consulta en la base de datos. No se encontró la factura especificada.");
                         }
                     }
+
+                    // Añadir la actualización de la tabla "fac"
+                    string updateFacQuery = "UPDATE fac SET estado = 4, dato_qr = @Cufe WHERE factura = @Factura AND empresa = @Empresa";
+
+                    using (MySqlCommand updateFacCommand = new MySqlCommand(updateFacQuery, connection))
+                    {
+                        updateFacCommand.Parameters.AddWithValue("@Cufe", cufe);
+                        updateFacCommand.Parameters.AddWithValue("@Factura", recibo);
+                        updateFacCommand.Parameters.AddWithValue("@Empresa", factura1.Empresa);
+
+                        int rowsAffectedFac = updateFacCommand.ExecuteNonQuery();
+
+                        if (rowsAffectedFac > 0)
+                        {
+                            Console.WriteLine("La tabla 'fac' se actualizó correctamente en la base de datos.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("No se pudo actualizar la tabla 'fac' en la base de datos. No se encontró la factura especificada.");
+                        }
+                    }
                 }
                 return true;
             }
@@ -90,12 +111,13 @@ namespace GeneradorCufe.Consultas
 
 
 
+
         public void BorrarEnBD(string cadenaConexion, string factura, string recibo, bool nota, Factura factura1)
         {
             try
             {
                 // Abrir una nueva conexión utilizando la cadena de conexión definida en la clase
-                using (MySqlConnection connection = new MySqlConnection(_data._connectionString))
+                using (MySqlConnection connection = _data.CreateConnection())
                 {
                     connection.Open();
 
