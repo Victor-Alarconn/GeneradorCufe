@@ -113,6 +113,8 @@ namespace GeneradorCufe.ViewModel
                     // Si no es "docum", utilizar la segunda URL
                     url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
                 }
+                Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
+                respuestaConsulta.GuardarCufe(cufe, factura);
                 string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
             }
             catch (Exception ex)

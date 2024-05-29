@@ -109,6 +109,40 @@ namespace GeneradorCufe.Consultas
         }
 
 
+        public void GuardarCufe(string cufe, Factura factura1)
+        {
+            try
+            {
+                using (MySqlConnection connection = _data.CreateConnection())
+                {
+                    connection.Open();
+
+                    string updateFacQuery = "UPDATE fac SET estado = 1, dato_qr = @Cufe WHERE factura = @Factura AND empresa = @Empresa";
+
+                    using (MySqlCommand updateFacCommand = new MySqlCommand(updateFacQuery, connection))
+                    {
+                        updateFacCommand.Parameters.AddWithValue("@Cufe", cufe);
+                        updateFacCommand.Parameters.AddWithValue("@Factura", factura1.Facturas);
+                        updateFacCommand.Parameters.AddWithValue("@Empresa", factura1.Empresa);
+
+                        int rowsAffectedFac = updateFacCommand.ExecuteNonQuery();
+
+                        if (rowsAffectedFac > 0)
+                        {
+                            Console.WriteLine("La tabla 'fac' se actualizó correctamente en la base de datos.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("No se pudo actualizar la tabla 'fac' en la base de datos. No se encontró la factura especificada.");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                new Factura_Consulta().MarcarComoConError(factura1, ex);
+            }
+        }
 
 
 
@@ -175,7 +209,7 @@ namespace GeneradorCufe.Consultas
                 // Concatenar el estado y el mensaje
                 string estadoMensaje = $"{status}: {mensaje}";
 
-                using (MySqlConnection connection = new MySqlConnection(cadenaConexion))
+                using (MySqlConnection connection = _data.CreateConnection())
                 {
                     connection.Open();
 
