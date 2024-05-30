@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 
 namespace GeneradorCufe.Consultas
 {
@@ -27,7 +28,7 @@ namespace GeneradorCufe.Consultas
         {
             _data = new Data();
             _timer = new System.Timers.Timer();
-            _timer.Interval = 5000; // Intervalo en milisegundos (10 segundos)
+            _timer.Interval = 9000; // Intervalo en milisegundos (10 segundos)
             _timer.Elapsed += TimerElapsed; // Método que se ejecutará cuando el temporizador expire
             _timer.Start(); // Iniciar el temporizador
             _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
@@ -108,7 +109,7 @@ namespace GeneradorCufe.Consultas
                 }
                 catch (Exception ex)
                 {
-                    // Manejar el error
+                    MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -149,6 +150,7 @@ namespace GeneradorCufe.Consultas
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     MarcarComoConError(factura, ex);
                 }
             }

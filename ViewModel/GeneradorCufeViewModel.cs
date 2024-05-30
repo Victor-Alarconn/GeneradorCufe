@@ -45,13 +45,8 @@ namespace GeneradorCufe.ViewModel
 
 
                 // Directorio donde se guardarán los archivos
-                string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
+                string xmlDirectory = Path.Combine(@"C:\inetpub\xml", "xml");
 
-                if (string.IsNullOrEmpty(xmlDirectory))
-                {
-                    MessageBox.Show("Error al obtener el directorio para guardar los archivos XML.", "Error de Directorio", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
 
                 // Asegurarte de que el directorio 'xml' existe
                 if (!Directory.Exists(xmlDirectory))
@@ -120,6 +115,7 @@ namespace GeneradorCufe.ViewModel
             catch (Exception ex)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
+                MessageBox.Show($"Error1: {ex.Message}", "Error:1", MessageBoxButton.OK, MessageBoxImage.Error);
                 facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
@@ -397,12 +393,12 @@ namespace GeneradorCufe.ViewModel
 
         public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string parentPath = Directory.GetParent(basePath).Parent.Parent.Parent.FullName;
+            string basePath = @"C:\inetpub\xml";
+            // string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            // string parentPath = Directory.GetParent(basePath).Parent.Parent.Parent.FullName;
 
-          //  string basePath = @"C:\Users\Programacion01\Desktop\Facturacion_P";
 
-          //  string cadenaConexion = Data.ConstruirCadenaConexion(factura);
+            //  string cadenaConexion = Data.ConstruirCadenaConexion(factura);
             string xmlTemplatePath;
             XDocument xmlDoc = null;
 
@@ -416,16 +412,16 @@ namespace GeneradorCufe.ViewModel
             switch (factura.Tipo_movimiento)
             {
                 case "SO1":
-                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla", "XML.xml");
+                    xmlTemplatePath = Path.Combine(basePath, "Plantilla", "XML.xml");
                     break;
                 case "NC":
-                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla_NC", "NC.xml");
+                    xmlTemplatePath = Path.Combine(basePath, "Plantilla_NC", "NC.xml");
                     break;
                 case "ND":
-                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla_ND", "ND.xml");
+                    xmlTemplatePath = Path.Combine(basePath, "Plantilla_ND", "ND.xml");
                     break;
                 default:
-                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla", "XML.xml");
+                    xmlTemplatePath = Path.Combine(basePath, "Plantilla", "XML.xml");
                     break;
             }
 
@@ -454,6 +450,7 @@ namespace GeneradorCufe.ViewModel
             catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
+                MessageBox.Show($"Error al cargar la plantilla XML: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 facturaConsulta.MarcarComoConError(factura, ex);
                 return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>(), null, null, null);
             }
