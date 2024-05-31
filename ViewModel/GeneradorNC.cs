@@ -31,7 +31,7 @@ namespace GeneradorCufe.ViewModel
 
                 // Llamar al método ConsultarProductosPorFactura para obtener la lista de productos
                 Encabezado encabezado = encabezadoConsulta.ConsultarEncabezado(factura, cadenaConexion);
-                Movimiento movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
+                Movimiento movimiento = movimientoConsulta.ConsultarValoresTotalesNC(factura, cadenaConexion);
                 List<Productos> listaProductos = productosConsulta.ConsultarProductosNota(factura, cadenaConexion);
                 List<FormaPago> listaFormaPago = formaPagoConsulta.ConsultarFormaPago(factura, cadenaConexion);
 

@@ -76,6 +76,86 @@ namespace GeneradorCufe.Consultas
 
 
 
+        public Movimiento ConsultarValoresTotalesNC(Factura factura, string cadenaConexion) // Consulta los valores totales de la factura
+        {
+            Movimiento movimiento = new Movimiento();
+
+            try
+            {
+                string query1 = @"
+                SELECT 
+                    nit, valor, vriva, desctos, gravada, exentas, fcruce, hdigita, rfuente, consumo, nbolsa, vbolsa, dato_cufe, numero, vendedor, dias, electron 
+                FROM 
+                    xxxxccfc 
+                WHERE 
+                    factura = @factura AND id_empresa = @Empresa"; // Añadir condición para id_empresa
+
+                                string query2 = @"
+                SELECT 
+                    debitos 
+                FROM 
+                    xxxxcmbt 
+                WHERE 
+                    factura = @factura AND id_empresa = @Empresa"; // Añadir condición para id_empresa
+
+                using (MySqlConnection connection = _data.CreateConnection()) // Utilizar la cadena de conexión proporcionada
+                {
+                    connection.Open();
+
+                    // Ejecutar primera consulta
+                    using (MySqlCommand command1 = new MySqlCommand(query1, connection))
+                    {
+                        command1.Parameters.AddWithValue("@factura", factura.Facturas); // Asignar valor a parámetro factura
+                        command1.Parameters.AddWithValue("@Empresa", factura.Empresa); // Asignar valor a parámetro empresa
+
+                        using (MySqlDataReader reader = command1.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                movimiento.Nit = reader["nit"].ToString();
+                                movimiento.Valor = reader.IsDBNull(reader.GetOrdinal("valor")) ? 0 : reader.GetDecimal(reader.GetOrdinal("valor"));
+                                movimiento.Valor_iva = reader.IsDBNull(reader.GetOrdinal("vriva")) ? 0 : reader.GetDecimal(reader.GetOrdinal("vriva"));
+                                movimiento.Valor_dsto = reader.IsDBNull(reader.GetOrdinal("desctos")) ? 0 : reader.GetDecimal(reader.GetOrdinal("desctos"));
+                                movimiento.Valor_neto = reader.IsDBNull(reader.GetOrdinal("gravada")) ? 0 : reader.GetDecimal(reader.GetOrdinal("gravada"));
+                                movimiento.Exentas = reader.IsDBNull(reader.GetOrdinal("exentas")) ? 0 : reader.GetDecimal(reader.GetOrdinal("exentas"));
+                                movimiento.Fecha_Factura = reader.GetDateTime(reader.GetOrdinal("fcruce"));
+                                movimiento.Hora_dig = reader["hdigita"].ToString();
+                                movimiento.Retiene = reader.IsDBNull(reader.GetOrdinal("rfuente")) ? 0 : reader.GetDecimal(reader.GetOrdinal("rfuente"));
+                                movimiento.Ipoconsumo = reader.IsDBNull(reader.GetOrdinal("consumo")) ? 0 : reader.GetDecimal(reader.GetOrdinal("consumo"));
+                                movimiento.Numero_bolsa = reader.IsDBNull(reader.GetOrdinal("nbolsa")) ? 0 : reader.GetDecimal(reader.GetOrdinal("nbolsa"));
+                                movimiento.Valor_bolsa = reader.IsDBNull(reader.GetOrdinal("vbolsa")) ? 0 : reader.GetDecimal(reader.GetOrdinal("vbolsa"));
+                                movimiento.Dato_Cufe = reader["dato_cufe"].ToString();
+                                movimiento.Numero = reader["numero"].ToString();
+                                movimiento.Vendedor = reader["electron"].ToString(); // Obtener el nombre del vendedor directamente
+                                movimiento.Dias = reader.IsDBNull(reader.GetOrdinal("dias")) ? 0 : reader.GetDecimal(reader.GetOrdinal("dias"));
+                            }
+                        }
+                    }
+
+                    // Ejecutar segunda consulta
+                    using (MySqlCommand command2 = new MySqlCommand(query2, connection))
+                    {
+                        command2.Parameters.AddWithValue("@factura", factura.Facturas); // Asignar valor a parámetro factura
+                        command2.Parameters.AddWithValue("@Empresa", factura.Empresa); // Asignar valor a parámetro empresa
+
+                        using (MySqlDataReader reader = command2.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                movimiento.Nota_credito = reader.IsDBNull(reader.GetOrdinal("debitos")) ? 0 : reader.GetDecimal(reader.GetOrdinal("debitos"));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
+            }
+
+            return movimiento;
+        }
 
 
 

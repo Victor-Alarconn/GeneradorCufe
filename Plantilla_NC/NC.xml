@@ -187,20 +187,6 @@
 			</cac:TaxCategory>
 		</cac:TaxSubtotal>
 	</cac:TaxTotal>
-	<cac:WithholdingTaxTotal>
-		<cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
-		<cac:TaxSubtotal>
-			<cbc:TaxableAmount currencyID="COP">{TaxableAmount}</cbc:TaxableAmount>
-			<cbc:TaxAmount currencyID="COP">{TaxAmount}</cbc:TaxAmount>
-			<cac:TaxCategory>
-				<cbc:Percent>{Percent}</cbc:Percent>
-				<cac:TaxScheme>
-					<cbc:ID>{ID}</cbc:ID>
-					<cbc:Name>{Name}</cbc:Name>
-				</cac:TaxScheme>
-			</cac:TaxCategory>
-		</cac:TaxSubtotal>
-	</cac:WithholdingTaxTotal>
 	<cac:LegalMonetaryTotal>
 		<cbc:LineExtensionAmount currencyID="COP">{LineExtensionAmount}</cbc:LineExtensionAmount>
 		<cbc:TaxExclusiveAmount currencyID="COP">{TaxExclusiveAmount}</cbc:TaxExclusiveAmount>
