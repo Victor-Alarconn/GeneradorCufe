@@ -67,7 +67,7 @@ namespace GeneradorCufe.Consultas
                     {
                         connection.Open();
 
-                        string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas FROM fac WHERE estado = 0";
+                        string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado FROM fac WHERE estado IN (0, 6)";
 
                         using (MySqlCommand command = new MySqlCommand(query, connection))
                         {
@@ -129,6 +129,7 @@ namespace GeneradorCufe.Consultas
                 Aplica = row["aplica"]?.ToString() ?? "",
                 Nombre = row["nombre3"]?.ToString() ?? "",
                 Notas = row["notas"]?.ToString() ?? "",
+                Estado = (row["estado"] == DBNull.Value) ? 0 : Convert.ToInt32(row["estado"]),
                // Terminal = row["terminal"]?.ToString() ?? "",
                // Ip_base = row["ip_base"]?.ToString() ?? ""
             };
@@ -189,7 +190,7 @@ namespace GeneradorCufe.Consultas
                     int intentos = registroProcesandoActualizado[idEncabezado].Intentos;
 
                     // Definir el límite máximo de intentos
-                    int maxIntentos = 3;
+                    int maxIntentos = 2;
 
                     if (intentos <= maxIntentos)
                     {

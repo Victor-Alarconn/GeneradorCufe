@@ -127,8 +127,19 @@ namespace GeneradorCufe.ViewModel
         {
             // Crear una instancia de la clase Respuesta_Consulta
             Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
+
             try
             {
+
+                if (factura.Estado == 6)
+                {
+                    // Guardar la respuesta en la base de datos y realizar la consulta del XML sin enviar la solicitud POST
+                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
+                    ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
+
+                    return "No se envió la solicitud POST porque el estado del registro es 6.";
+                }
+
                 using (WebClient client = new WebClient())
                 {
                     client.Headers["efacturaAuthorizationToken"] = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase)
@@ -377,7 +388,7 @@ namespace GeneradorCufe.ViewModel
                     else
                     {
                         // Mostrar un mensaje de error si la solicitud no fue exitosa
-                      //  MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
+                       MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
                         Factura_Consulta facturaConsulta = new Factura_Consulta();
                         facturaConsulta.ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
                     }
