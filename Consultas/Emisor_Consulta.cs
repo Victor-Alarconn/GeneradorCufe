@@ -80,7 +80,7 @@ namespace GeneradorCufe.Consultas
             catch (Exception ex)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
-                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+               // MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 facturaConsulta.MarcarComoConError(factura, ex);
             }
         }

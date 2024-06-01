@@ -39,7 +39,7 @@ namespace GeneradorCufe.ViewModel
                 // Verificar que el contenido XML no esté vacío antes de continuar
                 if (string.IsNullOrEmpty(xmlContent))
                 {
-                    MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
+                 //   MessageBox.Show("La generación del XML falló. Por favor, verifique que la plantilla XML exista y sea válida.", "Error de Generación XML", MessageBoxButton.OK, MessageBoxImage.Error);
                     return; // Detiene la ejecución adicional si no se generó el XML
                 }
 
@@ -116,7 +116,7 @@ namespace GeneradorCufe.ViewModel
             catch (Exception ex)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
-                MessageBox.Show($"Error1: {ex.Message}", "Error:1", MessageBoxButton.OK, MessageBoxImage.Error);
+              //  MessageBox.Show($"Error1: {ex.Message}", "Error:1", MessageBoxButton.OK, MessageBoxImage.Error);
                 facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
@@ -170,7 +170,7 @@ namespace GeneradorCufe.ViewModel
 
         private static void ManejarErrorSolicitud(Exception ex, Factura factura, string titulo, string mensaje)
         {
-            MessageBox.Show($"{mensaje}:\n\n{ex.Message}", titulo, MessageBoxButton.OK, MessageBoxImage.Error);
+         //   MessageBox.Show($"{mensaje}:\n\n{ex.Message}", titulo, MessageBoxButton.OK, MessageBoxImage.Error);
             new Factura_Consulta().MarcarComoConError(factura, ex);
         }
 
@@ -183,7 +183,7 @@ namespace GeneradorCufe.ViewModel
                 using (var reader = new StreamReader(stream))
                 {
                     string errorResponse = reader.ReadToEnd();
-                    MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                 //   MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                     respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
                     new Factura_Consulta().MarcarComoConError(factura, webEx);
                     return "";
@@ -191,7 +191,7 @@ namespace GeneradorCufe.ViewModel
             }
             else
             {
-                MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+               // MessageBox.Show("Error al enviar la solicitud POST:\n\n" + webEx.Message, "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                 return "";
             }
         }
@@ -388,7 +388,7 @@ namespace GeneradorCufe.ViewModel
                     else
                     {
                         // Mostrar un mensaje de error si la solicitud no fue exitosa
-                       MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
+                     //  MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
                         Factura_Consulta facturaConsulta = new Factura_Consulta();
                         facturaConsulta.ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
                     }
@@ -405,9 +405,9 @@ namespace GeneradorCufe.ViewModel
 
         public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
-            //  string basePath = @"C:\inetpub\xml";
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string parentPath = Directory.GetParent(basePath).Parent.Parent.Parent.FullName;
+             string basePath = @"C:\inetpub\xml";
+          //  string basePath = AppDomain.CurrentDomain.BaseDirectory;
+          //  string parentPath = Directory.GetParent(basePath).Parent.Parent.Parent.FullName;
 
 
             //  string cadenaConexion = Data.ConstruirCadenaConexion(factura);
@@ -424,16 +424,16 @@ namespace GeneradorCufe.ViewModel
             switch (factura.Tipo_movimiento)
             {
                 case "SO1":
-                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla", "XML.xml");
+                    xmlTemplatePath = Path.Combine(basePath, "Plantilla", "XML.xml");
                     break;
                 case "NC":
-                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla_NC", "NC.xml");
+                    xmlTemplatePath = Path.Combine(basePath, "Plantilla_NC", "NC.xml");
                     break;
                 case "ND":
-                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla_ND", "ND.xml");
+                    xmlTemplatePath = Path.Combine(basePath, "Plantilla_ND", "ND.xml");
                     break;
                 default:
-                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla", "XML.xml");
+                    xmlTemplatePath = Path.Combine(basePath, "Plantilla", "XML.xml");
                     break;
             }
 
@@ -462,7 +462,7 @@ namespace GeneradorCufe.ViewModel
             catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
-                MessageBox.Show($"Error al cargar la plantilla XML: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+              //  MessageBox.Show($"Error al cargar la plantilla XML: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 facturaConsulta.MarcarComoConError(factura, ex);
                 return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>(), null, null, null);
             }
