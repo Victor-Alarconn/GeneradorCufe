@@ -67,7 +67,7 @@ namespace GeneradorCufe.Consultas
                     {
                         connection.Open();
 
-                        string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado FROM fac WHERE estado IN (0, 6)";
+                        string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal FROM fac WHERE estado IN (0, 6)";
 
                         using (MySqlCommand command = new MySqlCommand(query, connection))
                         {
@@ -130,7 +130,7 @@ namespace GeneradorCufe.Consultas
                 Nombre = row["nombre3"]?.ToString() ?? "",
                 Notas = row["notas"]?.ToString() ?? "",
                 Estado = (row["estado"] == DBNull.Value) ? 0 : Convert.ToInt32(row["estado"]),
-               // Terminal = row["terminal"]?.ToString() ?? "",
+                Terminal = row["terminal"]?.ToString() ?? "",
                // Ip_base = row["ip_base"]?.ToString() ?? ""
             };
 

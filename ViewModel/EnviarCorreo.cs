@@ -70,8 +70,8 @@ namespace GeneradorCufe.ViewModel
 
 
             mensaje.IsBodyHtml = true; // Establecer el cuerpo del mensaje como HTML
-          //  string rutaImagen = @"C:\Users\Programacion01\source\repos\RepoVictor\GeneradorCufe\xml\logo.png";
-            string rutaImagen = @"C:\inetpub\xml\Imagenes\logo.png"; // Gigas
+            string rutaImagen = @"C:\Users\Programacion01\source\repos\RepoVictor\GeneradorCufe\xml\logo.png";
+         //   string rutaImagen = @"C:\inetpub\xml\Imagenes\logo.png"; // Gigas
             if (File.Exists(rutaImagen))
             {
                 // Agregar la imagen como un archivo adjunto al mensaje

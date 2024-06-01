@@ -79,13 +79,14 @@ namespace GeneradorCufe.Consultas
                     }
 
                     // Añadir la actualización de la tabla "fac"
-                    string updateFacQuery = "UPDATE fac SET estado = 4, dato_qr = @Cufe WHERE factura = @Factura AND empresa = @Empresa";
+                    string updateFacQuery = "UPDATE fac SET estado = 4, dato_qr = @Cufe WHERE factura = @Factura AND empresa = @Empresa AND tipo_mvt = @Tipo";
 
                     using (MySqlCommand updateFacCommand = new MySqlCommand(updateFacQuery, connection))
                     {
                         updateFacCommand.Parameters.AddWithValue("@Cufe", cufe);
-                        updateFacCommand.Parameters.AddWithValue("@Factura", recibo);
+                        updateFacCommand.Parameters.AddWithValue("@Factura", factura1.Facturas);
                         updateFacCommand.Parameters.AddWithValue("@Empresa", factura1.Empresa);
+                        updateFacCommand.Parameters.AddWithValue("@Tipo", factura1.Tipo_movimiento);
 
                         int rowsAffectedFac = updateFacCommand.ExecuteNonQuery();
 
@@ -117,13 +118,14 @@ namespace GeneradorCufe.Consultas
                 {
                     connection.Open();
 
-                    string updateFacQuery = "UPDATE fac SET estado = 1, dato_qr = @Cufe WHERE factura = @Factura AND empresa = @Empresa";
+                    string updateFacQuery = "UPDATE fac SET estado = 1, dato_qr = @Cufe WHERE factura = @Factura AND empresa = @Empresa AND tipo_mvt = @Tipo";
 
                     using (MySqlCommand updateFacCommand = new MySqlCommand(updateFacQuery, connection))
                     {
                         updateFacCommand.Parameters.AddWithValue("@Cufe", cufe);
                         updateFacCommand.Parameters.AddWithValue("@Factura", factura1.Facturas);
                         updateFacCommand.Parameters.AddWithValue("@Empresa", factura1.Empresa);
+                        updateFacCommand.Parameters.AddWithValue("@Tipo", factura1.Tipo_movimiento);
 
                         int rowsAffectedFac = updateFacCommand.ExecuteNonQuery();
 

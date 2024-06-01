@@ -23,13 +23,17 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                string query = "SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0, resolucion, notas, NOTA_FIN, llave_tecn FROM xxxxterm WHERE id_empresa = @Terminal";
+                string query = @"
+        SELECT resol_fe, f_inicio, f_termina, r_inicio, r_termina, prefijo0, resolucion, notas, NOTA_FIN, llave_tecn 
+        FROM xxxxterm 
+        WHERE id_empresa = @Empresa AND terminal = @Terminal";
 
                 using (MySqlConnection connection = _data.CreateConnection()) // Utilizar la cadena de conexión proporcionada
                 {
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Terminal", factura.Empresa);
+                        command.Parameters.AddWithValue("@Empresa", factura.Empresa);
+                        command.Parameters.AddWithValue("@Terminal", factura.Terminal);
 
                         connection.Open();
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -59,6 +63,7 @@ namespace GeneradorCufe.Consultas
 
             return encabezado;
         }
+
 
 
     }

@@ -45,7 +45,7 @@ namespace GeneradorCufe.ViewModel
 
 
                 // Directorio donde se guardarán los archivos
-               // string xmlDirectory = Path.Combine(@"C:\inetpub\xml", "xml");
+            //   string xmlDirectory = Path.Combine(@"C:\inetpub\xml", "xml"); // Gigas
                 string xmlDirectory = System.IO.Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "xml");
 
 
@@ -405,9 +405,9 @@ namespace GeneradorCufe.ViewModel
 
         public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GenerateXMLAndBase64(Emisor emisor, Factura factura)
         {
-             string basePath = @"C:\inetpub\xml";
-          //  string basePath = AppDomain.CurrentDomain.BaseDirectory;
-          //  string parentPath = Directory.GetParent(basePath).Parent.Parent.Parent.FullName;
+          //   string basePath = @"C:\inetpub\xml";
+           string basePath = AppDomain.CurrentDomain.BaseDirectory;
+           string parentPath = Directory.GetParent(basePath).Parent.Parent.Parent.FullName;
 
 
             //  string cadenaConexion = Data.ConstruirCadenaConexion(factura);
@@ -424,16 +424,16 @@ namespace GeneradorCufe.ViewModel
             switch (factura.Tipo_movimiento)
             {
                 case "SO1":
-                    xmlTemplatePath = Path.Combine(basePath, "Plantilla", "XML.xml");
+                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla", "XML.xml");
                     break;
                 case "NC":
-                    xmlTemplatePath = Path.Combine(basePath, "Plantilla_NC", "NC.xml");
+                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla_NC", "NC.xml");
                     break;
                 case "ND":
-                    xmlTemplatePath = Path.Combine(basePath, "Plantilla_ND", "ND.xml");
+                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla_ND", "ND.xml");
                     break;
                 default:
-                    xmlTemplatePath = Path.Combine(basePath, "Plantilla", "XML.xml");
+                    xmlTemplatePath = Path.Combine(parentPath, "Plantilla", "XML.xml");
                     break;
             }
 
