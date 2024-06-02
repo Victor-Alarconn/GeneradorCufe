@@ -115,6 +115,11 @@ namespace GeneradorCufe.ViewModel
                                             taxSchemeElement.Element(cbc + "ID")?.SetValue("01"); // ID es 01 si es Responsable IVA
                                             taxSchemeElement.Element(cbc + "Name")?.SetValue("IVA"); // Name es IVA si es Responsable IVA
                                         }
+                                        else if (adquiriente.Nombre_adqu == "CONSUMIDOR FINAL" || adquiriente.Nit_adqui == "222222222222")
+                                        {
+                                            taxSchemeElement.Element(cbc + "ID")?.SetValue("ZY"); // ID es ZZ si no es Responsable IVA
+                                            taxSchemeElement.Element(cbc + "Name")?.SetValue("No causa"); // Name es No aplica si no es Responsable IVA
+                                        }
                                         else
                                         {
                                             taxSchemeElement.Element(cbc + "ID")?.SetValue("ZZ"); // ID es ZZ si no es Responsable IVA
