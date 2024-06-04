@@ -16,7 +16,7 @@ namespace GeneradorCufe.ViewModel
     public  class EnviarCorreo
     {
         public static async Task<bool> Enviar(Emisor emisor, Adquiriente adquiriente, Factura factura, byte[] archivoAdjunto, string cufe)
-        {
+       {
             // Configurar el cliente SMTP
             SmtpClient clienteSmtp = new SmtpClient("mail.rmsoft.com.co");
             clienteSmtp.Port = 587;
@@ -70,8 +70,8 @@ namespace GeneradorCufe.ViewModel
 
 
             mensaje.IsBodyHtml = true; // Establecer el cuerpo del mensaje como HTML
-            string rutaImagen = @"C:\Users\hp\source\repos\GeneradorCufe\xml\logo.png";
-          //  string rutaImagen = @"C:\Users\Programacion01\source\repos\RepoVictor\GeneradorCufe\xml\logo.png";
+          //  string rutaImagen = @"C:\Users\hp\source\repos\GeneradorCufe\xml\logo.png"; // Victor
+            string rutaImagen = @"C:\Users\Programacion01\source\repos\RepoVictor\GeneradorCufe\xml\logo.png"; // Oficina
             // string rutaImagen = @"C:\inetpub\xml\Imagenes\logo.png"; // Gigas
             if (File.Exists(rutaImagen))
             {

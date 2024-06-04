@@ -67,7 +67,12 @@ namespace GeneradorCufe.Consultas
                     {
                         connection.Open();
 
-                        string query = "SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal FROM fac WHERE estado IN (0, 6)";
+                        string query = @"
+    SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
+    FROM fac 
+    WHERE estado IN (0, 6) 
+    AND (terminal IS NOT NULL AND terminal <> '')";
+
 
                         using (MySqlCommand command = new MySqlCommand(query, connection))
                         {

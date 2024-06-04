@@ -55,6 +55,7 @@ namespace GeneradorCufe.Consultas
 
                 string detalle = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 string jsonRespuesta = $"[{{\"factura\":\"{recibo}\",\"cufe/cude\":\"{cufe}\",\"estado\":{{\"codigo\":\"Enviado Adquiriente\"}},\"detalle\":\"{detalle}\"}}]";
+                string cufe1 = "ENVIADO ADQUIRIENTE CUFE: " + cufe;
 
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
@@ -63,7 +64,7 @@ namespace GeneradorCufe.Consultas
                     using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                     {
                         updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonRespuesta);
-                        updateCommand.Parameters.AddWithValue("@Cufe", cufe);
+                        updateCommand.Parameters.AddWithValue("@Cufe", cufe1);
                         updateCommand.Parameters.AddWithValue("@Factura", recibo);
 
                         int rowsAffected = updateCommand.ExecuteNonQuery();
