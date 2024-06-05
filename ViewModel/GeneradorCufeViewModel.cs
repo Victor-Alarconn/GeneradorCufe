@@ -110,7 +110,7 @@ namespace GeneradorCufe.ViewModel
                     url = "https://apivp.efacturacadena.com/staging/vp/documentos/proceso/alianzas";
                 }
                 Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
-                respuestaConsulta.GuardarCufe(cufe, factura);
+                respuestaConsulta.GuardarCufe(cufe, factura, emisor);
                 string response = await SendPostRequest(url, base64Content, emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
             }
             catch (Exception ex)
@@ -183,7 +183,7 @@ namespace GeneradorCufe.ViewModel
                 using (var reader = new StreamReader(stream))
                 {
                     string errorResponse = reader.ReadToEnd();
-                   MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                   MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}{factura.Facturas}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                     respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
                     new Factura_Consulta().MarcarComoConError(factura, webEx);
                     return "";

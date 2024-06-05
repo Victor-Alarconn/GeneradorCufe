@@ -64,7 +64,7 @@ namespace GeneradorCufe.Consultas
                     using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
                     {
                         updateCommand.Parameters.AddWithValue("@DocumentoJson", jsonRespuesta);
-                        updateCommand.Parameters.AddWithValue("@Cufe", cufe1);
+                        updateCommand.Parameters.AddWithValue("@Cufe", cufe);
                         updateCommand.Parameters.AddWithValue("@Factura", recibo);
 
                         int rowsAffected = updateCommand.ExecuteNonQuery();
@@ -84,7 +84,7 @@ namespace GeneradorCufe.Consultas
 
                     using (MySqlCommand updateFacCommand = new MySqlCommand(updateFacQuery, connection))
                     {
-                        updateFacCommand.Parameters.AddWithValue("@Cufe", cufe);
+                        updateFacCommand.Parameters.AddWithValue("@Cufe", jsonRespuesta);
                         updateFacCommand.Parameters.AddWithValue("@Factura", factura1.Facturas);
                         updateFacCommand.Parameters.AddWithValue("@Empresa", factura1.Empresa);
                         updateFacCommand.Parameters.AddWithValue("@Tipo", factura1.Tipo_movimiento);
@@ -111,7 +111,7 @@ namespace GeneradorCufe.Consultas
         }
 
 
-        public void GuardarCufe(string cufe, Factura factura1)
+        public void GuardarCufe(string cufe, Factura factura1, Emisor emisor)
         {
             try
             {
@@ -120,10 +120,34 @@ namespace GeneradorCufe.Consultas
                     connection.Open();
 
                     string updateFacQuery = "UPDATE fac SET estado = 1, dato_qr = @Cufe WHERE factura = @Factura AND empresa = @Empresa AND tipo_mvt = @Tipo";
+                    string idDocumento, codigoTipoDocumento, recibo, updateQuery;
+                    bool nota = !string.IsNullOrEmpty(factura1.Recibo) && factura1.Recibo != "0" && factura1.Tipo_movimiento == "NC";
+                    bool debito = !string.IsNullOrEmpty(factura1.Recibo) && factura1.Recibo != "0" && factura1.Tipo_movimiento == "ND";
+
+                    if (nota)
+                    {
+                        recibo = factura1.Recibo;
+                        idDocumento = recibo;
+                        cufe = emisor.cude;
+                    }
+                    else if (debito)
+                    {
+                        recibo = factura1.Recibo;
+                        idDocumento = recibo;
+                        cufe = emisor.cude;
+                    }
+                    else
+                    {
+                        recibo = factura1.Facturas;
+                        idDocumento = recibo;
+                    }
+
+                    string detalle = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    string Respuesta = $"[{{\"factura\":\"{recibo}\",\"cufe/cude\":\"{cufe}\",\"estado\":{{\"codigo\":\"Enviado Adquiriente\"}},\"detalle\":\"{detalle}\"}}]";
 
                     using (MySqlCommand updateFacCommand = new MySqlCommand(updateFacQuery, connection))
                     {
-                        updateFacCommand.Parameters.AddWithValue("@Cufe", cufe);
+                        updateFacCommand.Parameters.AddWithValue("@Cufe", Respuesta);
                         updateFacCommand.Parameters.AddWithValue("@Factura", factura1.Facturas);
                         updateFacCommand.Parameters.AddWithValue("@Empresa", factura1.Empresa);
                         updateFacCommand.Parameters.AddWithValue("@Tipo", factura1.Tipo_movimiento);
