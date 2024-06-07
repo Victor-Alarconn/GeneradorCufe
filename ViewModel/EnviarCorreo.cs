@@ -17,10 +17,18 @@ namespace GeneradorCufe.ViewModel
     {
         public static async Task<bool> Enviar(Emisor emisor, Adquiriente adquiriente, Factura factura, byte[] archivoAdjunto, string cufe)
        {
+
+            if (string.IsNullOrEmpty(adquiriente.Correo_adqui))
+            {
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConErrorCorreo(factura, new Exception("El adquiriente no tiene un correo electrónico registrado."));
+                return false;
+            }
+
             // Configurar el cliente SMTP
             SmtpClient clienteSmtp = new SmtpClient("mail.rmsoft.com.co");
             clienteSmtp.Port = 587;
-            clienteSmtp.Credentials = new NetworkCredential("facturaelectronica@rmsoft.com.co", "J%[XE9.X0i]{");
+            clienteSmtp.Credentials = new NetworkCredential("facturaelectronica@rmsoft.com.co", "Jad*1J{84MD?");
             clienteSmtp.EnableSsl = true; // Habilitar SSL
            
 
@@ -70,8 +78,8 @@ namespace GeneradorCufe.ViewModel
 
 
             mensaje.IsBodyHtml = true; // Establecer el cuerpo del mensaje como HTML
-            string rutaImagen = @"C:\Users\hp\source\repos\GeneradorCufe\xml\logo.png"; // Victor
-           /* string rutaImagen = @"C:\Users\Programacion01\source\repos\RepoVictor\GeneradorCufe\xml\logo.png";*/ // Oficina
+            /* string rutaImagen = @"C:\Users\hp\source\repos\GeneradorCufe\xml\logo.png";*/ // Victor
+            string rutaImagen = @"C:\Users\Programacion01\source\repos\RepoVictor\GeneradorCufe\xml\logo.png"; // Oficina
             // string rutaImagen = @"C:\inetpub\xml\Imagenes\logo.png"; // Gigas
             if (File.Exists(rutaImagen))
             {
@@ -128,8 +136,8 @@ namespace GeneradorCufe.ViewModel
             }
             catch (SmtpException ex)
             {
-                // Manejar la excepción SmtpException
-                Console.WriteLine("Error al enviar el correo: " + ex.Message);
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConErrorCorreo(factura, ex);
                 return false;
             }
             catch (Exception ex)

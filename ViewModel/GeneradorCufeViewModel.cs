@@ -133,8 +133,6 @@ namespace GeneradorCufe.ViewModel
 
                 if (factura.Estado == 6)
                 {
-                    // Guardar la respuesta en la base de datos y realizar la consulta del XML sin enviar la solicitud POST
-                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
 
                     return "No se envió la solicitud POST porque el estado del registro es 6.";
@@ -149,9 +147,6 @@ namespace GeneradorCufe.ViewModel
                     // Convertir el contenido base64 en bytes y realizar la solicitud POST
                     byte[] responseBytes = client.UploadData(url, "POST", Encoding.UTF8.GetBytes(base64Content));
                     string response = Encoding.UTF8.GetString(responseBytes);
-
-                    // Guardar la respuesta en la base de datos y realizar la consulta del XML
-                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
 
                     return response;
@@ -375,11 +370,14 @@ namespace GeneradorCufe.ViewModel
                                 if (correoEnviado)
                                 {
 
-                                    Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data()); 
+                                    Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
 
-                                      // Borrar la respuesta de la base de datos solo si se guardó correctamente
-                                   //   respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
-                                    
+                                    // Guardar la respuesta en la base de datos y realizar la consulta del XML sin enviar la solicitud POST
+                                    respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
+
+                                    // Borrar la respuesta de la base de datos solo si se guardó correctamente
+                                    //   respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
+
                                 }
 
                             }

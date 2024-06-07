@@ -246,7 +246,7 @@ namespace GeneradorCufe.Consultas
             catch (Exception ex)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
-                facturaConsulta.MarcarComoConError(factura, ex);
+                facturaConsulta.MarcarComoConErrorATTAs(factura, ex);
             }
         }
 
@@ -260,7 +260,7 @@ namespace GeneradorCufe.Consultas
                 Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
 
                 if (File.Exists("registro_procesando.json"))
-                {   
+                {
                     using (StreamReader reader = new StreamReader("registro_procesando.json"))
                     {
                         string json = reader.ReadToEnd();
@@ -300,6 +300,150 @@ namespace GeneradorCufe.Consultas
                         // Agregar parámetros a la consulta
                         command.Parameters.AddWithValue("@idEncabezado", factura.Id_encabezado);
                         command.Parameters.AddWithValue("@mensajeError", ex.Message); // Agregar el mensaje de error
+
+                        // Ejecutar la consulta
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        // Verificar si se actualizó algún registro
+                        if (rowsAffected > 0)
+                        {
+                            Console.WriteLine($"Registro con Id_encabezado {factura.Id_encabezado} marcado como error. Mensaje de error: {ex.Message}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No se encontró ningún registro con Id_encabezado {factura.Id_encabezado} y estado 0.");
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error al marcar como error el registro con Id_encabezado {factura.Id_encabezado}: {e.Message}");
+            }
+        }
+
+        public void MarcarComoConErrorCorreo(Factura factura, Exception ex)
+        {
+            try
+            {
+                // Cargar el diccionario desde el archivo temporal, si existe
+                Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+
+                if (File.Exists("registro_procesando.json"))
+                {
+                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                    {
+                        string json = reader.ReadToEnd();
+                        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
+                    return;
+                }
+
+                // Remover el registro del diccionario si existe
+                if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                {
+                    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+
+                    // Guardar el diccionario actualizado en el archivo temporal
+                    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                    File.WriteAllText("registro_procesando.json", jsonOutput);
+                }
+                else
+                {
+                    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                }
+
+                // Actualizar el estado en la base de datos
+                using (MySqlConnection connection = _data.CreateConnection())
+                {
+                    connection.Open();
+
+                    // Construir la consulta para actualizar el estado del registro con estado 5 y el mensaje de error
+                    string query = "UPDATE fac SET estado = 3, msm_error = @mensajeError WHERE id_enc = @idEncabezado";
+
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        // Agregar parámetros a la consulta
+                        command.Parameters.AddWithValue("@idEncabezado", factura.Id_encabezado);
+                        command.Parameters.AddWithValue("@mensajeError", ex.Message); // Agregar el mensaje de error
+
+                        // Ejecutar la consulta
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        // Verificar si se actualizó algún registro
+                        if (rowsAffected > 0)
+                        {
+                            Console.WriteLine($"Registro con Id_encabezado {factura.Id_encabezado} marcado como error. Mensaje de error: {ex.Message}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No se encontró ningún registro con Id_encabezado {factura.Id_encabezado} y estado 0.");
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error al marcar como error el registro con Id_encabezado {factura.Id_encabezado}: {e.Message}");
+            }
+        }
+
+        public void MarcarComoConErrorATTAs(Factura factura, Exception ex)
+        {
+            try
+            {
+                // Cargar el diccionario desde el archivo temporal, si existe
+                Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+
+                if (File.Exists("registro_procesando.json"))
+                {
+                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                    {
+                        string json = reader.ReadToEnd();
+                        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
+                    return;
+                }
+
+                // Remover el registro del diccionario si existe
+                if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                {
+                    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+
+                    // Guardar el diccionario actualizado en el archivo temporal
+                    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                    File.WriteAllText("registro_procesando.json", jsonOutput);
+                }
+                else
+                {
+                    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                }
+
+                // Actualizar el estado en la base de datos
+                using (MySqlConnection connection = _data.CreateConnection())
+                {
+                    connection.Open();
+
+                    // Construir la consulta para actualizar el estado del registro con estado 5 y el mensaje de error
+                    string query = "UPDATE fac SET estado = 2, msm_error = @mensajeError WHERE id_enc = @idEncabezado";
+
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        // Agregar parámetros a la consulta
+                        command.Parameters.AddWithValue("@idEncabezado", factura.Id_encabezado);
+                        command.Parameters.AddWithValue("@mensajeError", "Error a consultar el Attasdocumnet"); // Agregar el mensaje de error
 
                         // Ejecutar la consulta
                         int rowsAffected = command.ExecuteNonQuery();
