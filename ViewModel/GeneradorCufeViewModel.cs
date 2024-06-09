@@ -178,7 +178,7 @@ namespace GeneradorCufe.ViewModel
                 using (var reader = new StreamReader(stream))
                 {
                     string errorResponse = reader.ReadToEnd();
-                   MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}{factura.Facturas}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
+                //   MessageBox.Show($"Error al enviar la solicitud POST. Código de estado: {statusCode}\nMensaje de error: {errorResponse}{factura.Facturas}", "Error de Solicitud POST", MessageBoxButton.OK, MessageBoxImage.Error);
                     respuestaConsulta.GuardarErrorEnBD(cadenaConexion, statusCode, errorResponse, factura);
                     new Factura_Consulta().MarcarComoConError(factura, webEx);
                     return "";
