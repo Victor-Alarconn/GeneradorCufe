@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -15,7 +16,9 @@ namespace GeneradorCufe.Consultas
     public class Respuesta_Consulta
     {
         public readonly Conexion.Data _data;
-
+        // Cargar el diccionario desde el archivo temporal, si existe
+        Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+   
         public Respuesta_Consulta(Conexion.Data data)
         {
             _data = data;
@@ -55,7 +58,6 @@ namespace GeneradorCufe.Consultas
 
                 string detalle = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 string jsonRespuesta = $"[{{\"factura\":\"{recibo}\",\"cufe/cude\":\"{cufe}\",\"estado\":{{\"codigo\":\"Enviado Adquiriente\"}},\"detalle\":\"{detalle}\"}}]";
-
 
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
@@ -101,6 +103,32 @@ namespace GeneradorCufe.Consultas
                         }
                     }
                 }
+              
+
+                    if (File.Exists("registro_procesando.json"))
+                    {
+                        using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                        {
+                            string json = reader.ReadToEnd();
+                            registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                        }
+                    }
+
+                    // Eliminar el registro del diccionario y guardar los cambios en el archivo temporal
+                    if (registroProcesandoActualizado.ContainsKey(factura1.Id_encabezado.Value))
+                    {
+                        registroProcesandoActualizado.Remove(factura1.Id_encabezado.Value);
+
+                        // Guardar el diccionario actualizado en el archivo temporal
+                        string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                        File.WriteAllText("registro_procesando.json", jsonOutput);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"No se encontró el registro con Id_encabezado {factura1.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                    }
+                
+
                 return true;
             }
             catch (Exception ex)
@@ -109,6 +137,7 @@ namespace GeneradorCufe.Consultas
                 return false;
             }
         }
+
 
 
         public void GuardarCufe(string cufe, Factura factura1, Emisor emisor)
@@ -164,13 +193,13 @@ namespace GeneradorCufe.Consultas
                         }
                     }
                 }
+                
             }
             catch (Exception ex)
             {
                 new Factura_Consulta().MarcarComoConError(factura1, ex);
             }
         }
-
 
 
         public void BorrarEnBD(string cadenaConexion, string factura, string recibo, bool nota, Factura factura1)
@@ -225,11 +254,11 @@ namespace GeneradorCufe.Consultas
                 facturaConsulta.MarcarComoConError(factura1, ex);
             }
         }
-    
 
 
 
-    public void GuardarErrorEnBD(string cadenaConexion, HttpStatusCode status, string mensaje, Factura factura)
+
+        public void GuardarErrorEnBD(string cadenaConexion, HttpStatusCode status, string mensaje, Factura factura)
         {
             try
             {
@@ -273,6 +302,30 @@ namespace GeneradorCufe.Consultas
                         }
                     }
                 }
+
+                    if (File.Exists("registro_procesando.json"))
+                    {
+                        using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                        {
+                            string json = reader.ReadToEnd();
+                            registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                        }
+                    }
+
+                    // Eliminar el registro del diccionario y guardar los cambios en el archivo temporal
+                    if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                    {
+                        registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+
+                        // Guardar el diccionario actualizado en el archivo temporal
+                        string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                        File.WriteAllText("registro_procesando.json", jsonOutput);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                    }
+                
             }
             catch (Exception ex)
             {
@@ -280,6 +333,7 @@ namespace GeneradorCufe.Consultas
                 facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
+
 
 
 
