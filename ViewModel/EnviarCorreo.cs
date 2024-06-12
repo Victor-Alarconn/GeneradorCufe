@@ -28,8 +28,8 @@ namespace GeneradorCufe.ViewModel
             // Configurar el cliente SMTP
             SmtpClient clienteSmtp = new SmtpClient("mail.rmsoft.com.co");
             clienteSmtp.Port = 587;
-            clienteSmtp.Credentials = new NetworkCredential("facturaelectronica@rmsoft.com.co", "p6;li17^wU02");
-            // clienteSmtp.Credentials = new NetworkCredential("facturaselectronicas@rmsoft.com.co", "[]Q^nFwROD[6");
+            //clienteSmtp.Credentials = new NetworkCredential("facturaelectronica@rmsoft.com.co", "p6;li17^wU02");
+            clienteSmtp.Credentials = new NetworkCredential("facturaselectronicas@rmsoft.com.co", "[]Q^nFwROD[6");
             clienteSmtp.EnableSsl = true; // Habilitar SSL
            
 

@@ -345,7 +345,7 @@ namespace GeneradorCufe.ViewModel
                                 bool correoEnviado = false;
 
                                 // Comprobar si se ha enviado un correo electrónico para esta factura
-                                if (registroProcesando.ContainsKey(idEncabezado) && registroProcesando[idEncabezado].Envio == 0)
+                                if (registroProcesando.ContainsKey(idEncabezado) && registroProcesando[idEncabezado].Envio == 0 && adquiriente.Nit_adqui != "222222222222")
                                 {
                                     // Enviar el archivo ZIP por correo electrónico
                                     correoEnviado = await EnviarCorreo.Enviar(emisor, adquiriente, factura, zipStream.ToArray(), nombreArchivoXML);
