@@ -28,7 +28,7 @@ namespace GeneradorCufe.Consultas
         {
             _data = new Data();
             _timer = new System.Timers.Timer();
-            _timer.Interval = 9000; // Intervalo en milisegundos (10 segundos)
+            _timer.Interval = 15000; // Intervalo en milisegundos (10 segundos)
             _timer.Elapsed += TimerElapsed; // Método que se ejecutará cuando el temporizador expire
             _timer.Start(); // Iniciar el temporizador
             _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
