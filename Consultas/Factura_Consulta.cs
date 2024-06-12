@@ -71,10 +71,7 @@ namespace GeneradorCufe.Consultas
                         SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
                         FROM fac 
                         WHERE estado IN (0, 6) 
-                        AND (terminal IS NOT NULL AND terminal <> '')
-                        AND empresa <> 'A087'";
-
-
+                        AND (terminal IS NOT NULL AND terminal <> '')";
 
                         using (MySqlCommand command = new MySqlCommand(query, connection))
                         {
