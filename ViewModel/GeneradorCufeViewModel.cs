@@ -197,7 +197,7 @@ namespace GeneradorCufe.ViewModel
         {
             try
             {
-                await Task.Delay(5000);
+                await Task.Delay(9000);
 
                 string nitCompleto = emisor.Nit_emisor ?? "";
                 string[] partesNit = nitCompleto.Split('-');

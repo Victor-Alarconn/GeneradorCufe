@@ -21,7 +21,7 @@ namespace GeneradorCufe.Consultas
     {
         private readonly Data _data;
         private readonly System.Timers.Timer _timer;
-        private readonly Dictionary<int, EstadoProcesamiento> _registroProcesando;
+        private  Dictionary<int, EstadoProcesamiento> _registroProcesando;
         private readonly object _lock = new object();
 
         public Factura_Consulta()
@@ -46,32 +46,17 @@ namespace GeneradorCufe.Consultas
             {
                 try
                 {
-                    Dictionary<int, EstadoProcesamiento> registroProcesando;
-
-                    // Leer el archivo temporal si existe
-                    if (File.Exists("registro_procesando.json"))
-                    {
-                        using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                        {
-                            string json = reader.ReadToEnd();
-                            registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                        }
-                    }
-                    else
-                    {
-                        // Si no existe el archivo, crear un nuevo diccionario
-                        registroProcesando = new Dictionary<int, EstadoProcesamiento>();
-                    }
+                    CargarEstadoProcesamiento();
 
                     using (MySqlConnection connection = _data.CreateConnection())
                     {
                         connection.Open();
 
                         string query = @"
-                        SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
-                        FROM fac 
-                        WHERE estado IN (0, 6) 
-                        AND (terminal IS NOT NULL AND terminal <> '')";
+                    SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
+                    FROM fac 
+                    WHERE estado IN (0, 6) 
+                    AND (terminal IS NOT NULL AND terminal <> '')";
 
                         using (MySqlCommand command = new MySqlCommand(query, connection))
                         {
@@ -82,16 +67,15 @@ namespace GeneradorCufe.Consultas
 
                                 List<Factura> facturas = new List<Factura>(); // Lista para almacenar las facturas
 
-                                // Llenar la lista de facturas con los registros de la base de datos
                                 foreach (DataRow row in dataTable.Rows)
                                 {
                                     int idEncabezado = Convert.ToInt32(row["id_enc"]);
 
                                     // Verificar si el registro está en proceso
-                                    if (!registroProcesando.ContainsKey(idEncabezado) || !registroProcesando[idEncabezado].Procesando)
+                                    if (!_registroProcesando.ContainsKey(idEncabezado) || !_registroProcesando[idEncabezado].Procesando)
                                     {
                                         // Marcar el registro como en proceso
-                                        registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
+                                        _registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
 
                                         // Procesar los datos de la fila y agregar la factura a la lista
                                         Factura factura = ProcesarDatosFactura(row);
@@ -99,9 +83,8 @@ namespace GeneradorCufe.Consultas
                                     }
                                 }
 
-                                // Serializar y guardar el diccionario actualizado
-                                string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
-                                File.WriteAllText("registro_procesando.json", jsonOutput);
+                                // Guardar el estado de procesamiento
+                                GuardarEstadoProcesamiento();
 
                                 // Procesar todas las facturas en bloque
                                 ProcesarRegistros(facturas);
@@ -113,9 +96,31 @@ namespace GeneradorCufe.Consultas
                 }
                 catch (Exception ex)
                 {
-                   // MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // Manejar el error adecuadamente
                 }
             }
+        }
+
+        private void CargarEstadoProcesamiento()
+        {
+            if (File.Exists("registro_procesando.json"))
+            {
+                using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                {
+                    string json = reader.ReadToEnd();
+                    _registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                }
+            }
+            else
+            {
+                _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
+            }
+        }
+
+        private void GuardarEstadoProcesamiento()
+        {
+            string jsonOutput = JsonConvert.SerializeObject(_registroProcesando);
+            File.WriteAllText("registro_procesando.json", jsonOutput);
         }
 
 
