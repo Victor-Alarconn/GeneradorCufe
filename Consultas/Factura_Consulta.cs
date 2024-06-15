@@ -53,10 +53,10 @@ namespace GeneradorCufe.Consultas
                         connection.Open();
 
                         string query = @"
-                    SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
-                    FROM fac 
-                    WHERE estado IN (0, 6) 
-                    AND (terminal IS NOT NULL AND terminal <> '')";
+                                        SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
+                                        FROM fac 
+                                        WHERE estado IN (0, 6) 
+                                        AND (terminal IS NOT NULL AND terminal <> '')";
 
                         using (MySqlCommand command = new MySqlCommand(query, connection))
                         {
@@ -77,14 +77,13 @@ namespace GeneradorCufe.Consultas
                                         // Marcar el registro como en proceso
                                         _registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
 
+                                        GuardarEstadoProcesamiento();
+
                                         // Procesar los datos de la fila y agregar la factura a la lista
                                         Factura factura = ProcesarDatosFactura(row);
                                         facturas.Add(factura);
                                     }
                                 }
-
-                                // Guardar el estado de procesamiento
-                                GuardarEstadoProcesamiento();
 
                                 // Procesar todas las facturas en bloque
                                 ProcesarRegistros(facturas);
@@ -172,80 +171,83 @@ namespace GeneradorCufe.Consultas
         {
             try
             {
-                // Cargar el diccionario desde el archivo temporal, si existe
-                Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado;
-
-                if (File.Exists("registro_procesando.json"))
+                lock (_lock)
                 {
-                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                    // Cargar el diccionario desde el archivo temporal, si existe
+                    Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado;
+
+                    if (File.Exists("registro_procesando.json"))
                     {
-                        string json = reader.ReadToEnd();
-                        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                    }
-                }
-                else
-                {
-                    throw new FileNotFoundException("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                }
-
-                // Usar el diccionario cargado para acceder a los registros
-                int idEncabezado = factura.Id_encabezado.Value;
-
-                // Verificar si el registro está en proceso y actualizar los intentos
-                if (registroProcesandoActualizado.ContainsKey(idEncabezado))
-                {
-                    registroProcesandoActualizado[idEncabezado].Intentos++;
-
-                    int intentos = registroProcesandoActualizado[idEncabezado].Intentos;
-
-                    // Definir el límite máximo de intentos
-                    int maxIntentos = 2;
-
-                    if (intentos <= maxIntentos)
-                    {
-                        // Implementar una política de reintento exponencial solo para esta acción específica
-                        TimeSpan retardo = TimeSpan.FromSeconds(Math.Pow(2, intentos)); // Retardo exponencial
-
-                        // Programar un nuevo intento después del retardo solo para esta acción específica
-                        System.Timers.Timer timer = new System.Timers.Timer();
-                        timer.Interval = 5000; // 5000 milisegundos = 5 segundos
-                        timer.AutoReset = false; // No se reiniciará automáticamente
-                        timer.Elapsed += async (sender, e) =>
+                        using (StreamReader reader = new StreamReader("registro_procesando.json"))
                         {
-                            try
-                            {
-                                // Aquí puedes llamar nuevamente a la acción específica que falló
-                                await InvoiceViewModel.ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
-                            }
-                            catch (Exception innerEx)
-                            {
-                                // Si hay un error al volver a intentar la acción, manejarlo
-                               // await ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
-                            }
-                            finally
-                            {
-                                // Detener y liberar el temporizador después del intento
-                                timer.Stop();
-                                timer.Dispose();
-                            }
-                        };
-                        timer.Start();
+                            string json = reader.ReadToEnd();
+                            registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                        }
                     }
                     else
                     {
-                        // Si se excede el límite de intentos, marcar el registro como con error
-                        MarcarComoConError(factura, new SystemException());
-                        registroProcesandoActualizado[idEncabezado].Procesando = false;
+                        throw new FileNotFoundException("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
                     }
-                }
-                else
-                {
-                    throw new KeyNotFoundException($"No se encontró el registro con ID: {idEncabezado} en el archivo temporal 'registro_procesando.json'.");
-                }
 
-                // Guardar el diccionario actualizado en el archivo temporal
-                string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                File.WriteAllText("registro_procesando.json", jsonOutput);
+                    // Usar el diccionario cargado para acceder a los registros
+                    int idEncabezado = factura.Id_encabezado.Value;
+
+                    // Verificar si el registro está en proceso y actualizar los intentos
+                    if (registroProcesandoActualizado.ContainsKey(idEncabezado))
+                    {
+                        registroProcesandoActualizado[idEncabezado].Intentos++;
+
+                        int intentos = registroProcesandoActualizado[idEncabezado].Intentos;
+
+                        // Definir el límite máximo de intentos
+                        int maxIntentos = 2;
+
+                        if (intentos <= maxIntentos)
+                        {
+                            // Implementar una política de reintento exponencial solo para esta acción específica
+                            TimeSpan retardo = TimeSpan.FromSeconds(Math.Pow(2, intentos)); // Retardo exponencial
+
+                            // Programar un nuevo intento después del retardo solo para esta acción específica
+                            System.Timers.Timer timer = new System.Timers.Timer();
+                            timer.Interval = retardo.TotalMilliseconds;
+                            timer.AutoReset = false; // No se reiniciará automáticamente
+                            timer.Elapsed += async (sender, e) =>
+                            {
+                                try
+                                {
+                                    // Aquí puedes llamar nuevamente a la acción específica que falló
+                                    await InvoiceViewModel.ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
+                                }
+                                catch (Exception innerEx)
+                                {
+                                    // Si hay un error al volver a intentar la acción, manejarlo
+                                    // await ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
+                                }
+                                finally
+                                {
+                                    // Detener y liberar el temporizador después del intento
+                                    timer.Stop();
+                                    timer.Dispose();
+                                }
+                            };
+                            timer.Start();
+                        }
+                        else
+                        {
+                            // Si se excede el límite de intentos, marcar el registro como con error
+                            MarcarComoConError(factura, new SystemException());
+                            registroProcesandoActualizado[idEncabezado].Procesando = false;
+                        }
+                    }
+                    else
+                    {
+                        throw new KeyNotFoundException($"No se encontró el registro con ID: {idEncabezado} en el archivo temporal 'registro_procesando.json'.");
+                    }
+
+                    // Guardar el diccionario actualizado en el archivo temporal
+                    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                    File.WriteAllText("registro_procesando.json", jsonOutput);
+                }
             }
             catch (Exception ex)
             {

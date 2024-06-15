@@ -11,6 +11,7 @@ namespace GeneradorCufe.Model
         public bool Procesando { get; set; }
         public int Intentos { get; set; }
         public int Envio { get; set; }
+        public int Dian { get; set; } 
     }
 
 }
