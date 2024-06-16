@@ -51,42 +51,61 @@ namespace GeneradorCufe.Consultas
                     using (MySqlConnection connection = _data.CreateConnection())
                     {
                         connection.Open();
-
-                        string query = @"
-                                        SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
-                                        FROM fac 
-                                        WHERE estado IN (0, 6) 
-                                        AND (terminal IS NOT NULL AND terminal <> '')";
-
-                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        using (MySqlTransaction transaction = connection.BeginTransaction())
                         {
-                            using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
+                            string query = @"
+                                    SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
+                                    FROM fac 
+                                    WHERE estado IN (0, 6) 
+                                    AND (terminal IS NOT NULL AND terminal <> '') 
+                                    FOR UPDATE";
+
+                            using (MySqlCommand command = new MySqlCommand(query, connection, transaction))
                             {
-                                DataTable dataTable = new DataTable();
-                                adapter.Fill(dataTable);
-
-                                List<Factura> facturas = new List<Factura>(); // Lista para almacenar las facturas
-
-                                foreach (DataRow row in dataTable.Rows)
+                                using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
                                 {
-                                    int idEncabezado = Convert.ToInt32(row["id_enc"]);
+                                    DataTable dataTable = new DataTable();
+                                    adapter.Fill(dataTable);
 
-                                    // Verificar si el registro está en proceso
-                                    if (!_registroProcesando.ContainsKey(idEncabezado) || !_registroProcesando[idEncabezado].Procesando)
+                                    List<int> idsActualizados = new List<int>();
+
+                                    foreach (DataRow row in dataTable.Rows)
                                     {
-                                        // Marcar el registro como en proceso
-                                        _registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
+                                        int idEncabezado = Convert.ToInt32(row["id_enc"]);
 
-                                        GuardarEstadoProcesamiento();
-
-                                        // Procesar los datos de la fila y agregar la factura a la lista
-                                        Factura factura = ProcesarDatosFactura(row);
-                                        facturas.Add(factura);
+                                        if (!_registroProcesando.ContainsKey(idEncabezado) || !_registroProcesando[idEncabezado].Procesando)
+                                        {
+                                            _registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
+                                            idsActualizados.Add(idEncabezado);
+                                        }
                                     }
-                                }
 
-                                // Procesar todas las facturas en bloque
-                                ProcesarRegistros(facturas);
+                                    if (idsActualizados.Count > 0)
+                                    {
+                                        // Marcar todas las facturas seleccionadas como en proceso (estado = 1) en la base de datos
+                                        string updateQuery = "UPDATE fac SET estado = 1 WHERE id_enc IN (" + string.Join(",", idsActualizados) + ")";
+                                        using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection, transaction))
+                                        {
+                                            updateCommand.ExecuteNonQuery();
+                                        }
+                                    }
+
+                                    transaction.Commit();
+
+                                    List<Factura> facturas = new List<Factura>();
+                                    foreach (DataRow row in dataTable.Rows)
+                                    {
+                                        int idEncabezado = Convert.ToInt32(row["id_enc"]);
+                                        if (idsActualizados.Contains(idEncabezado))
+                                        {
+                                            Factura factura = ProcesarDatosFactura(row);
+                                            facturas.Add(factura);
+                                        }
+                                    }
+                                    GuardarEstadoProcesamiento();
+                                    // Procesar todas las facturas en bloque
+                                    ProcesarRegistros(facturas);
+                                }
                             }
                         }
 
@@ -102,6 +121,7 @@ namespace GeneradorCufe.Consultas
 
         private void CargarEstadoProcesamiento()
         {
+            // Leer el archivo temporal si existe
             if (File.Exists("registro_procesando.json"))
             {
                 using (StreamReader reader = new StreamReader("registro_procesando.json"))
@@ -112,7 +132,9 @@ namespace GeneradorCufe.Consultas
             }
             else
             {
+                // Si no existe el archivo, crear un nuevo diccionario
                 _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
+                GuardarEstadoProcesamiento(); // Crear el archivo inicial vacío
             }
         }
 
@@ -200,7 +222,7 @@ namespace GeneradorCufe.Consultas
                         int intentos = registroProcesandoActualizado[idEncabezado].Intentos;
 
                         // Definir el límite máximo de intentos
-                        int maxIntentos = 2;
+                        int maxIntentos = 3;
 
                         if (intentos <= maxIntentos)
                         {
