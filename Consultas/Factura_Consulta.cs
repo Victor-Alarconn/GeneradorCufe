@@ -28,7 +28,7 @@ namespace GeneradorCufe.Consultas
         {
             _data = new Data();
             _timer = new System.Timers.Timer();
-            _timer.Interval = 15000; // Intervalo en milisegundos (10 segundos)
+            _timer.Interval = 15000; // Intervalo en milisegundos (15 segundos)
             _timer.Elapsed += TimerElapsed; // Método que se ejecutará cuando el temporizador expire
             _timer.Start(); // Iniciar el temporizador
             _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
@@ -51,55 +51,61 @@ namespace GeneradorCufe.Consultas
                     using (MySqlConnection connection = _data.CreateConnection())
                     {
                         connection.Open();
-
-                        string query = @"
-                        SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
-                        FROM fac 
-                        WHERE estado IN (0, 6) 
-                        AND (terminal IS NOT NULL AND terminal <> '')";
-
-                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        using (MySqlTransaction transaction = connection.BeginTransaction())
                         {
-                            using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
+                            string query = @"
+                         SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
+                         FROM fac 
+                         WHERE estado IN (0, 6) 
+                         AND (terminal IS NOT NULL AND terminal <> '') 
+                         FOR UPDATE";
+
+                            using (MySqlCommand command = new MySqlCommand(query, connection, transaction))
                             {
-                                DataTable dataTable = new DataTable();
-                                adapter.Fill(dataTable);
-
-                                List<int> idsActualizados = new List<int>();
-
-                                foreach (DataRow row in dataTable.Rows)
+                                using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
                                 {
-                                    int idEncabezado = Convert.ToInt32(row["id_enc"]);
+                                    DataTable dataTable = new DataTable();
+                                    adapter.Fill(dataTable);
 
-                                    if (!_registroProcesando.ContainsKey(idEncabezado) || !_registroProcesando[idEncabezado].Procesando)
+                                    List<int> idsActualizados = new List<int>();
+
+                                    foreach (DataRow row in dataTable.Rows)
                                     {
-                                        _registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
-                                        idsActualizados.Add(idEncabezado);
+                                        int idEncabezado = Convert.ToInt32(row["id_enc"]);
 
-                                        // Marcar el registro como en proceso (estado = 1) inmediatamente
-                                        string updateQuery = "UPDATE fac SET estado = 1 WHERE id_enc = @idEncabezado";
-                                        using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
+                                        if (!_registroProcesando.ContainsKey(idEncabezado) || !_registroProcesando[idEncabezado].Procesando)
                                         {
-                                            updateCommand.Parameters.AddWithValue("@idEncabezado", idEncabezado);
+                                            _registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
+                                            idsActualizados.Add(idEncabezado);
+                                        }
+                                    }
+
+                                    if (idsActualizados.Count > 0)
+                                    {
+                                        // Marcar todas las facturas seleccionadas como en proceso (estado = 1) en la base de datos
+                                        string updateQuery = "UPDATE fac SET estado = 1 WHERE id_enc IN (" + string.Join(",", idsActualizados) + ")";
+                                        using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection, transaction))
+                                        {
                                             updateCommand.ExecuteNonQuery();
                                         }
                                     }
-                                }
 
-                                List<Factura> facturas = new List<Factura>();
-                                foreach (DataRow row in dataTable.Rows)
-                                {
-                                    int idEncabezado = Convert.ToInt32(row["id_enc"]);
-                                    if (idsActualizados.Contains(idEncabezado))
+                                    transaction.Commit();
+
+                                    List<Factura> facturas = new List<Factura>();
+                                    foreach (DataRow row in dataTable.Rows)
                                     {
-                                        Factura factura = ProcesarDatosFactura(row);
-                                        facturas.Add(factura);
+                                        int idEncabezado = Convert.ToInt32(row["id_enc"]);
+                                        if (idsActualizados.Contains(idEncabezado))
+                                        {
+                                            Factura factura = ProcesarDatosFactura(row);
+                                            facturas.Add(factura);
+                                        }
                                     }
+                                    GuardarEstadoProcesamiento();
+                                    // Procesar todas las facturas en bloque
+                                    ProcesarRegistros(facturas);
                                 }
-
-                                GuardarEstadoProcesamiento();
-                                // Procesar todas las facturas en bloque
-                                ProcesarRegistros(facturas);
                             }
                         }
 
@@ -112,10 +118,9 @@ namespace GeneradorCufe.Consultas
                 }
             }
         }
-    
 
 
-        private void CargarEstadoProcesamiento()
+            private void CargarEstadoProcesamiento()
         {
             // Leer el archivo temporal si existe
             if (File.Exists("registro_procesando.json"))
