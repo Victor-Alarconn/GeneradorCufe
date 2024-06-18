@@ -197,7 +197,7 @@ namespace GeneradorCufe.ViewModel
         {
             try
             {
-                await Task.Delay(9000);
+                await Task.Delay(15000);
 
                 string nitCompleto = emisor.Nit_emisor ?? "";
                 string[] partesNit = nitCompleto.Split('-');
@@ -232,7 +232,7 @@ namespace GeneradorCufe.ViewModel
                     Nota_credito = true;
 
                 }
-                else if(!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
                 {
                     PrefijoNC = "ND" + factura.Recibo;
                     idDocumento = PrefijoNC;
@@ -248,49 +248,32 @@ namespace GeneradorCufe.ViewModel
                     Nota_credito = false;
                 }
 
-                // Construir los parámetros de la URL
                 string parametros = $"?nit_emisor={nitEmisor}&id_documento={idDocumento}&codigo_tipo_documento={codigoTipoDocumento}";
-
-                // Concatenar los parámetros a la URL
                 url += parametros;
 
-                // Crear la instancia de HttpClient
                 using (HttpClient client = new HttpClient())
                 {
-                    // Establecer los encabezados de la solicitud
                     client.DefaultRequestHeaders.Add("Partnership-Id", partnershipId);
                     client.DefaultRequestHeaders.Add("efacturaAuthorizationToken", token);
 
-                    // Realizar la solicitud GET y obtener la respuesta
                     HttpResponseMessage response = await client.GetAsync(url);
 
-                    // Verificar si la solicitud fue exitosa
                     if (response.IsSuccessStatusCode)
                     {
-                        // Obtener la respuesta en formato JSON
                         string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                        // Convertir la respuesta JSON a un objeto dynamic para acceder a los campos
                         dynamic jsonResponseObject = JsonConvert.DeserializeObject(jsonResponse);
-
-                        // Extraer el valor del parámetro 'document' (documento adjunto en base64)
                         string documentBase64 = jsonResponseObject.document;
-
-                        // Decodificar el documento base64 a un array de bytes (XML)
                         byte[] xmlBytes = Convert.FromBase64String(documentBase64);
 
-                        // Guardar el archivo XML en un flujo de memoria
                         using (MemoryStream xmlStream = new MemoryStream(xmlBytes))
                         {
-
                             int añoActual = DateTime.Now.Year;
-                            // Construir el nombre del archivo PDF
                             string nombreArchivoPDF;
                             if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
                             {
                                 nombreArchivoPDF = $"nc{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.pdf";
                             }
-                            else if(!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                            else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
                             {
                                 nombreArchivoPDF = $"nd{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.pdf";
                             }
@@ -299,13 +282,12 @@ namespace GeneradorCufe.ViewModel
                                 nombreArchivoPDF = $"fv{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{factura.Facturas:D8}.pdf";
                             }
 
-                            // Construir el nombre del archivo XML
                             string nombreArchivoXML;
                             if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "NC")
                             {
                                 nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.xml";
                             }
-                            else if(!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
+                            else if (!string.IsNullOrEmpty(factura.Recibo) && factura.Recibo != "0" && factura.Tipo_movimiento == "ND")
                             {
                                 nombreArchivoXML = $"ad{nitEmisor.TrimStart('0')}{añoActual.ToString().Substring(2)}000{PrefijoNC:D8}.xml";
                             }
@@ -316,81 +298,53 @@ namespace GeneradorCufe.ViewModel
 
                             string directorioProyecto = Directory.GetCurrentDirectory();
                             string rutaArchivoPDF = Path.Combine(directorioProyecto, nombreArchivoPDF);
+
+                            // Eliminar archivo si ya existe
+                            if (File.Exists(rutaArchivoPDF))
+                            {
+                                File.Delete(rutaArchivoPDF);
+                            }
+
                             GeneradorPDF.CrearPDF(rutaArchivoPDF, emisor, factura, listaProductos, cufe, adquiriente, movimiento, encabezado);
 
-                            // Comprimir el PDF y el XML en un archivo ZIP en un flujo de memoria
                             using (MemoryStream zipStream = new MemoryStream())
                             {
                                 using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
                                 {
                                     zip.CreateEntryFromFile(rutaArchivoPDF, nombreArchivoPDF);
 
-                                    // Agregar el XML al archivo ZIP desde el flujo de memoria
                                     var entry = zip.CreateEntry(nombreArchivoXML, CompressionLevel.Fastest);
                                     using (Stream entryStream = entry.Open())
                                     {
-                                        xmlStream.Seek(0, SeekOrigin.Begin); // Reiniciar el flujo de memoria del XML
+                                        xmlStream.Seek(0, SeekOrigin.Begin);
                                         await xmlStream.CopyToAsync(entryStream);
                                     }
                                 }
 
-                                Dictionary<int, EstadoProcesamiento> registroProcesando;
-
-                                using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                                {
-                                    string json = reader.ReadToEnd();
-                                    registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                                }
-                                int idEncabezado = factura.Id_encabezado.Value;
                                 bool correoEnviado = false;
 
-                                // Comprobar si se ha enviado un correo electrónico para esta factura
-                                if (registroProcesando.ContainsKey(idEncabezado) && registroProcesando[idEncabezado].Envio == 0 && adquiriente.Nit_adqui != "222222222222")
+                                if (adquiriente.Nit_adqui != "222222222222")
                                 {
-                                    // Enviar el archivo ZIP por correo electrónico
                                     correoEnviado = await EnviarCorreo.Enviar(emisor, adquiriente, factura, zipStream.ToArray(), nombreArchivoXML);
-
-                                    if (correoEnviado)
-                                    {
-                                        // Actualizar el estado de "Envio" en el diccionario
-                                        registroProcesando[idEncabezado].Envio = 1;
-
-                                        // Guardar el diccionario actualizado en el archivo temporal
-                                        string jsonOutput = JsonConvert.SerializeObject(registroProcesando);
-                                        File.WriteAllText("registro_procesando.json", jsonOutput);
-                                    }
                                 }
                                 else
                                 {
-                                    // Ya se ha enviado un correo electrónico para esta factura, no es necesario enviar otro.
                                     correoEnviado = true;
                                 }
 
-                                // Realizar otras operaciones solo si se envió correctamente el correo electrónico
                                 if (correoEnviado)
                                 {
-
                                     Respuesta_Consulta respuestaConsulta = new Respuesta_Consulta(new Conexion.Data());
-
-                                    // Guardar la respuesta en la base de datos y realizar la consulta del XML sin enviar la solicitud POST
                                     respuestaConsulta.GuardarRespuestaEnBD(cadenaConexion, cufe, factura, emisor);
-
-                                    // Borrar la respuesta de la base de datos solo si se guardó correctamente
-                                    //   respuestaConsulta.BorrarEnBD(cadenaConexion, idDocumento, recibo, Nota_credito, factura);
-
                                 }
-
                             }
                         }
                     }
                     else
                     {
-                        // Mostrar un mensaje de error si la solicitud no fue exitosa
-                     //  MessageBox.Show($"Error al enviar la solicitud GET. Código de estado: {response.StatusCode}", "Error de Solicitud GET", MessageBoxButton.OK, MessageBoxImage.Error);
                         Factura_Consulta facturaConsulta = new Factura_Consulta();
-                        facturaConsulta.ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
+                        facturaConsulta.MarcarComoConErrorATTAS(factura);
                     }
-
                 }
             }
             catch (Exception ex)
@@ -399,6 +353,7 @@ namespace GeneradorCufe.ViewModel
                 facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
+
 
 
         public static (string xmlContent, string base64Content, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado) GenerateXMLAndBase64(Emisor emisor, Factura factura)

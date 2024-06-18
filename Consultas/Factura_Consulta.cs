@@ -21,7 +21,7 @@ namespace GeneradorCufe.Consultas
     {
         private readonly Data _data;
         private readonly System.Timers.Timer _timer;
-        private  Dictionary<int, EstadoProcesamiento> _registroProcesando;
+      //  private  Dictionary<int, EstadoProcesamiento> _registroProcesando;
         private readonly object _lock = new object();
 
         public Factura_Consulta()
@@ -31,7 +31,7 @@ namespace GeneradorCufe.Consultas
             _timer.Interval = 15000; // Intervalo en milisegundos (15 segundos)
             _timer.Elapsed += TimerElapsed; // Método que se ejecutará cuando el temporizador expire
             _timer.Start(); // Iniciar el temporizador
-            _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
+         //   _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
         }
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)  // Método que se ejecuta cada vez que el temporizador expire
@@ -46,63 +46,58 @@ namespace GeneradorCufe.Consultas
             {
                 try
                 {
-                    CargarEstadoProcesamiento();
-
                     using (MySqlConnection connection = _data.CreateConnection())
                     {
                         connection.Open();
-
-                        string query = @"
-                        SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
-                        FROM fac 
-                        WHERE estado IN (0, 6) 
-                        AND (terminal IS NOT NULL AND terminal <> '')";
-
-                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        using (MySqlTransaction transaction = connection.BeginTransaction())
                         {
-                            using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
+                            string query = @"
+                    SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
+                    FROM fac 
+                    WHERE estado IN (0, 6) 
+                    AND (terminal IS NOT NULL AND terminal <> '') 
+                    FOR UPDATE";
+
+                            using (MySqlCommand command = new MySqlCommand(query, connection, transaction))
                             {
-                                DataTable dataTable = new DataTable();
-                                adapter.Fill(dataTable);
-
-                                List<int> idsActualizados = new List<int>();
-
-                                foreach (DataRow row in dataTable.Rows)
+                                using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
                                 {
-                                    int idEncabezado = Convert.ToInt32(row["id_enc"]);
+                                    DataTable dataTable = new DataTable();
+                                    adapter.Fill(dataTable);
 
-                                    if (!_registroProcesando.ContainsKey(idEncabezado) || !_registroProcesando[idEncabezado].Procesando)
+                                    List<int> idsActualizados = new List<int>();
+
+                                    foreach (DataRow row in dataTable.Rows)
                                     {
-                                        _registroProcesando[idEncabezado] = new EstadoProcesamiento { Procesando = true, Intentos = 0, Envio = 0 };
+                                        int idEncabezado = Convert.ToInt32(row["id_enc"]);
                                         idsActualizados.Add(idEncabezado);
+                                    }
 
-                                        // Marcar el registro como en proceso (estado = 1) inmediatamente
-                                        string updateQuery = "UPDATE fac SET estado = 1 WHERE id_enc = @idEncabezado";
-                                        using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection))
+                                    if (idsActualizados.Count > 0)
+                                    {
+                                        // Marcar todas las facturas seleccionadas como en proceso (estado = 1) en la base de datos
+                                        string updateQuery = "UPDATE fac SET estado = 1 WHERE id_enc IN (" + string.Join(",", idsActualizados) + ")";
+                                        using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, connection, transaction))
                                         {
-                                            updateCommand.Parameters.AddWithValue("@idEncabezado", idEncabezado);
                                             updateCommand.ExecuteNonQuery();
                                         }
                                     }
-                                }
 
-                                List<Factura> facturas = new List<Factura>();
-                                foreach (DataRow row in dataTable.Rows)
-                                {
-                                    int idEncabezado = Convert.ToInt32(row["id_enc"]);
-                                    if (idsActualizados.Contains(idEncabezado))
+                                    transaction.Commit();
+
+                                    List<Factura> facturas = new List<Factura>();
+                                    foreach (DataRow row in dataTable.Rows)
                                     {
+                                        int idEncabezado = Convert.ToInt32(row["id_enc"]);
                                         Factura factura = ProcesarDatosFactura(row);
                                         facturas.Add(factura);
                                     }
-                                }
 
-                                GuardarEstadoProcesamiento();
-                                // Procesar todas las facturas en bloque
-                                ProcesarRegistros(facturas);
+                                    // Procesar todas las facturas en bloque
+                                    ProcesarRegistros(facturas);
+                                }
                             }
                         }
-
                         connection.Close();
                     }
                 }
@@ -115,30 +110,31 @@ namespace GeneradorCufe.Consultas
 
 
 
-        private void CargarEstadoProcesamiento()
-        {
-            // Leer el archivo temporal si existe
-            if (File.Exists("registro_procesando.json"))
-            {
-                using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                {
-                    string json = reader.ReadToEnd();
-                    _registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                }
-            }
-            else
-            {
-                // Si no existe el archivo, crear un nuevo diccionario
-                _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
-                GuardarEstadoProcesamiento(); // Crear el archivo inicial vacío
-            }
-        }
 
-        private void GuardarEstadoProcesamiento()
-        {
-            string jsonOutput = JsonConvert.SerializeObject(_registroProcesando);
-            File.WriteAllText("registro_procesando.json", jsonOutput);
-        }
+        //private void CargarEstadoProcesamiento()
+        //{
+        //    // Leer el archivo temporal si existe
+        //    if (File.Exists("registro_procesando.json"))
+        //    {
+        //        using (StreamReader reader = new StreamReader("registro_procesando.json"))
+        //        {
+        //            string json = reader.ReadToEnd();
+        //            _registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // Si no existe el archivo, crear un nuevo diccionario
+        //        _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
+        //        GuardarEstadoProcesamiento(); // Crear el archivo inicial vacío
+        //    }
+        //}
+
+        //private void GuardarEstadoProcesamiento()
+        //{
+        //    string jsonOutput = JsonConvert.SerializeObject(_registroProcesando);
+        //    File.WriteAllText("registro_procesando.json", jsonOutput);
+        //}
 
 
 
@@ -254,7 +250,7 @@ namespace GeneradorCufe.Consultas
                         {
                             // Si se excede el límite de intentos, marcar el registro como con error
                             MarcarComoConError(factura, new SystemException());
-                            registroProcesandoActualizado[idEncabezado].Procesando = false;
+                          //  registroProcesandoActualizado[idEncabezado].Procesando = false;
                         }
                     }
                     else
@@ -280,36 +276,36 @@ namespace GeneradorCufe.Consultas
         {
             try
             {
-                // Cargar el diccionario desde el archivo temporal, si existe
-                Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+                //// Cargar el diccionario desde el archivo temporal, si existe
+                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
 
-                if (File.Exists("registro_procesando.json"))
-                {
-                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                    {
-                        string json = reader.ReadToEnd();
-                        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                    return;
-                }
+                //if (File.Exists("registro_procesando.json"))
+                //{
+                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                //    {
+                //        string json = reader.ReadToEnd();
+                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                //    }
+                //}
+                //else
+                //{
+                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
+                //    return;
+                //}
 
-                // Remover el registro del diccionario si existe
-                if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                {
-                    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+                //// Remover el registro del diccionario si existe
+                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                //{
+                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
 
-                    // Guardar el diccionario actualizado en el archivo temporal
-                    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    File.WriteAllText("registro_procesando.json", jsonOutput);
-                }
-                else
-                {
-                    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                }
+                //    // Guardar el diccionario actualizado en el archivo temporal
+                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                //    File.WriteAllText("registro_procesando.json", jsonOutput);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                //}
 
                 // Actualizar el estado en la base de datos
                 using (MySqlConnection connection = _data.CreateConnection())
@@ -348,40 +344,112 @@ namespace GeneradorCufe.Consultas
             }
         }
 
+        public void MarcarComoConErrorPDF(Factura factura, Exception ex)
+        {
+            try
+            {
+                //// Cargar el diccionario desde el archivo temporal, si existe
+                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+
+                //if (File.Exists("registro_procesando.json"))
+                //{
+                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                //    {
+                //        string json = reader.ReadToEnd();
+                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                //    }
+                //}
+                //else
+                //{
+                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
+                //    return;
+                //}
+
+                //// Remover el registro del diccionario si existe
+                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                //{
+                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+
+                //    // Guardar el diccionario actualizado en el archivo temporal
+                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                //    File.WriteAllText("registro_procesando.json", jsonOutput);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                //}
+
+                // Actualizar el estado en la base de datos
+                using (MySqlConnection connection = _data.CreateConnection())
+                {
+                    connection.Open();
+
+                    // Construir la consulta para actualizar el estado del registro con estado 5 y el mensaje de error
+                    string query = "UPDATE fac SET estado = 5, msm_error = @mensajeError WHERE id_enc = @idEncabezado";
+
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        // Agregar parámetros a la consulta
+                        command.Parameters.AddWithValue("@idEncabezado", factura.Id_encabezado);
+                        command.Parameters.AddWithValue("@mensajeError","PDF" + ex.Message); // Agregar el mensaje de error
+
+                        // Ejecutar la consulta
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        // Verificar si se actualizó algún registro
+                        if (rowsAffected > 0)
+                        {
+                            Console.WriteLine($"Registro con Id_encabezado {factura.Id_encabezado} marcado como error. Mensaje de error: {ex.Message}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No se encontró ningún registro con Id_encabezado {factura.Id_encabezado} y estado 0.");
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error al marcar como error el registro con Id_encabezado {factura.Id_encabezado}: {e.Message}");
+            }
+        }
+
         public void MarcarComoConErrorCorreo(Factura factura, Exception ex)
         {
             try
             {
                 // Cargar el diccionario desde el archivo temporal, si existe
-                Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
 
-                if (File.Exists("registro_procesando.json"))
-                {
-                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                    {
-                        string json = reader.ReadToEnd();
-                        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                    return;
-                }
+                //if (File.Exists("registro_procesando.json"))
+                //{
+                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                //    {
+                //        string json = reader.ReadToEnd();
+                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                //    }
+                //}
+                //else
+                //{
+                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
+                //    return;
+                //}
 
-                // Remover el registro del diccionario si existe
-                if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                {
-                    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+                //// Remover el registro del diccionario si existe
+                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                //{
+                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
 
-                    // Guardar el diccionario actualizado en el archivo temporal
-                    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    File.WriteAllText("registro_procesando.json", jsonOutput);
-                }
-                else
-                {
-                    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                }
+                //    // Guardar el diccionario actualizado en el archivo temporal
+                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                //    File.WriteAllText("registro_procesando.json", jsonOutput);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                //}
 
                 // Actualizar el estado en la base de datos
                 using (MySqlConnection connection = _data.CreateConnection())
@@ -425,35 +493,35 @@ namespace GeneradorCufe.Consultas
             try
             {
                 // Cargar el diccionario desde el archivo temporal, si existe
-                Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
 
-                if (File.Exists("registro_procesando.json"))
-                {
-                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                    {
-                        string json = reader.ReadToEnd();
-                        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                    return;
-                }
+                //if (File.Exists("registro_procesando.json"))
+                //{
+                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                //    {
+                //        string json = reader.ReadToEnd();
+                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                //    }
+                //}
+                //else
+                //{
+                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
+                //    return;
+                //}
 
-                // Remover el registro del diccionario si existe
-                if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                {
-                    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+                //// Remover el registro del diccionario si existe
+                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                //{
+                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
 
-                    // Guardar el diccionario actualizado en el archivo temporal
-                    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    File.WriteAllText("registro_procesando.json", jsonOutput);
-                }
-                else
-                {
-                    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                }
+                //    // Guardar el diccionario actualizado en el archivo temporal
+                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                //    File.WriteAllText("registro_procesando.json", jsonOutput);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                //}
 
                 // Actualizar el estado en la base de datos
                 using (MySqlConnection connection = _data.CreateConnection())
@@ -476,6 +544,78 @@ namespace GeneradorCufe.Consultas
                         if (rowsAffected > 0)
                         {
                             Console.WriteLine($"Registro con Id_encabezado {factura.Id_encabezado} marcado como error. Mensaje de error: {ex.Message}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No se encontró ningún registro con Id_encabezado {factura.Id_encabezado} y estado 0.");
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error al marcar como error el registro con Id_encabezado {factura.Id_encabezado}: {e.Message}");
+            }
+        }
+
+        public void MarcarComoConErrorATTAS(Factura factura)
+        {
+            try
+            {
+                // Cargar el diccionario desde el archivo temporal, si existe
+                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+
+                //if (File.Exists("registro_procesando.json"))
+                //{
+                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                //    {
+                //        string json = reader.ReadToEnd();
+                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                //    }
+                //}
+                //else
+                //{
+                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
+                //    return;
+                //}
+
+                //// Remover el registro del diccionario si existe
+                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                //{
+                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+
+                //    // Guardar el diccionario actualizado en el archivo temporal
+                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                //    File.WriteAllText("registro_procesando.json", jsonOutput);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                //}
+
+                // Actualizar el estado en la base de datos
+                using (MySqlConnection connection = _data.CreateConnection())
+                {
+                    connection.Open();
+
+                    // Construir la consulta para actualizar el estado del registro con estado 5 y el mensaje de error
+                    string query = "UPDATE fac SET estado = 2, msm_error = @mensajeError WHERE id_enc = @idEncabezado";
+
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        // Agregar parámetros a la consulta
+                        command.Parameters.AddWithValue("@idEncabezado", factura.Id_encabezado);
+                        command.Parameters.AddWithValue("@mensajeError", "Error a consultar el Attasdocumnet"); // Agregar el mensaje de error
+
+                        // Ejecutar la consulta
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        // Verificar si se actualizó algún registro
+                        if (rowsAffected > 0)
+                        {
+                            Console.WriteLine($"Registro con Id_encabezado {factura.Id_encabezado} marcado como error. Mensaje de error:");
                         }
                         else
                         {

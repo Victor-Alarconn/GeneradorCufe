@@ -63,20 +63,35 @@ namespace GeneradorCufe.ViewModel
 
                 if (!string.IsNullOrEmpty(emisor.Logo_emisor))
                 {
-                    // Convertir la cadena base64 del logo en bytes
-                    byte[] logoBytes = Convert.FromBase64String(emisor.Logo_emisor);
+                    try
+                    {
+                        // Convertir la cadena base64 del logo en bytes
+                        byte[] logoBytes = Convert.FromBase64String(emisor.Logo_emisor);
 
-                    // Convertir bytes en una instancia de iTextSharp.text.Image
-                    Image logo = Image.GetInstance(logoBytes);
-                    logo.ScaleAbsoluteWidth(120); // Ajustar el ancho de la imagen
-                    logo.ScaleAbsoluteHeight(80); // Ajustar también la altura de la imagen si es necesario
-                    logo.BackgroundColor = BaseColor.WHITE;
-                    logo.Alignment = Element.ALIGN_MIDDLE;
+                        // Convertir bytes en una instancia de iTextSharp.text.Image
+                        Image logo = Image.GetInstance(logoBytes);
+                        logo.ScaleAbsoluteWidth(120); // Ajustar el ancho de la imagen
+                        logo.ScaleAbsoluteHeight(80); // Ajustar también la altura de la imagen si es necesario
+                        logo.BackgroundColor = BaseColor.WHITE;
+                        logo.Alignment = Element.ALIGN_MIDDLE;
 
-                    // Agregar el logo en la primera columna (izquierda)
-                    PdfPCell cLogo = new PdfPCell(logo);
-                    cLogo.Border = Rectangle.NO_BORDER;
-                    encabezado.AddCell(cLogo);
+                        // Agregar el logo en la primera columna (izquierda)
+                        PdfPCell cLogo = new PdfPCell(logo);
+                        cLogo.Border = Rectangle.NO_BORDER;
+                        encabezado.AddCell(cLogo);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Loguear el error si es necesario
+                        Console.WriteLine($"Error al cargar el logo: {ex.Message}");
+
+                        // Si hay un problema con el logo, agregar una celda vacía en su lugar
+                        PdfPCell cEmpty = new PdfPCell(new Phrase(" "))
+                        {
+                            Border = Rectangle.NO_BORDER
+                        };
+                        encabezado.AddCell(cEmpty);
+                    }
                 }
                 else
                 {
@@ -850,7 +865,7 @@ namespace GeneradorCufe.ViewModel
             catch (Exception ex)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
-                facturaConsulta.MarcarComoConError(factura, ex);
+                facturaConsulta.MarcarComoConErrorPDF(factura, ex);
             }
         }
 

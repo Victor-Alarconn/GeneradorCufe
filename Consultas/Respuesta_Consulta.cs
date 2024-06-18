@@ -17,7 +17,7 @@ namespace GeneradorCufe.Consultas
     {
         public readonly Conexion.Data _data;
         // Cargar el diccionario desde el archivo temporal, si existe
-        Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
+      //  Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
    
         public Respuesta_Consulta(Conexion.Data data)
         {
@@ -105,28 +105,28 @@ namespace GeneradorCufe.Consultas
                 }
               
 
-                    if (File.Exists("registro_procesando.json"))
-                    {
-                        using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                        {
-                            string json = reader.ReadToEnd();
-                            registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                        }
-                    }
+                    //if (File.Exists("registro_procesando.json"))
+                    //{
+                    //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                    //    {
+                    //        string json = reader.ReadToEnd();
+                    //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                    //    }
+                    //}
 
-                    // Eliminar el registro del diccionario y guardar los cambios en el archivo temporal
-                    if (registroProcesandoActualizado.ContainsKey(factura1.Id_encabezado.Value))
-                    {
-                        registroProcesandoActualizado.Remove(factura1.Id_encabezado.Value);
+                    //// Eliminar el registro del diccionario y guardar los cambios en el archivo temporal
+                    //if (registroProcesandoActualizado.ContainsKey(factura1.Id_encabezado.Value))
+                    //{
+                    //    registroProcesandoActualizado.Remove(factura1.Id_encabezado.Value);
 
-                        // Guardar el diccionario actualizado en el archivo temporal
-                        string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                        File.WriteAllText("registro_procesando.json", jsonOutput);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"No se encontró el registro con Id_encabezado {factura1.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                    }
+                    //    // Guardar el diccionario actualizado en el archivo temporal
+                    //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                    //    File.WriteAllText("registro_procesando.json", jsonOutput);
+                    //}
+                    //else
+                    //{
+                    //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura1.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                    //}
                 
 
                 return true;
@@ -303,28 +303,28 @@ namespace GeneradorCufe.Consultas
                     }
                 }
 
-                    if (File.Exists("registro_procesando.json"))
-                    {
-                        using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                        {
-                            string json = reader.ReadToEnd();
-                            registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                        }
-                    }
+                    //if (File.Exists("registro_procesando.json"))
+                    //{
+                    //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
+                    //    {
+                    //        string json = reader.ReadToEnd();
+                    //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
+                    //    }
+                    //}
 
-                    // Eliminar el registro del diccionario y guardar los cambios en el archivo temporal
-                    if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                    {
-                        registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
+                    //// Eliminar el registro del diccionario y guardar los cambios en el archivo temporal
+                    //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
+                    //{
+                    //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
 
-                        // Guardar el diccionario actualizado en el archivo temporal
-                        string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                        File.WriteAllText("registro_procesando.json", jsonOutput);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                    }
+                    //    // Guardar el diccionario actualizado en el archivo temporal
+                    //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
+                    //    File.WriteAllText("registro_procesando.json", jsonOutput);
+                    //}
+                    //else
+                    //{
+                    //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
+                    //}
                 
             }
             catch (Exception ex)
