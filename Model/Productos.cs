@@ -22,7 +22,7 @@ namespace GeneradorCufe.Model
         public decimal Consumo { get; set; }  
         public string? Hora_Digitada { get; set; }
         public int Excluido { get; set; }
-
+        public decimal Valor2 { get; set; }
         public DateTime Fecha { get; set; }
     }
 }

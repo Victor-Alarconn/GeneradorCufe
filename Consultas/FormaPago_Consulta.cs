@@ -23,7 +23,9 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                string query = @" SELECT bancop, vrpago FROM xxxxccpg  WHERE factura = @factura AND id_empresa = @Empresa"; // Añadir condición para id_empresa
+                string query = @"SELECT IFNULL(bancop, '00') AS bancop, IFNULL(vrpago, 0.00) AS vrpago 
+                         FROM xxxxccpg  
+                         WHERE factura = @factura AND id_empresa = @Empresa";
 
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
@@ -47,6 +49,12 @@ namespace GeneradorCufe.Consultas
                         }
                     }
                 }
+
+                // Si no se encontraron resultados, agregar valores predeterminados "00" y "0.00"
+                if (listaFormaPago.Count == 0)
+                {
+                    listaFormaPago.Add(new FormaPago { Id_forma = "00", Valor_pago = 0.00m });
+                }
             }
             catch (Exception ex)
             {
@@ -56,6 +64,7 @@ namespace GeneradorCufe.Consultas
 
             return listaFormaPago;
         }
+
 
 
 

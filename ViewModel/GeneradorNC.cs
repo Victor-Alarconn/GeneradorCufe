@@ -35,6 +35,10 @@ namespace GeneradorCufe.ViewModel
                 List<Productos> listaProductos = productosConsulta.ConsultarProductosNota(factura, cadenaConexion);
                 List<FormaPago> listaFormaPago = formaPagoConsulta.ConsultarFormaPago(factura, cadenaConexion);
 
+                string nitValue = listaProductos[0].Nit;
+
+                Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion, factura);
+
                 string horaProducto = listaProductos.First().Hora_Digitada; // Aquí supongo que hay un atributo "Hora" en tu objeto Producto
                 DateTimeOffset horaConDesplazamiento = DateTimeOffset.ParseExact(horaProducto, "HH:mm:ss", CultureInfo.InvariantCulture);
                 string horaformateada = horaConDesplazamiento.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
@@ -46,17 +50,25 @@ namespace GeneradorCufe.ViewModel
 
                 string cufe;
                 string hora = "";
+
+                movimiento.Nit = adquiriente.Nit_adqui;
+
+                string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
+                string cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
+                emisor.cude = cude;
                 if (string.IsNullOrEmpty(movimiento.Dato_Cufe) || movimiento.Dato_Cufe == "0")
                 {
                     // Consultar los valores totales para la construcción del CUFE
-                    movimiento = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
-                    List<Productos> listaProductosCufe = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
+                    Movimiento movimiento1 = movimientoConsulta.ConsultarValoresTotales(factura, cadenaConexion);
+                    List<Productos> listaProductosCufe1 = productosConsulta.ConsultarProductosPorFactura(factura, cadenaConexion);
 
-                    DateTimeOffset horaCon = DateTimeOffset.ParseExact(movimiento.Hora_dig, "HH:mm:ss", CultureInfo.InvariantCulture);
+                    string horaDig = movimiento.Hora_dig ?? "00:00:00";
+                    DateTimeOffset horaCon = DateTimeOffset.ParseExact(horaDig, "HH:mm:ss", CultureInfo.InvariantCulture);
                     hora = horaCon.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
 
                     // Construir el CUFE
-                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe, factura, hora, Nit, emisor, encabezado);
+
+                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe1, factura, hora, Nit, emisor, encabezado);
                     cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
                 }
                 else
@@ -64,9 +76,7 @@ namespace GeneradorCufe.ViewModel
                     cufe = movimiento.Dato_Cufe;
                 }
 
-                string construirCUDE = GeneradorCufe_Cude.ConstruirCadenaCUDE(movimiento, listaProductos, factura, horaformateada, Nit, emisor, hora, PrefijoNC);
-                string cude = GeneradorCufe_Cude.GenerarCUFE(construirCUDE);
-                emisor.cude = cude;
+               
 
                 // Actualizar 'CustomizationID'
                 xmlDoc.Descendants(cbc + "CustomizationID").FirstOrDefault()?.SetValue("20"); // 22 o sin referencia a facturas
@@ -84,7 +94,7 @@ namespace GeneradorCufe.ViewModel
                 DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
                 DateTime fechaHoy = DateTime.Today;
 
-                if ((fechaHoy - fechaProducto).TotalDays < 14)
+                if ((fechaHoy - fechaProducto).TotalDays < 30)
                 {
                     fechaProducto = DateTime.Today;
                 }
@@ -148,9 +158,7 @@ namespace GeneradorCufe.ViewModel
 
                 GenerarEmisor.MapearInformacionEmisor(xmlDoc, emisor, encabezado, codigos, listaProductos, factura);
 
-                string nitValue = listaProductos[0].Nit;
-
-                Adquiriente adquiriente = adquirienteConsulta.ConsultarAdquiriente(nitValue, cadenaConexion, factura);
+               
                 GenerarAdquiriente.MapAccountingCustomerParty(xmlDoc, nitValue, cadenaConexion, adquiriente, codigos);
 
                 emisor.Codigo_FormaPago_emisor = GenerarFormasPago.GenerarFormaPagos(xmlDoc, listaFormaPago, movimiento.Dias);
@@ -184,8 +192,14 @@ namespace GeneradorCufe.ViewModel
                     withholdingTaxTotalElement?.Remove();
                 }
 
+                decimal Valor;
+                Valor = movimiento.Retiene != 0 && emisor.Retiene_emisor == 2 ? Math.Round(movimiento.Valor + movimiento.Retiene, 2) : movimiento.Valor;
 
-                decimal Valor = movimiento.Retiene != 0 && emisor.Retiene_emisor == 2 ? Math.Round(movimiento.Valor + movimiento.Retiene, 2) : movimiento.Valor;
+                if (movimiento.Valor == 0.00m)
+                {
+                    Valor = Math.Round(listaProductos.Sum(producto => producto.Valor2), 2);
+                }
+               
 
                 decimal Excluidos = Math.Round(listaProductos.Where(producto => producto.Excluido == 2).Sum(producto => producto.Neto), 2);
                 decimal Exentos = Math.Round(listaProductos.Where(producto => producto.Excluido != 2).Sum(producto => producto.Neto), 2);

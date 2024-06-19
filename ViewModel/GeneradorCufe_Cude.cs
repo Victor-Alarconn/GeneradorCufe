@@ -37,7 +37,7 @@ namespace GeneradorCufe.ViewModel
             DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
             DateTime fechaHoy = DateTime.Today;
 
-            fechaProducto = (fechaHoy - fechaProducto).TotalDays < 14 ? fechaHoy : fechaProducto;
+            fechaProducto = (fechaHoy - fechaProducto).TotalDays < 30 ? fechaHoy : fechaProducto;
             string fechaNC = fechaProducto.ToString("yyyy-MM-dd");
 
             decimal Valor = emisor.Retiene_emisor == 2 && movimiento.Retiene != 0 ? Math.Round(movimiento.Nota_credito + 0, 2) : movimiento.Nota_credito;
