@@ -21,7 +21,6 @@ namespace GeneradorCufe.Consultas
     {
         private readonly Data _data;
         private readonly System.Timers.Timer _timer;
-      //  private  Dictionary<int, EstadoProcesamiento> _registroProcesando;
         private readonly object _lock = new object();
 
         public Factura_Consulta()
@@ -31,7 +30,6 @@ namespace GeneradorCufe.Consultas
             _timer.Interval = 15000; // Intervalo en milisegundos (15 segundos)
             _timer.Elapsed += TimerElapsed; // Método que se ejecutará cuando el temporizador expire
             _timer.Start(); // Iniciar el temporizador
-         //   _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
         }
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)  // Método que se ejecuta cada vez que el temporizador expire
@@ -109,36 +107,6 @@ namespace GeneradorCufe.Consultas
         }
 
 
-
-
-        //private void CargarEstadoProcesamiento()
-        //{
-        //    // Leer el archivo temporal si existe
-        //    if (File.Exists("registro_procesando.json"))
-        //    {
-        //        using (StreamReader reader = new StreamReader("registro_procesando.json"))
-        //        {
-        //            string json = reader.ReadToEnd();
-        //            _registroProcesando = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // Si no existe el archivo, crear un nuevo diccionario
-        //        _registroProcesando = new Dictionary<int, EstadoProcesamiento>();
-        //        GuardarEstadoProcesamiento(); // Crear el archivo inicial vacío
-        //    }
-        //}
-
-        //private void GuardarEstadoProcesamiento()
-        //{
-        //    string jsonOutput = JsonConvert.SerializeObject(_registroProcesando);
-        //    File.WriteAllText("registro_procesando.json", jsonOutput);
-        //}
-
-
-
-
         private Factura ProcesarDatosFactura(DataRow row)
         {
             Factura factura = new Factura
@@ -181,133 +149,10 @@ namespace GeneradorCufe.Consultas
 
 
 
-        public async Task ManejarIntentos(Emisor emisor, Factura factura, string cadenaConexion, string cufe, List<Productos> listaProductos, Adquiriente adquiriente, Movimiento movimiento, Encabezado encabezado, HttpResponseMessage response)
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    // Cargar el diccionario desde el archivo temporal, si existe
-                    Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado;
-
-                    if (File.Exists("registro_procesando.json"))
-                    {
-                        using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                        {
-                            string json = reader.ReadToEnd();
-                            registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                        }
-                    }
-                    else
-                    {
-                        throw new FileNotFoundException("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                    }
-
-                    // Usar el diccionario cargado para acceder a los registros
-                    int idEncabezado = factura.Id_encabezado.Value;
-
-                    // Verificar si el registro está en proceso y actualizar los intentos
-                    if (registroProcesandoActualizado.ContainsKey(idEncabezado))
-                    {
-                        registroProcesandoActualizado[idEncabezado].Intentos++;
-
-                        int intentos = registroProcesandoActualizado[idEncabezado].Intentos;
-
-                        // Definir el límite máximo de intentos
-                        int maxIntentos = 3;
-
-                        if (intentos <= maxIntentos)
-                        {
-                            // Implementar una política de reintento exponencial solo para esta acción específica
-                            TimeSpan retardo = TimeSpan.FromSeconds(Math.Pow(2, intentos)); // Retardo exponencial
-
-                            // Programar un nuevo intento después del retardo solo para esta acción específica
-                            System.Timers.Timer timer = new System.Timers.Timer();
-                            timer.Interval = retardo.TotalMilliseconds;
-                            timer.AutoReset = false; // No se reiniciará automáticamente
-                            timer.Elapsed += async (sender, e) =>
-                            {
-                                try
-                                {
-                                    // Aquí puedes llamar nuevamente a la acción específica que falló
-                                    await InvoiceViewModel.ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
-                                }
-                                catch (Exception innerEx)
-                                {
-                                    // Si hay un error al volver a intentar la acción, manejarlo
-                                    // await ManejarIntentos(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado, response);
-                                }
-                                finally
-                                {
-                                    // Detener y liberar el temporizador después del intento
-                                    timer.Stop();
-                                    timer.Dispose();
-                                }
-                            };
-                            timer.Start();
-                        }
-                        else
-                        {
-                            // Si se excede el límite de intentos, marcar el registro como con error
-                            MarcarComoConError(factura, new SystemException());
-                          //  registroProcesandoActualizado[idEncabezado].Procesando = false;
-                        }
-                    }
-                    else
-                    {
-                        throw new KeyNotFoundException($"No se encontró el registro con ID: {idEncabezado} en el archivo temporal 'registro_procesando.json'.");
-                    }
-
-                    // Guardar el diccionario actualizado en el archivo temporal
-                    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    File.WriteAllText("registro_procesando.json", jsonOutput);
-                }
-            }
-            catch (Exception ex)
-            {
-                Factura_Consulta facturaConsulta = new Factura_Consulta();
-                facturaConsulta.MarcarComoConErrorATTAs(factura, ex);
-            }
-        }
-
-
-
         public void MarcarComoConError(Factura factura, Exception ex)
         {
             try
             {
-                //// Cargar el diccionario desde el archivo temporal, si existe
-                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
-
-                //if (File.Exists("registro_procesando.json"))
-                //{
-                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                //    {
-                //        string json = reader.ReadToEnd();
-                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                //    }
-                //}
-                //else
-                //{
-                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                //    return;
-                //}
-
-                //// Remover el registro del diccionario si existe
-                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                //{
-                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
-
-                //    // Guardar el diccionario actualizado en el archivo temporal
-                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                //    File.WriteAllText("registro_procesando.json", jsonOutput);
-                //}
-                //else
-                //{
-                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                //}
-
-                // Actualizar el estado en la base de datos
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
                     connection.Open();
@@ -348,38 +193,6 @@ namespace GeneradorCufe.Consultas
         {
             try
             {
-                //// Cargar el diccionario desde el archivo temporal, si existe
-                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
-
-                //if (File.Exists("registro_procesando.json"))
-                //{
-                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                //    {
-                //        string json = reader.ReadToEnd();
-                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                //    }
-                //}
-                //else
-                //{
-                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                //    return;
-                //}
-
-                //// Remover el registro del diccionario si existe
-                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                //{
-                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
-
-                //    // Guardar el diccionario actualizado en el archivo temporal
-                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                //    File.WriteAllText("registro_procesando.json", jsonOutput);
-                //}
-                //else
-                //{
-                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                //}
-
-                // Actualizar el estado en la base de datos
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
                     connection.Open();
@@ -420,36 +233,6 @@ namespace GeneradorCufe.Consultas
         {
             try
             {
-                // Cargar el diccionario desde el archivo temporal, si existe
-                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
-
-                //if (File.Exists("registro_procesando.json"))
-                //{
-                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                //    {
-                //        string json = reader.ReadToEnd();
-                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                //    }
-                //}
-                //else
-                //{
-                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                //    return;
-                //}
-
-                //// Remover el registro del diccionario si existe
-                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                //{
-                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
-
-                //    // Guardar el diccionario actualizado en el archivo temporal
-                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                //    File.WriteAllText("registro_procesando.json", jsonOutput);
-                //}
-                //else
-                //{
-                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                //}
 
                 // Actualizar el estado en la base de datos
                 using (MySqlConnection connection = _data.CreateConnection())
@@ -492,38 +275,7 @@ namespace GeneradorCufe.Consultas
         {
             try
             {
-                // Cargar el diccionario desde el archivo temporal, si existe
-                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
 
-                //if (File.Exists("registro_procesando.json"))
-                //{
-                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                //    {
-                //        string json = reader.ReadToEnd();
-                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                //    }
-                //}
-                //else
-                //{
-                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                //    return;
-                //}
-
-                //// Remover el registro del diccionario si existe
-                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                //{
-                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
-
-                //    // Guardar el diccionario actualizado en el archivo temporal
-                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                //    File.WriteAllText("registro_procesando.json", jsonOutput);
-                //}
-                //else
-                //{
-                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                //}
-
-                // Actualizar el estado en la base de datos
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
                     connection.Open();
@@ -564,38 +316,6 @@ namespace GeneradorCufe.Consultas
         {
             try
             {
-                // Cargar el diccionario desde el archivo temporal, si existe
-                //Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
-
-                //if (File.Exists("registro_procesando.json"))
-                //{
-                //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                //    {
-                //        string json = reader.ReadToEnd();
-                //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                //    }
-                //}
-                //else
-                //{
-                //    Console.WriteLine("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                //    return;
-                //}
-
-                //// Remover el registro del diccionario si existe
-                //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                //{
-                //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
-
-                //    // Guardar el diccionario actualizado en el archivo temporal
-                //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                //    File.WriteAllText("registro_procesando.json", jsonOutput);
-                //}
-                //else
-                //{
-                //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                //}
-
-                // Actualizar el estado en la base de datos
                 using (MySqlConnection connection = _data.CreateConnection())
                 {
                     connection.Open();
@@ -632,48 +352,6 @@ namespace GeneradorCufe.Consultas
             }
         }
 
-
-
-        public void MarcarComoProcesado(int idEncabezado)
-        {
-            try
-            {
-                // Cargar el diccionario desde el archivo temporal, si existe
-                Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado;
-
-                if (File.Exists("registro_procesando.json"))
-                {
-                    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                    {
-                        string json = reader.ReadToEnd();
-                        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                    }
-                }
-                else
-                {
-                    throw new FileNotFoundException("El archivo temporal 'registro_procesando.json' no se encontró. No se puede continuar sin este archivo.");
-                }
-
-                // Eliminar el registro del diccionario
-                if (registroProcesandoActualizado.ContainsKey(idEncabezado))
-                {
-                    registroProcesandoActualizado.Remove(idEncabezado);
-
-                    // Guardar el diccionario actualizado en el archivo temporal
-                    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    File.WriteAllText("registro_procesando.json", jsonOutput);
-                }
-                else
-                {
-                    throw new KeyNotFoundException($"No se encontró el registro con ID: {idEncabezado} en el archivo temporal 'registro_procesando.json'.");
-                }
-            }
-            catch (Exception ex)
-            {
-                // Manejar el error
-                Console.WriteLine($"Error al marcar como procesado el registro: {ex.Message}");
-            }
-        }
 
        
     }

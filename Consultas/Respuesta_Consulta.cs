@@ -16,9 +16,7 @@ namespace GeneradorCufe.Consultas
     public class Respuesta_Consulta
     {
         public readonly Conexion.Data _data;
-        // Cargar el diccionario desde el archivo temporal, si existe
-      //  Dictionary<int, EstadoProcesamiento> registroProcesandoActualizado = new Dictionary<int, EstadoProcesamiento>();
-   
+       
         public Respuesta_Consulta(Conexion.Data data)
         {
             _data = data;
@@ -103,31 +101,6 @@ namespace GeneradorCufe.Consultas
                         }
                     }
                 }
-              
-
-                    //if (File.Exists("registro_procesando.json"))
-                    //{
-                    //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                    //    {
-                    //        string json = reader.ReadToEnd();
-                    //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                    //    }
-                    //}
-
-                    //// Eliminar el registro del diccionario y guardar los cambios en el archivo temporal
-                    //if (registroProcesandoActualizado.ContainsKey(factura1.Id_encabezado.Value))
-                    //{
-                    //    registroProcesandoActualizado.Remove(factura1.Id_encabezado.Value);
-
-                    //    // Guardar el diccionario actualizado en el archivo temporal
-                    //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    //    File.WriteAllText("registro_procesando.json", jsonOutput);
-                    //}
-                    //else
-                    //{
-                    //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura1.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                    //}
-                
 
                 return true;
             }
@@ -202,62 +175,6 @@ namespace GeneradorCufe.Consultas
         }
 
 
-        public void BorrarEnBD(string cadenaConexion, string factura, string recibo, bool nota, Factura factura1)
-        {
-            try
-            {
-                // Abrir una nueva conexión utilizando la cadena de conexión definida en la clase
-                using (MySqlConnection connection = _data.CreateConnection())
-                {
-                    connection.Open();
-
-                    // Definir la consulta SQL para borrar el archivo en la tabla fac
-                    string deleteQuery;
-                    if (nota == true)
-                    {
-                        // Si es una nota de crédito, buscar por el valor de recibo en lugar de factura
-                        deleteQuery = "DELETE FROM fac WHERE recibo = @Recibo";
-                    }
-                    else
-                    {
-                        deleteQuery = "DELETE FROM fac WHERE factura = @Factura";
-                    }
-
-                    using (MySqlCommand deleteCommand = new MySqlCommand(deleteQuery, connection))
-                    {
-                        // Asignar el valor del parámetro correspondiente
-                        if (nota == true)
-                        {
-                            deleteCommand.Parameters.AddWithValue("@Recibo", recibo);
-                        }
-                        else
-                        {
-                            deleteCommand.Parameters.AddWithValue("@Factura", factura);
-                        }
-
-                        // Ejecutar la consulta para borrar el archivo
-                        int rowsAffected = deleteCommand.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            // Si se eliminó correctamente el registro de la base de datos, también lo eliminamos de la colección
-                            Factura_Consulta facturaConsulta = new Factura_Consulta();
-                            facturaConsulta.MarcarComoProcesado(factura1.Id_encabezado.Value);
-                        }
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Factura_Consulta facturaConsulta = new Factura_Consulta();
-                facturaConsulta.MarcarComoConError(factura1, ex);
-            }
-        }
-
-
-
-
         public void GuardarErrorEnBD(string cadenaConexion, HttpStatusCode status, string mensaje, Factura factura)
         {
             try
@@ -302,29 +219,6 @@ namespace GeneradorCufe.Consultas
                         }
                     }
                 }
-
-                    //if (File.Exists("registro_procesando.json"))
-                    //{
-                    //    using (StreamReader reader = new StreamReader("registro_procesando.json"))
-                    //    {
-                    //        string json = reader.ReadToEnd();
-                    //        registroProcesandoActualizado = JsonConvert.DeserializeObject<Dictionary<int, EstadoProcesamiento>>(json);
-                    //    }
-                    //}
-
-                    //// Eliminar el registro del diccionario y guardar los cambios en el archivo temporal
-                    //if (registroProcesandoActualizado.ContainsKey(factura.Id_encabezado.Value))
-                    //{
-                    //    registroProcesandoActualizado.Remove(factura.Id_encabezado.Value);
-
-                    //    // Guardar el diccionario actualizado en el archivo temporal
-                    //    string jsonOutput = JsonConvert.SerializeObject(registroProcesandoActualizado);
-                    //    File.WriteAllText("registro_procesando.json", jsonOutput);
-                    //}
-                    //else
-                    //{
-                    //    Console.WriteLine($"No se encontró el registro con Id_encabezado {factura.Id_encabezado} en el archivo temporal 'registro_procesando.json'.");
-                    //}
                 
             }
             catch (Exception ex)
@@ -333,8 +227,6 @@ namespace GeneradorCufe.Consultas
                 facturaConsulta.MarcarComoConError(factura, ex);
             }
         }
-
-
 
 
         public void ConsultarFacturaEnBD(string cadenaConexion, string factura)
