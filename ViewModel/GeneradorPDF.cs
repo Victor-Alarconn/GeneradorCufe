@@ -512,9 +512,7 @@ namespace GeneradorCufe.ViewModel
                 tTotales.WidthPercentage = 100;
                 tTotales.SetWidths(new float[] { 4.5f, 1.5f, 1.5f });
 
-                // Datos ficticios
-
-                // Simulación de valor ficticio para el total neto
+               
                 decimal vTotalAP = movimiento.Valor;
                 string TextoAdicional = encabezado1.Notas;
                 string moneda = "COP";
