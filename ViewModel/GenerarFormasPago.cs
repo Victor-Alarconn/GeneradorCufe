@@ -56,7 +56,6 @@ namespace GeneradorCufe.ViewModel
                         }
                         else
                         {
-
                             paymentMeansElementCloned.Element(cbc + "ID")?.SetValue("1");
 
                             if (formaPago.Id_forma == "00" || formaPago.Id_forma == "0")
@@ -69,7 +68,7 @@ namespace GeneradorCufe.ViewModel
                                 paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("49");
                                 paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Débito");
                             }
-                            if (formaPago.Id_forma == "02")
+                            else if (formaPago.Id_forma == "02")
                             {
                                 paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("48");
 
@@ -85,11 +84,16 @@ namespace GeneradorCufe.ViewModel
 
                                 paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Crédito");
                             }
-
                             else if (formaPago.Id_forma == "03")
                             {
                                 paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("47");
                                 paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Transferencia Débito Bancaria");
+                            }
+                            else
+                            {
+                                // Por defecto, establecer "01"
+                                paymentMeansElementCloned.Element(cbc + "PaymentMeansCode")?.SetValue("49");
+                                paymentMeansElementCloned.Element(cbc + "PaymentID")?.SetValue("Tarjeta Débito");
                             }
                         }
 

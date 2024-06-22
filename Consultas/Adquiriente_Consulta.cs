@@ -33,12 +33,12 @@ namespace GeneradorCufe.Consultas
 
             try
             {
-                using (MySqlConnection connection = _data.CreateConnection()) // Utilizar la cadena de conexión proporcionada
+                using (MySqlConnection connection = _data.CreateConnection()) 
                 {
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Nit", nit);
-                        command.Parameters.AddWithValue("@Empresa", factura.Empresa); // Agregar el parámetro para id_empresa
+                        command.Parameters.AddWithValue("@Empresa", factura.Empresa); 
 
                         connection.Open();
                         using (MySqlDataReader reader = command.ExecuteReader())
