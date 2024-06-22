@@ -67,8 +67,7 @@ namespace GeneradorCufe.ViewModel
                     hora = horaCon.ToString("HH:mm:sszzz", CultureInfo.InvariantCulture);
 
                     // Construir el CUFE
-
-                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento, listaProductosCufe1, factura, hora, Nit, emisor, encabezado);
+                    string construir = GeneradorCufe_Cude.ConstruirCadenaCUFE(movimiento1, listaProductosCufe1, factura, hora, Nit, emisor, encabezado);
                     cufe = GeneradorCufe_Cude.GenerarCUFE(construir);
                 }
                 else
