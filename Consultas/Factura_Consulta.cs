@@ -158,13 +158,18 @@ namespace GeneradorCufe.Consultas
                     connection.Open();
 
                     // Construir la consulta para actualizar el estado del registro con estado 5 y el mensaje de error
-                    string query = "UPDATE fac SET estado = 5, msm_error = @mensajeError WHERE id_enc = @idEncabezado";
+                    string query = "UPDATE fac SET estado = 5, msm_error = @mensajeError, dato_qr = @Respuesta WHERE id_enc = @idEncabezado";
+
+                    string detalle = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    string mensajeError = ex.Message; // Solo el mensaje de la excepción
+                    string Respuesta = $"[{{\"estado\":{{\"codigo\":\"Error en el envio\"}},\"detalle\":\"{mensajeError}\"}}]";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         // Agregar parámetros a la consulta
                         command.Parameters.AddWithValue("@idEncabezado", factura.Id_encabezado);
-                        command.Parameters.AddWithValue("@mensajeError", ex.Message); // Agregar el mensaje de error
+                        command.Parameters.AddWithValue("@Respuesta", Respuesta);
+                        command.Parameters.AddWithValue("@mensajeError", mensajeError); // Agregar el mensaje de error
 
                         // Ejecutar la consulta
                         int rowsAffected = command.ExecuteNonQuery();
@@ -172,7 +177,7 @@ namespace GeneradorCufe.Consultas
                         // Verificar si se actualizó algún registro
                         if (rowsAffected > 0)
                         {
-                            Console.WriteLine($"Registro con Id_encabezado {factura.Id_encabezado} marcado como error. Mensaje de error: {ex.Message}");
+                            Console.WriteLine($"Registro con Id_encabezado {factura.Id_encabezado} marcado como error. Mensaje de error: {mensajeError}");
                         }
                         else
                         {
@@ -188,6 +193,7 @@ namespace GeneradorCufe.Consultas
                 Console.WriteLine($"Error al marcar como error el registro con Id_encabezado {factura.Id_encabezado}: {e.Message}");
             }
         }
+
 
         public void MarcarComoConErrorPDF(Factura factura, Exception ex)
         {

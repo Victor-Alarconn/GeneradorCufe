@@ -21,24 +21,20 @@ namespace GeneradorCufe.Consultas
         {
             Adquiriente adquiriente = new Adquiriente();
 
-            string query = @"
-            SELECT 
-                tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen, 
-                trodigito, trotp_3ro, trotelef, trocity, trotipo, tropagweb 
-            FROM 
-                xxxx3ros 
-            WHERE 
-                tronit = @Nit AND id_empresa = @Empresa 
-            LIMIT 1";
+            string query = @"SELECT tronombre, tronomb_2, troapel_1, troapel_2, trociudad, trodirec, troemail, troregimen, 
+                                trodigito, trotp_3ro, trotelef, trocity, trotipo, tropagweb 
+                            FROM 
+                                xxxx3ros 
+                            WHERE 
+                                tronit = @Nit AND id_empresa = @Empresa 
+                            LIMIT 1";
 
-            try
-            {
-                using (MySqlConnection connection = _data.CreateConnection()) 
+                using (MySqlConnection connection = _data.CreateConnection())
                 {
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Nit", nit);
-                        command.Parameters.AddWithValue("@Empresa", factura.Empresa); 
+                        command.Parameters.AddWithValue("@Empresa", factura.Empresa);
 
                         connection.Open();
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -57,19 +53,42 @@ namespace GeneradorCufe.Consultas
                                 adquiriente.Nit_adqui = nit.ToString();
                                 adquiriente.Tipo_doc = reader["trotipo"].ToString();
                                 adquiriente.Correo2 = reader["tropagweb"].ToString();
+
+                                // Verificar el DV
+                                if (nit != "222222222222")
+                                {
+                                    int dvCalculado = Calcular(nit);
+                                    int dvConsultado = int.Parse(reader["trodigito"].ToString());
+
+                                if (dvCalculado != dvConsultado)
+                                {
+                                    throw new Exception("Error: El dígito de verificación no coincide con el NIT ingresado. Verifique la informacion del Adquiriente");
+                                }
+
                             }
+                        }
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Factura_Consulta facturaConsulta = new Factura_Consulta();
-                facturaConsulta.MarcarComoConError(factura, ex);
-            }
 
             return adquiriente;
         }
+
+        public static int Calcular(string nit)
+        {
+            int[] pesos = { 71, 67, 59, 53, 47, 43, 41, 37, 29, 23, 19, 17, 13, 7, 3 };
+            int suma = 0;
+            nit = nit.PadLeft(15, '0');
+
+            for (int i = 0; i < 15; i++)
+            {
+                suma += (int)char.GetNumericValue(nit[i]) * pesos[i];
+            }
+
+            int modulo = suma % 11;
+            return (modulo < 2) ? modulo : 11 - modulo;
+        }
+
 
 
 
