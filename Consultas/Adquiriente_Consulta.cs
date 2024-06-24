@@ -55,7 +55,7 @@ namespace GeneradorCufe.Consultas
                                 adquiriente.Correo2 = reader["tropagweb"].ToString();
 
                                 // Verificar el DV
-                                if (nit != "222222222222")
+                                if (nit != "222222222222" && !string.IsNullOrEmpty(adquiriente.Dv_Adqui))
                                 {
                                     int dvCalculado = Calcular(nit);
                                     int dvConsultado = int.Parse(reader["trodigito"].ToString());

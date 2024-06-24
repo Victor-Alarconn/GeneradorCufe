@@ -202,14 +202,15 @@ namespace GeneradorCufe.ViewModel
 
                 decimal Excluidos = Math.Round(listaProductos.Where(producto => producto.Excluido == 2).Sum(producto => producto.Neto), 2);
                 decimal Exentos = Math.Round(listaProductos.Where(producto => producto.Excluido != 2).Sum(producto => producto.Neto), 2);
+                decimal ValorProvisional = Exentos + Math.Round(listaProductos.Where(producto => producto.Excluido != 2).Sum(producto => producto.IvaTotal), 2);
 
                 var legalMonetaryTotalElement = xmlDoc.Descendants(cac + "LegalMonetaryTotal").FirstOrDefault();
                 if (legalMonetaryTotalElement != null)
                 {
-                    legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(ValorNeto.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto antes de tributos 
+                    legalMonetaryTotalElement.Element(cbc + "LineExtensionAmount")?.SetValue(Exentos.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto antes de tributos 
                     legalMonetaryTotalElement.Element(cbc + "TaxExclusiveAmount")?.SetValue(Exentos.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Base Imponible
-                    legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(Valor.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto más tributos
-                    legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(Valor.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor a Pagar // cufe ValTot
+                    legalMonetaryTotalElement.Element(cbc + "TaxInclusiveAmount")?.SetValue(ValorProvisional.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor Bruto más tributos
+                    legalMonetaryTotalElement.Element(cbc + "PayableAmount")?.SetValue(ValorProvisional.ToString("F2", CultureInfo.InvariantCulture)); // Total Valor a Pagar // cufe ValTot
                 }
 
                 GenerarProductos.MapCreditNoteLine(xmlDoc, listaProductos, movimiento); // Llamada a la función para mapear la información de InvoiceLine
