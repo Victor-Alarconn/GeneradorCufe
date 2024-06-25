@@ -20,7 +20,7 @@ namespace GeneradorCufe.ViewModel
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
             decimal Neto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
 
-            string fechaFactura = (DateTime.Today - movimiento.Fecha_Factura).TotalDays > 14 ? movimiento.Fecha_Factura.ToString("yyyy-MM-dd") : DateTime.Today.ToString("yyyy-MM-dd");
+            string fechaFactura = (DateTime.Today - movimiento.Fecha_Factura).TotalDays > 30 ? movimiento.Fecha_Factura.ToString("yyyy-MM-dd") : DateTime.Today.ToString("yyyy-MM-dd");
 
             string cadenaCUFE = $"{factura.Facturas}{fechaFactura}{hora}{Neto}01{Iva}04{consumo}030.00{Valor}{nit}{movimiento.Nit}{encabezado.Llave_tecnica}{ambiente}";
             cadenaCUFE = cadenaCUFE.Replace(',', '.');
@@ -37,7 +37,7 @@ namespace GeneradorCufe.ViewModel
             DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
             DateTime fechaHoy = DateTime.Today;
 
-            fechaProducto = (fechaHoy - fechaProducto).TotalDays < 30 ? fechaHoy : fechaProducto;
+            fechaProducto = (fechaHoy - fechaProducto).TotalDays < 60 ? fechaHoy : fechaProducto;
             string fechaNC = fechaProducto.ToString("yyyy-MM-dd");
 
             decimal Valor = emisor.Retiene_emisor == 2 && movimiento.Retiene != 0 ? Math.Round(movimiento.Nota_credito + 0, 2) : movimiento.Nota_credito;
