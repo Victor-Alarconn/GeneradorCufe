@@ -403,7 +403,7 @@ namespace GeneradorCufe.ViewModel
                 {
                     (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorND.GeneradorNotaDebito(xmlDoc, emisor, factura);
                 }
-                else if(factura.Tipo_movimiento == "SO1")
+                else if (factura.Tipo_movimiento == "SO1")
                 {
                     (cufe, listaProductos, adquiriente, movimiento, encabezado) = GeneradorDS.GeneradorDocSoporte(xmlDoc, emisor, factura);
                 }
@@ -415,9 +415,16 @@ namespace GeneradorCufe.ViewModel
             catch (Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
             {
                 Factura_Consulta facturaConsulta = new Factura_Consulta();
-              //  MessageBox.Show($"Error al cargar la plantilla XML: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //  MessageBox.Show($"Error al cargar la plantilla XML: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 facturaConsulta.MarcarComoConError(factura, ex);
                 return (string.Empty, string.Empty, string.Empty, string.Empty, new List<Productos>(), null, null, null);
+            }
+
+            catch (Exception ex)
+            {
+                Factura_Consulta facturaConsulta = new Factura_Consulta();
+                facturaConsulta.MarcarComoConError(factura, ex);
+                throw; // Propaga la excepción hacia el llamador
             }
 
             // Convertir el XML actualizado a string
