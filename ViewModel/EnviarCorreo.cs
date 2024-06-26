@@ -132,7 +132,7 @@ namespace GeneradorCufe.ViewModel
 
             try
             {
-                // Enviar el mensaje
+                await Task.Delay(500); // Agregar un retraso de 500 ms entre cada envío
                 clienteSmtp.Send(mensaje);
                 return true;
             }
@@ -150,12 +150,11 @@ namespace GeneradorCufe.ViewModel
             }
             finally
             {
-                // Liberar recursos
                 mensaje.Dispose();
                 clienteSmtp.Dispose();
             }
 
-            
+
         }
 
 

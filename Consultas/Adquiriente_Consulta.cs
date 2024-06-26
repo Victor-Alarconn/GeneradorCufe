@@ -62,7 +62,8 @@ namespace GeneradorCufe.Consultas
 
                                 if (dvCalculado != dvConsultado)
                                 {
-                                    throw new Exception("Error: El dígito de verificación no coincide con el NIT ingresado. Verifique la informacion del Adquiriente");
+                                    adquiriente.Dv_Adqui = dvConsultado.ToString();
+                                   // throw new Exception("Error: El dígito de verificación no coincide con el NIT ingresado. Verifique la informacion del Adquiriente");
                                 }
 
                             }
