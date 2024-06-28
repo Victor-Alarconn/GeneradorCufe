@@ -617,7 +617,8 @@ namespace GeneradorCufe.ViewModel
                 decimal VlrIva = movimiento.Valor_iva; // Monto exclusivo de impuestos ficticio
 
                 // Convertir el subtotal no gravado a cadena
-                string iSubtotalNG = VlrIva.ToString("$#,###,##0.00");
+                decimal totalImpuestoIVA = Math.Round(listaProductos.Where(p => p.Iva > 0).Sum(p => p.IvaTotal), 2);
+                string iSubtotalNG = totalImpuestoIVA.ToString("$#,###,##0.00");
 
                 // Crear la celda con el valor del subtotal no gravado ficticio
                 var cvSubtotalNG = new PdfPCell(new Phrase(iSubtotalNG, fnt9));

@@ -34,6 +34,11 @@ namespace GeneradorCufe.ViewModel
             decimal consumo = Math.Round(listaProductos.Sum(p => p.Consumo), 2);
             decimal Iva = Math.Round(listaProductos.Sum(p => p.IvaTotal), 2);
             decimal VlrNeto = Math.Round(listaProductos.Sum(p => p.Neto), 2);
+
+
+            // revisar
+            decimal Exentos = Math.Round(listaProductos.Where(producto => producto.Excluido != 2).Sum(producto => producto.Neto), 2);
+            decimal ValorProvisional = Exentos + Math.Round(listaProductos.Where(producto => producto.Excluido != 2).Sum(producto => producto.IvaTotal), 2);
             DateTime fechaProducto = listaProductos.FirstOrDefault()?.Fecha ?? DateTime.Today;
             DateTime fechaHoy = DateTime.Today;
 
@@ -44,7 +49,7 @@ namespace GeneradorCufe.ViewModel
 
             int ambiente = emisor.Url_emisor.Equals("docum", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
 
-            string cadenaCUDE = $"{prefijo}{fechaNC}{horaf}{VlrNeto}01{Iva}04{consumo}030.00{Valor}{nit}{movimiento.Nit}75315{ambiente}";
+            string cadenaCUDE = $"{prefijo}{fechaNC}{horaf}{VlrNeto}01{Iva}04{consumo}030.00{ValorProvisional}{nit}{movimiento.Nit}75315{ambiente}";
             cadenaCUDE = cadenaCUDE.Replace(',', '.');
 
             return cadenaCUDE;
