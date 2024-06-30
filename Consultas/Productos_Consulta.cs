@@ -30,16 +30,17 @@ namespace GeneradorCufe.Consultas
 
                     // Consulta SQL principal, incluyendo la columna artiexclu
                     string query = @"
-            SELECT 
-                codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, vrventa, consumo, artiexclu 
-            FROM 
-                xxxxmvin 
-            WHERE 
-                factura = @factura AND (recibo = '' OR recibo IS NULL)";
+SELECT 
+    codigo, recibo, nit, detalle, cantidad, valor, neto, dsct4, iva, vriva, vrventa, consumo, artiexclu 
+FROM 
+    xxxxmvin 
+WHERE 
+    factura = @factura AND (recibo = '' OR recibo IS NULL) AND id_empresa = @id_empresa";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@factura", factura.Facturas);
+                        command.Parameters.AddWithValue("@id_empresa", factura.Empresa);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
@@ -78,6 +79,7 @@ namespace GeneradorCufe.Consultas
 
             return productos;
         }
+
 
 
 

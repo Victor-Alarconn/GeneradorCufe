@@ -52,7 +52,7 @@ namespace GeneradorCufe.Consultas
                             string query = @"
                     SELECT id_enc, empresa, tipo_mvt, factura, recibo, aplica, nombre3, notas, estado, terminal 
                     FROM fac 
-                    WHERE estado IN (7, 8) 
+                    WHERE estado IN (0, 6) 
                     AND (terminal IS NOT NULL AND terminal <> '') 
                     FOR UPDATE";
 

@@ -131,7 +131,7 @@ namespace GeneradorCufe.ViewModel
             try
             {
 
-                if (factura.Estado == 8)
+                if (factura.Estado == 6)
                 {
                     ConsultarXML(emisor, factura, cadenaConexion, cufe, listaProductos, adquiriente, movimiento, encabezado);
 
